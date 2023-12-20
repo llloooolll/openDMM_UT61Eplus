@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "call build.bat",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "gen_mingw",
+            "type": "shell",
+            "command": "call gen_mingw.bat",
+            "problemMatcher": []
+        },
+    ],
+    "presentation": { //其他设定
+        "reveal": "always", //执行任务时跳转到终端面板
+        "echo": true, //要有输出
+        "clear": true, //不清理
+        "panel": "shared", // 共用一个命令行
+    },
+}
