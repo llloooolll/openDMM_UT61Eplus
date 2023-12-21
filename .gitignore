@@ -52,4 +52,7 @@ Mkfile.old
 dkms.conf
 
 # build files
-/build
+/build/
+
+/.vscode/*
+!tasks.json
