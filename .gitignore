@@ -56,3 +56,4 @@ dkms.conf
 
 /.vscode/*
 !tasks.json
+!c_cpp_properties.json
