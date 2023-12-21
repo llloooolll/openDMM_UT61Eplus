@@ -1,0 +1,39 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "cmake --build build --target all",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "rebuild",
+            "type": "shell",
+            "command": "cmake --build build --target clean && cmake --build build --target all",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "gen_mingw",
+            "type": "shell",
+            "command": "cmake -S . -B ./build -G Ninja",
+            "problemMatcher": []
+        },
+    ],
+    "presentation": { //其他设定
+        "reveal": "always", //执行任务时跳转到终端面板
+        "echo": true, //要有输出
+        "clear": true, //不清理
+        "panel": "shared", // 共用一个命令行
+    },
+}
