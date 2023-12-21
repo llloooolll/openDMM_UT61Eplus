@@ -4,7 +4,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "cmake --build build --target all",
+            "command": "call ./scripts/shell/build.bat",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -17,7 +17,7 @@
         {
             "label": "rebuild",
             "type": "shell",
-            "command": "cmake --build build --target clean && cmake --build build --target all",
+            "command": "call ./scripts/shell/rebuild.bat",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -26,7 +26,7 @@
         {
             "label": "gen_mingw",
             "type": "shell",
-            "command": "cmake -S . -B ./build -G Ninja",
+            "command": "call ./scripts/shell/gen_mingw.bat",
             "problemMatcher": []
         },
     ],

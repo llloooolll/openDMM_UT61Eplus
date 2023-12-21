@@ -4,7 +4,7 @@
 
 __WEAK int main(void)
 {
-    volatile uint8_t i = 0;
+    volatile uint32_t i = 0;
 
     while (1)
     {
