@@ -54,6 +54,11 @@ dkms.conf
 # build files
 /build/
 
+# vscode json
 /.vscode/*
 !tasks.json
 !c_cpp_properties.json
+
+# tool
+/tool/gcc/*
+!mingw-w64-i686-arm-none-eabi.zip

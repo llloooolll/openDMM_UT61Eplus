@@ -5,9 +5,6 @@
             "label": "build",
             "type": "shell",
             "command": "call ./scripts/shell/build.bat",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -18,9 +15,6 @@
             "label": "rebuild",
             "type": "shell",
             "command": "call ./scripts/shell/rebuild.bat",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
             "problemMatcher": []
         },
         {
@@ -29,7 +23,22 @@
             "command": "call ./scripts/shell/gen_mingw.bat",
             "problemMatcher": []
         },
+        {
+            "label": "load",
+            "type": "shell",
+            "command": "call ./scripts/shell/load.bat",
+            "problemMatcher": []
+        },
+        {
+            "label": "erase",
+            "type": "shell",
+            "command": "call ./scripts/shell/erase.bat",
+            "problemMatcher": []
+        },
     ],
+    "options": {
+        "cwd": "${workspaceFolder}"
+    },
     "presentation": { //其他设定
         "reveal": "always", //执行任务时跳转到终端面板
         "echo": true, //要有输出
