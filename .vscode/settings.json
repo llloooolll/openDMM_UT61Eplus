@@ -1,0 +1,5 @@
+{
+    "cortex-debug.liveWatchRefreshRate": 500,
+    "cortex-debug.armToolchainPath": "${workspaceFolder}/tool/gcc/bin/",
+    "cortex-debug.armToolchainPrefix": "arm-none-eabi",
+}
