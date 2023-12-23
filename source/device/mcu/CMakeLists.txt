@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.8)
 
 # 项目名称
-project(hc32l130_lib LANGUAGES C ASM)
+project(mcu LANGUAGES C ASM)
 
 # 源文件
 file(GLOB SOURCE_FILES *.c *.s)

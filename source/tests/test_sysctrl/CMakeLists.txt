@@ -23,7 +23,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 # 库
 target_link_libraries(${PROJECT_NAME}
     "boot"
-    "hc32l130_lib"
+    "mcu"
 )
 
 include(${CMAKE_SOURCE_DIR}/scripts/cmake/utilities.cmake)

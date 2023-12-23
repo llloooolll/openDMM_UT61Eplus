@@ -2,9 +2,19 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "build_all",
+            "type": "shell",
+            "command": "call ./scripts/shell/build.bat all",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "build",
             "type": "shell",
-            "command": "call ./scripts/shell/build.bat",
+            "command": "call ./scripts/shell/build.bat ${fileDirnameBasename}",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -14,7 +24,7 @@
         {
             "label": "rebuild",
             "type": "shell",
-            "command": "call ./scripts/shell/rebuild.bat",
+            "command": "call ./scripts/shell/rebuild.bat all",
             "problemMatcher": []
         },
         {
@@ -26,7 +36,7 @@
         {
             "label": "load",
             "type": "shell",
-            "command": "call ./scripts/shell/load.bat",
+            "command": "call ./scripts/shell/load.bat ${fileDirnameBasename}",
             "problemMatcher": []
         },
         {

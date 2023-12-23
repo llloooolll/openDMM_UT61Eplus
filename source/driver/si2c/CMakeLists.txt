@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.8)
 
 # 项目名称
-project(boot LANGUAGES C ASM)
+project(si2c LANGUAGES C ASM)
 
 # 源文件
 file(GLOB SOURCE_FILES *.c *.s)
@@ -17,4 +17,10 @@ add_library(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME} PUBLIC
     .
     ${CMAKE_SOURCE_DIR}/source/device/CMSIS/core/include
+    ${CMAKE_SOURCE_DIR}/source/device/base
+    ${CMAKE_SOURCE_DIR}/source/boot
+)
+
+target_link_libraries(${PROJECT_NAME}
+    "mcu"
 )
