@@ -7,4 +7,4 @@ include(${CMAKE_SOURCE_DIR}/scripts/cmake/utilities.cmake)
 project(openDMM_UT61Eplus C ASM)
 
 # 子文件夹
-add_subdirectory(source)
+add_subdirectory(source)# 源码目录

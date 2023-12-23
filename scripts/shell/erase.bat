@@ -1,1 +1,1 @@
-pyocd erase --chip --target hc32l130
+pyocd erase --chip --target HC32L130

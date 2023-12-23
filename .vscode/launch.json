@@ -11,9 +11,12 @@
             "request": "launch",
             "type": "cortex-debug",
             "showDevDebugOutput": "both",
-            "servertype":"pyocd",
-            "targetId": "hc32l130",
+            "servertype": "pyocd",
+            "targetId": "HC32L130",
             "interface": "swd",
+            "serverArgs": [
+                "--frequency 1000000"
+            ],
             "runToEntryPoint": "main",
             "armToolchainPath": "${workspaceFolder}/tool/gcc/bin/",
             // "preLaunchTask": "load"
