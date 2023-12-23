@@ -114,6 +114,7 @@ extern "C"
 
 #include <core_cm0plus.h>
 #include <stdint.h>
+#include <stdbool.h>
 
     /******************************************************************************/
     /*                Device Specific Peripheral Registers structures             */
