@@ -4,27 +4,19 @@
         {
             "label": "build_all",
             "type": "shell",
-            "command": "call ./scripts/shell/build.bat all",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+            "command": "call ./scripts/shell/build.bat",
+            "args": [
+                "all"
+            ],
             "problemMatcher": []
         },
         {
             "label": "build",
             "type": "shell",
-            "command": "call ./scripts/shell/build.bat ${fileDirnameBasename}",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "rebuild",
-            "type": "shell",
-            "command": "call ./scripts/shell/rebuild.bat all",
+            "command": "call ./scripts/shell/build.bat",
+            "args": [
+                "${fileDirnameBasename}"
+            ],
             "problemMatcher": []
         },
         {
@@ -36,7 +28,10 @@
         {
             "label": "load",
             "type": "shell",
-            "command": "call ./scripts/shell/load.bat ${fileDirnameBasename}",
+            "command": "call ./scripts/shell/load.bat",
+            "args": [
+                "./build/${relativeFileDirname}/${fileBasenameNoExtension}.hex"
+            ],
             "problemMatcher": []
         },
         {

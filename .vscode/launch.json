@@ -7,19 +7,22 @@
         {
             "name": "Cortex Debug",
             "cwd": "${workspaceFolder}",
-            "executable": "./build/source/boot/boot_main.elf",
+            "executable": "./build/${relativeFileDirname}/${fileBasenameNoExtension}.elf",
             "request": "launch",
             "type": "cortex-debug",
             "showDevDebugOutput": "both",
             "servertype": "pyocd",
             "targetId": "HC32L130",
-            "interface": "swd",
             "serverArgs": [
-                "--frequency 1000000"
+                "--frequency",
+                "1000000"
             ],
+            "interface": "swd",
             "runToEntryPoint": "main",
             "armToolchainPath": "${workspaceFolder}/tool/gcc/bin/",
-            // "preLaunchTask": "load"
+            "preLaunchTask": "load",
+            // "svdPath": null,
+            // "svdFile": null
         }
     ]
 }
