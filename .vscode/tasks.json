@@ -30,7 +30,7 @@
             "type": "shell",
             "command": "call ./scripts/shell/load.bat",
             "args": [
-                "./build/${relativeFileDirname}/${fileBasenameNoExtension}.hex"
+                "./build/${relativeFileDirname}/${fileDirnameBasename}.hex"
             ],
             "problemMatcher": []
         },
