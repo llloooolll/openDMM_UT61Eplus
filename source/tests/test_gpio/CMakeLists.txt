@@ -26,6 +26,5 @@ target_link_libraries(${PROJECT_NAME}
     "mcu"
 )
 
-include(${CMAKE_SOURCE_DIR}/scripts/cmake/utilities.cmake)
 set_target_linker(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/scripts/ld/hc32l130.ld)
 post_build(${PROJECT_NAME})
