@@ -20,5 +20,14 @@ typedef struct _si2c_pin_t
 } si2c_pin_t;
 
 void si2c_init(void);
+void si2c_trans_begin(uint8_t address);
+si2c_status_t si2c_trans_end(void);
+uint8_t si2c_request_from(uint8_t address, uint8_t size);
+void si2c_byte_write(uint8_t data);
+void si2c_bytes_write(uint8_t *data, uint8_t size);
+int si2c_available(void);
+uint8_t si2c_peek(void);
+int si2c_byte_read(void);
+int HAL_SI2C_bytes_read(uint8_t *buf, uint8_t size);
 
 #endif

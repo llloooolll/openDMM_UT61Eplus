@@ -13,7 +13,6 @@ static si2c_pin_t si2c_pin;
 static void ll_si2c_delay(void);                   // 等待
 static void ll_si2c_init(void);                    // 初始化
 static void ll_si2c_start(void);                   // 开始
-static void ll_si2c_repstart(void);                // 开始
 static void ll_si2c_stop(void);                    // 结束
 static bool ll_si2c_bit_read(void);                // 读位
 static void ll_si2c_bit_write(bool data_bit);      // 写位
@@ -47,7 +46,7 @@ static void ll_si2c_start(void)
 {
     bool sda_status = si2c_pin.si2c_sda_option(1);
     bool scl_status = si2c_pin.si2c_scl_option(1);
-    if (sda_status && scl_status) // 都是高
+    if (sda_status && scl_status) // 确认都是高
     {
         si2c_pin.si2c_sda_option(0);
         ll_si2c_delay();
@@ -56,28 +55,7 @@ static void ll_si2c_start(void)
     }
     else
     {
-        _i2c_status = si2c_status_shortcut;
-    }
-}
-
-/**
- * @brief 重发开始位
- *
- */
-static void ll_si2c_repstart(void)
-{
-    bool sda_status = si2c_pin.si2c_sda_option(1);
-    bool scl_status = si2c_pin.si2c_scl_option(1);
-    if (sda_status && scl_status) // 都是高
-    {
-        si2c_pin.si2c_sda_option(0);
-        ll_si2c_delay();
-        si2c_pin.si2c_scl_option(0);
-        ll_si2c_delay();
-    }
-    else
-    {
-        _i2c_status = si2c_status_shortcut;
+        _i2c_status = si2c_status_shortcut; // 总线电平错误
     }
 }
 
@@ -106,7 +84,7 @@ static bool ll_si2c_bit_read(void)
 {
     si2c_pin.si2c_scl_option(0);
     ll_si2c_delay();
-    si2c_pin.si2c_sda_option(1);
+    si2c_pin.si2c_sda_option(1); // 释放SDA
     ll_si2c_delay();
     si2c_pin.si2c_scl_option(1);
     ll_si2c_delay();
@@ -127,7 +105,7 @@ static void ll_si2c_bit_write(bool data_bit)
     ll_si2c_delay();
     si2c_pin.si2c_scl_option(1);
     ll_si2c_delay();
-    ll_si2c_delay();
+    ll_si2c_delay(); // 凑够四个延时周期，保证时钟周期稳定
 }
 
 /**
@@ -202,19 +180,11 @@ void si2c_trans_begin(uint8_t address)
 /**
  * @brief 停止传输
  *
- * @param send_stop 是否发送停止位
  * @return si2c_status_t 错误状态
  */
-si2c_status_t si2c_trans_end(bool send_stop)
+si2c_status_t si2c_trans_end(void)
 {
-    if (send_stop)
-    {
-        ll_si2c_stop();
-    }
-    else
-    {
-        ll_si2c_repstart();
-    }
+    ll_si2c_stop();
     return _i2c_status;
 }
 
@@ -223,10 +193,9 @@ si2c_status_t si2c_trans_end(bool send_stop)
  *
  * @param address 从机地址
  * @param size 长度，单位字节8bit
- * @param send_stop 是否发送停止位
  * @return uint8_t 读取字节数
  */
-uint8_t si2c_request_from(uint8_t address, uint8_t size, bool send_stop)
+uint8_t si2c_request_from(uint8_t address, uint8_t size)
 {
     uint8_t n = 0; // number of valid received bytes. Start with 0 bytes.
 
@@ -260,14 +229,7 @@ uint8_t si2c_request_from(uint8_t address, uint8_t size, bool send_stop)
             _i2c_status = si2c_status_addr_nack;
         }
 
-        if (send_stop)
-        {
-            ll_si2c_stop();
-        }
-        else
-        {
-            ll_si2c_repstart();
-        }
+        ll_si2c_stop();
     }
     return (n);
 }
