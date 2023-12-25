@@ -6,10 +6,10 @@
 
 typedef enum _gpio_port_t
 {
-    gpio_port_a = 0x00,
-    gpio_port_b = 0x40,
-    gpio_port_c = 0x80,
-    gpio_port_d = 0xC0,
+    gpio_port_a = 0x00UL,
+    gpio_port_b = 0x40UL,
+    gpio_port_c = 0x80UL,
+    gpio_port_d = 0xC0UL,
 } gpio_port_t;
 
 typedef enum _gpio_pin_t
@@ -50,9 +50,9 @@ void gpio_enable_analog(gpio_port_t port, gpio_pin_t pin, bool flag);
 void gpio_enable_pullup(gpio_port_t port, gpio_pin_t pin, bool flag);
 void gpio_enable_pulldown(gpio_port_t port, gpio_pin_t pin, bool flag);
 void gpio_enable_od(gpio_port_t port, gpio_pin_t pin, bool flag);
-void gpio_write_output(gpio_port_t port, gpio_pin_t pin, bool flag);
-void gpio_set_output(gpio_port_t port, gpio_pin_t pin);
-void gpio_clear_output(gpio_port_t port, gpio_pin_t pin);
-bool gpio_read_input(gpio_port_t port, gpio_pin_t pin);
+void gpio_write_pin(gpio_port_t port, gpio_pin_t pin, bool flag);
+void gpio_set_pin(gpio_port_t port, gpio_pin_t pin);
+void gpio_clear_pin(gpio_port_t port, gpio_pin_t pin);
+bool gpio_read_pin(gpio_port_t port, gpio_pin_t pin);
 
 #endif

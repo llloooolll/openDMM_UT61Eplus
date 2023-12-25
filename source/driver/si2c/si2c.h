@@ -15,11 +15,11 @@ typedef enum _si2c_status_t
 
 typedef struct _si2c_pin_t
 {
-    bool (*si2c_scl_option)(bool flag);
-    bool (*si2c_sda_option)(bool flag);
+    bool (*scl_option)(bool flag);
+    bool (*sda_option)(bool flag);
 } si2c_pin_t;
 
-void si2c_init(void);
+void si2c_init(si2c_pin_t *si2c_pin);
 void si2c_trans_begin(uint8_t address);
 si2c_status_t si2c_trans_end(void);
 uint8_t si2c_request_from(uint8_t address, uint8_t size);

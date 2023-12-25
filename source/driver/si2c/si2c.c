@@ -8,7 +8,7 @@ static si2c_status_t _i2c_status;                // 错误类型
 static uint8_t _rx_buffer[SOFT_I2C_BUFFER_SIZE]; // 读缓冲区
 static uint8_t _rx_buffer_put;                   // 第一个空字节
 static uint8_t _rx_buffer_get;                   // 第一个非空字节
-static si2c_pin_t si2c_pin;
+static si2c_pin_t *_si2c_pin;
 
 static void ll_si2c_delay(void);                   // 等待
 static void ll_si2c_init(void);                    // 初始化
@@ -26,6 +26,12 @@ static bool ll_si2c_write_byte(uint8_t data_byte); // 写字节
 static void ll_si2c_delay(void)
 {
     // 延时
+
+    volatile uint32_t i = 0;
+    while (i < 1000)
+    {
+        i++;
+    }
 }
 
 /**
@@ -44,13 +50,13 @@ static void ll_si2c_init(void)
  */
 static void ll_si2c_start(void)
 {
-    bool sda_status = si2c_pin.si2c_sda_option(1);
-    bool scl_status = si2c_pin.si2c_scl_option(1);
+    bool sda_status = _si2c_pin->sda_option(1);
+    bool scl_status = _si2c_pin->scl_option(1);
     if (sda_status && scl_status) // 确认都是高
     {
-        si2c_pin.si2c_sda_option(0);
+        _si2c_pin->sda_option(0);
         ll_si2c_delay();
-        si2c_pin.si2c_scl_option(0);
+        _si2c_pin->scl_option(0);
         ll_si2c_delay();
     }
     else
@@ -65,13 +71,13 @@ static void ll_si2c_start(void)
  */
 static void ll_si2c_stop(void)
 {
-    si2c_pin.si2c_scl_option(0);
+    _si2c_pin->scl_option(0);
     ll_si2c_delay();
-    si2c_pin.si2c_sda_option(0);
+    _si2c_pin->sda_option(0);
     ll_si2c_delay();
-    si2c_pin.si2c_scl_option(1);
+    _si2c_pin->scl_option(1);
     ll_si2c_delay();
-    si2c_pin.si2c_sda_option(1);
+    _si2c_pin->sda_option(1);
     ll_si2c_delay();
 }
 
@@ -82,13 +88,13 @@ static void ll_si2c_stop(void)
  */
 static bool ll_si2c_read_bit(void)
 {
-    si2c_pin.si2c_scl_option(0);
+    _si2c_pin->scl_option(0);
     ll_si2c_delay();
-    si2c_pin.si2c_sda_option(1); // 释放SDA
+    _si2c_pin->sda_option(1); // 释放SDA
     ll_si2c_delay();
-    si2c_pin.si2c_scl_option(1);
+    _si2c_pin->scl_option(1);
     ll_si2c_delay();
-    bool rusult = si2c_pin.si2c_sda_option(1);
+    bool rusult = _si2c_pin->sda_option(1);
     ll_si2c_delay();
     return rusult;
 }
@@ -99,11 +105,11 @@ static bool ll_si2c_read_bit(void)
  */
 static void ll_si2c_write_bit(bool data_bit)
 {
-    si2c_pin.si2c_scl_option(0);
+    _si2c_pin->scl_option(0);
     ll_si2c_delay();
-    si2c_pin.si2c_sda_option(data_bit);
+    _si2c_pin->sda_option(data_bit);
     ll_si2c_delay();
-    si2c_pin.si2c_scl_option(1);
+    _si2c_pin->scl_option(1);
     ll_si2c_delay();
     ll_si2c_delay(); // 凑够四个延时周期，保证时钟周期稳定
 }
@@ -150,8 +156,9 @@ static bool ll_si2c_write_byte(uint8_t data_byte)
  * @brief 初始化
  *
  */
-void si2c_init(void)
+void si2c_init(si2c_pin_t *si2c_pin)
 {
+    _si2c_pin = si2c_pin;
     ll_si2c_init();
 }
 

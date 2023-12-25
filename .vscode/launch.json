@@ -15,14 +15,13 @@
             "targetId": "HC32L130",
             "serverArgs": [
                 "--frequency",
-                "1000000"
+                "1000000",
             ],
             "interface": "swd",
-            "runToEntryPoint": "main",
+            "runToEntryPoint": "Reset_Handler",
             "armToolchainPath": "${workspaceFolder}/tool/gcc/bin/",
             "preLaunchTask": "load",
-            // "svdPath": null,
-            // "svdFile": null
+            "svdPath": "${workspaceFolder}/scripts/svd/HC32L130.svd",
         }
     ]
 }

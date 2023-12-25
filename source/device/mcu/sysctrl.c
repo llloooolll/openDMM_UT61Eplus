@@ -231,7 +231,6 @@ void sysctrl_set_pclk_div(sysctrl_pclk_div_t div)
  */
 void sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_t peripheral, bool flag)
 {
-
     if (flag)
     {
         SET_BIT(M0P_SYSCTRL->PERI_CLKEN, peripheral);
