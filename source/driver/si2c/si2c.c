@@ -14,10 +14,10 @@ static void ll_si2c_delay(void);                   // 等待
 static void ll_si2c_init(void);                    // 初始化
 static void ll_si2c_start(void);                   // 开始
 static void ll_si2c_stop(void);                    // 结束
-static bool ll_si2c_bit_read(void);                // 读位
-static void ll_si2c_bit_write(bool data_bit);      // 写位
-static uint8_t ll_si2c_byte_read(bool ack);        // 读字节
-static bool ll_si2c_byte_write(uint8_t data_byte); // 写字节
+static bool ll_si2c_read_bit(void);                // 读位
+static void ll_si2c_write_bit(bool data_bit);      // 写位
+static uint8_t ll_si2c_read_byte(bool ack);        // 读字节
+static bool ll_si2c_write_byte(uint8_t data_byte); // 写字节
 
 /**
  * @brief 总线操作延时
@@ -80,7 +80,7 @@ static void ll_si2c_stop(void)
  *
  * @return bool
  */
-static bool ll_si2c_bit_read(void)
+static bool ll_si2c_read_bit(void)
 {
     si2c_pin.si2c_scl_option(0);
     ll_si2c_delay();
@@ -97,7 +97,7 @@ static bool ll_si2c_bit_read(void)
  *
  * @param data_bit
  */
-static void ll_si2c_bit_write(bool data_bit)
+static void ll_si2c_write_bit(bool data_bit)
 {
     si2c_pin.si2c_scl_option(0);
     ll_si2c_delay();
@@ -114,16 +114,16 @@ static void ll_si2c_bit_write(bool data_bit)
  * @param ack
  * @return uint8_t
  */
-static uint8_t ll_si2c_byte_read(bool ack)
+static uint8_t ll_si2c_read_byte(bool ack)
 {
     uint8_t res = 0;
 
     for (uint8_t i = 0; i < 8; i++)
     {
         res <<= 1;
-        res |= ll_si2c_bit_read();
+        res |= ll_si2c_read_bit();
     }
-    ll_si2c_bit_write(!ack);
+    ll_si2c_write_bit(!ack);
     ll_si2c_delay();
 
     return res;
@@ -135,15 +135,15 @@ static uint8_t ll_si2c_byte_read(bool ack)
  * @param data_byte
  * @return bool
  */
-static bool ll_si2c_byte_write(uint8_t data_byte)
+static bool ll_si2c_write_byte(uint8_t data_byte)
 {
     for (uint8_t i = 0; i < 8; i++)
     {
-        ll_si2c_bit_write((bool)(data_byte & 0x80)); // MSB
+        ll_si2c_write_bit((bool)(data_byte & 0x80)); // MSB
         data_byte <<= 1;
     }
 
-    return ll_si2c_bit_read();
+    return ll_si2c_read_bit();
 }
 
 /**
@@ -170,7 +170,7 @@ void si2c_trans_begin(uint8_t address)
     ll_si2c_start();
     if (_i2c_status == si2c_status_ok) //
     {
-        bool addr_ack = ll_si2c_byte_write(address); // The r/w bit is zero for write
+        bool addr_ack = ll_si2c_write_byte(address); // The r/w bit is zero for write
         if (addr_ack)                                // a sda zero from Slave for the 9th bit is ack
         {
             _i2c_status = si2c_status_addr_nack;
@@ -207,7 +207,7 @@ uint8_t si2c_request_from(uint8_t address, uint8_t size)
 
     if (!_i2c_status)
     {
-        bool rc = ll_si2c_byte_write(address | 0x01); // The r/w bit is '1' to read
+        bool rc = ll_si2c_write_byte(address | 0x01); // The r/w bit is '1' to read
 
         if (!rc) // a sda zero from Slave for the 9th bit is ack
         {
@@ -215,11 +215,11 @@ uint8_t si2c_request_from(uint8_t address, uint8_t size)
             {
                 if (n < (size - 1))
                 {
-                    _rx_buffer[n] = ll_si2c_byte_read(1); // read with ack
+                    _rx_buffer[n] = ll_si2c_read_byte(1); // read with ack
                 }
                 else
                 {
-                    _rx_buffer[n] = ll_si2c_byte_read(0); // last byte, read with nack
+                    _rx_buffer[n] = ll_si2c_read_byte(0); // last byte, read with nack
                 }
             }
             _rx_buffer_put = n;
@@ -239,11 +239,11 @@ uint8_t si2c_request_from(uint8_t address, uint8_t size)
  *
  * @param data
  */
-void si2c_byte_write(uint8_t data)
+void si2c_write_byte(uint8_t data)
 {
     if (_i2c_status == si2c_status_ok)
     {
-        if (ll_si2c_byte_write(data))
+        if (ll_si2c_write_byte(data))
         {
             _i2c_status = si2c_status_data_nack;
         }
@@ -256,11 +256,11 @@ void si2c_byte_write(uint8_t data)
  * @param data
  * @param size
  */
-void si2c_bytes_write(uint8_t *data, uint8_t size)
+void si2c_write_bytes(uint8_t *data, uint8_t size)
 {
     for (uint8_t i = 0; i < size; i++)
     {
-        si2c_byte_write(data[i]);
+        si2c_write_byte(data[i]);
     }
 }
 
@@ -300,7 +300,7 @@ uint8_t si2c_peek(void)
  *
  * @return int
  */
-int si2c_byte_read(void)
+int si2c_read_byte(void)
 {
     uint8_t data;
 
@@ -324,14 +324,14 @@ int si2c_byte_read(void)
  * @param size
  * @return int
  */
-int HAL_SI2C_bytes_read(uint8_t *buf, uint8_t size)
+int HAL_SI2C_read_bytes(uint8_t *buf, uint8_t size)
 {
     uint8_t data;
     uint8_t n;
 
     for (n = 0; n < size; n++)
     {
-        data = si2c_byte_read();
+        data = si2c_read_byte();
         if (data == -1)
         {
             break;
