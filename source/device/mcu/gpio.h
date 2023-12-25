@@ -44,15 +44,15 @@ typedef enum _gpio_mux_t
     gpio_mux_7 = 7U,
 } gpio_mux_t;
 
-void gpio_mux_set(gpio_port_t port, gpio_pin_t pin, gpio_mux_t mux);
-void gpio_output_enable(gpio_port_t port, gpio_pin_t pin, bool flag);
-void gpio_analog_enable(gpio_port_t port, gpio_pin_t pin, bool flag);
-void gpio_pullup_enable(gpio_port_t port, gpio_pin_t pin, bool flag);
-void gpio_pulldown_enable(gpio_port_t port, gpio_pin_t pin, bool flag);
-void gpio_od_enable(gpio_port_t port, gpio_pin_t pin, bool flag);
-void gpio_output_write(gpio_port_t port, gpio_pin_t pin, bool flag);
-void gpio_output_set(gpio_port_t port, gpio_pin_t pin);
-void gpio_output_clear(gpio_port_t port, gpio_pin_t pin);
-bool gpio_input_read(gpio_port_t port, gpio_pin_t pin);
+void gpio_set_mux(gpio_port_t port, gpio_pin_t pin, gpio_mux_t mux);
+void gpio_enable_output(gpio_port_t port, gpio_pin_t pin, bool flag);
+void gpio_enable_analog(gpio_port_t port, gpio_pin_t pin, bool flag);
+void gpio_enable_pullup(gpio_port_t port, gpio_pin_t pin, bool flag);
+void gpio_enable_pulldown(gpio_port_t port, gpio_pin_t pin, bool flag);
+void gpio_enable_od(gpio_port_t port, gpio_pin_t pin, bool flag);
+void gpio_write_output(gpio_port_t port, gpio_pin_t pin, bool flag);
+void gpio_set_output(gpio_port_t port, gpio_pin_t pin);
+void gpio_clear_output(gpio_port_t port, gpio_pin_t pin);
+bool gpio_read_input(gpio_port_t port, gpio_pin_t pin);
 
 #endif

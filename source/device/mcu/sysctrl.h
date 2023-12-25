@@ -111,15 +111,15 @@ typedef enum _sysctrl_peripheral_clk_t
 #define RCL_TRIM_38_4K (*((volatile uint16_t *)(0x00100C20UL)))
 #define RCL_TRIM_32_768K (*((volatile uint16_t *)(0x00100C21UL)))
 
-void sysctrl_source_enable(sysctrl_clk_t clk, bool flag);
-void sysctrl_rcl_stable_time(sysctrl_rcl_cycle_t cycle);
-void sysctrl_clk_source_switch(sysctrl_clk_source_t source);
-uint32_t sysctrl_hclk_get(void);
-uint32_t sysctrl_pclk_get(void);
-void sysctrl_rch_trim_set(sysctrl_rch_freq_t freq);
-void sysctrl_rcl_trim_set(sysctrl_rcl_freq_t freq);
-void sysctrl_hclk_div_set(sysctrl_hclk_div_t div);
-void sysctrl_pclk_div_set(sysctrl_pclk_div_t div);
-void sysctrl_peripheral_clk_enable(sysctrl_peripheral_clk_t peripheral, bool flag);
+void sysctrl_enable_clock(sysctrl_clk_t clk, bool flag);
+void sysctrl_set_rcl_stable_time(sysctrl_rcl_cycle_t cycle);
+void sysctrl_switch_sys_clk_source(sysctrl_clk_source_t source);
+uint32_t sysctrl_get_hclk_freq(void);
+uint32_t sysctrl_get_pclk_freq(void);
+void sysctrl_set_rch_trim(sysctrl_rch_freq_t freq);
+void sysctrl_set_rcl_trim(sysctrl_rcl_freq_t freq);
+void sysctrl_set_hclk_div(sysctrl_hclk_div_t div);
+void sysctrl_set_pclk_div(sysctrl_pclk_div_t div);
+void sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_t peripheral, bool flag);
 
 #endif

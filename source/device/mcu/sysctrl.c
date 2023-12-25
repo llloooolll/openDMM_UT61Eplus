@@ -21,7 +21,7 @@ static void sysctrl_unlock(void)
  * @param clk 时钟源
  * @param flag
  */
-void sysctrl_source_enable(sysctrl_clk_t clk, bool flag)
+void sysctrl_enable_clock(sysctrl_clk_t clk, bool flag)
 {
     sysctrl_unlock(); // 解锁SYSCTRL0
     switch (clk)
@@ -59,7 +59,7 @@ void sysctrl_source_enable(sysctrl_clk_t clk, bool flag)
  *
  * @param cycle 时钟周期
  */
-void sysctrl_rcl_stable_time(sysctrl_rcl_cycle_t cycle)
+void sysctrl_set_rcl_stable_time(sysctrl_rcl_cycle_t cycle)
 {
     M0P_SYSCTRL->RCL_CR_f.STARTUP = cycle;
 }
@@ -69,7 +69,7 @@ void sysctrl_rcl_stable_time(sysctrl_rcl_cycle_t cycle)
  *
  * @param source 时钟源
  */
-void sysctrl_clk_source_switch(sysctrl_clk_source_t source)
+void sysctrl_switch_sys_clk_source(sysctrl_clk_source_t source)
 {
     sysctrl_unlock();
     M0P_SYSCTRL->SYSCTRL0_f.CLKSW = source;
@@ -80,7 +80,7 @@ void sysctrl_clk_source_switch(sysctrl_clk_source_t source)
  *
  * @return uint32_t 频率(Hz)
  */
-uint32_t sysctrl_hclk_get(void)
+uint32_t sysctrl_get_hclk_freq(void)
 {
     uint32_t hclk_freq = 0;
     const uint32_t rch_freq_table[] = {24000000, 22120000, 16000000, 8000000, 4000000};
@@ -174,9 +174,9 @@ uint32_t sysctrl_hclk_get(void)
  *
  * @return uint32_t 频率(Hz)
  */
-uint32_t sysctrl_pclk_get(void)
+uint32_t sysctrl_get_pclk_freq(void)
 {
-    uint32_t pclk_freq = sysctrl_hclk_get();
+    uint32_t pclk_freq = sysctrl_get_hclk_freq();
     pclk_freq = (pclk_freq >> (M0P_SYSCTRL->SYSCTRL0_f.PCLK_PRS));
 
     return pclk_freq;
@@ -187,7 +187,7 @@ uint32_t sysctrl_pclk_get(void)
  *
  * @param freq
  */
-void sysctrl_rch_trim_set(sysctrl_rch_freq_t freq)
+void sysctrl_set_rch_trim(sysctrl_rch_freq_t freq)
 {
     M0P_SYSCTRL->RCH_CR_f.TRIM = *(&(RCH_TRIM_24M) + freq);
 }
@@ -197,7 +197,7 @@ void sysctrl_rch_trim_set(sysctrl_rch_freq_t freq)
  *
  * @param freq
  */
-void sysctrl_rcl_trim_set(sysctrl_rcl_freq_t freq)
+void sysctrl_set_rcl_trim(sysctrl_rcl_freq_t freq)
 {
     M0P_SYSCTRL->RCL_CR_f.TRIM = *(&(RCL_TRIM_38_4K) + freq);
 }
@@ -207,7 +207,7 @@ void sysctrl_rcl_trim_set(sysctrl_rcl_freq_t freq)
  *
  * @param div
  */
-void sysctrl_hclk_div_set(sysctrl_hclk_div_t div)
+void sysctrl_set_hclk_div(sysctrl_hclk_div_t div)
 {
     sysctrl_unlock();
     M0P_SYSCTRL->SYSCTRL0_f.HCLK_PRS = div;
@@ -218,7 +218,7 @@ void sysctrl_hclk_div_set(sysctrl_hclk_div_t div)
  *
  * @param div
  */
-void sysctrl_pclk_div_set(sysctrl_pclk_div_t div)
+void sysctrl_set_pclk_div(sysctrl_pclk_div_t div)
 {
     sysctrl_unlock();
     M0P_SYSCTRL->SYSCTRL0_f.PCLK_PRS = div;
@@ -229,14 +229,15 @@ void sysctrl_pclk_div_set(sysctrl_pclk_div_t div)
  *
  * @param peripheral
  */
-void sysctrl_peripheral_clk_enable(sysctrl_peripheral_clk_t peripheral, bool flag)
+void sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_t peripheral, bool flag)
 {
+
     if (flag)
     {
-        BIT_SET(M0P_SYSCTRL->PERI_CLKEN, peripheral);
+        SET_BIT(M0P_SYSCTRL->PERI_CLKEN, peripheral);
     }
     else
     {
-        BIT_CLR(M0P_SYSCTRL->PERI_CLKEN, peripheral);
+        CLR_BIT(M0P_SYSCTRL->PERI_CLKEN, peripheral);
     }
 }

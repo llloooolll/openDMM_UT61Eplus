@@ -10,7 +10,7 @@
  * @param pin
  * @param mux
  */
-void gpio_mux_set(gpio_port_t port, gpio_pin_t pin, gpio_mux_t mux)
+void gpio_set_mux(gpio_port_t port, gpio_pin_t pin, gpio_mux_t mux)
 {
     for (uint8_t i = 0; (i < 16) && (pin > 0);)
     {
@@ -27,15 +27,15 @@ void gpio_mux_set(gpio_port_t port, gpio_pin_t pin, gpio_mux_t mux)
  * @param pin
  * @param flag
  */
-void gpio_output_enable(gpio_port_t port, gpio_pin_t pin, bool flag)
+void gpio_enable_output(gpio_port_t port, gpio_pin_t pin, bool flag)
 {
     if (!flag)
     {
-        BITS_SET(*(&(M0P_GPIO->PADIR) + port), pin);
+        SET_BITS(*(&(M0P_GPIO->PADIR) + port), pin);
     }
     else
     {
-        BITS_CLR(*(&(M0P_GPIO->PADIR) + port), pin);
+        CLR_BITS(*(&(M0P_GPIO->PADIR) + port), pin);
     }
 }
 
@@ -46,15 +46,15 @@ void gpio_output_enable(gpio_port_t port, gpio_pin_t pin, bool flag)
  * @param pin
  * @param flag
  */
-void gpio_analog_enable(gpio_port_t port, gpio_pin_t pin, bool flag)
+void gpio_enable_analog(gpio_port_t port, gpio_pin_t pin, bool flag)
 {
     if (flag)
     {
-        BITS_SET(*(&(M0P_GPIO->PAADS) + port), pin);
+        SET_BITS(*(&(M0P_GPIO->PAADS) + port), pin);
     }
     else
     {
-        BITS_CLR(*(&(M0P_GPIO->PAADS) + port), pin);
+        CLR_BITS(*(&(M0P_GPIO->PAADS) + port), pin);
     }
 }
 
@@ -65,15 +65,15 @@ void gpio_analog_enable(gpio_port_t port, gpio_pin_t pin, bool flag)
  * @param pin
  * @param flag
  */
-void gpio_pullup_enable(gpio_port_t port, gpio_pin_t pin, bool flag)
+void gpio_enable_pullup(gpio_port_t port, gpio_pin_t pin, bool flag)
 {
     if (flag)
     {
-        BITS_SET(*(&(M0P_GPIO->PAPU) + port), pin);
+        SET_BITS(*(&(M0P_GPIO->PAPU) + port), pin);
     }
     else
     {
-        BITS_CLR(*(&(M0P_GPIO->PAPU) + port), pin);
+        CLR_BITS(*(&(M0P_GPIO->PAPU) + port), pin);
     }
 }
 
@@ -84,15 +84,15 @@ void gpio_pullup_enable(gpio_port_t port, gpio_pin_t pin, bool flag)
  * @param pin
  * @param flag
  */
-void gpio_pulldown_enable(gpio_port_t port, gpio_pin_t pin, bool flag)
+void gpio_enable_pulldown(gpio_port_t port, gpio_pin_t pin, bool flag)
 {
     if (flag)
     {
-        BITS_SET(*(&(M0P_GPIO->PAPD) + port), pin);
+        SET_BITS(*(&(M0P_GPIO->PAPD) + port), pin);
     }
     else
     {
-        BITS_CLR(*(&(M0P_GPIO->PAPD) + port), pin);
+        CLR_BITS(*(&(M0P_GPIO->PAPD) + port), pin);
     }
 }
 
@@ -103,15 +103,15 @@ void gpio_pulldown_enable(gpio_port_t port, gpio_pin_t pin, bool flag)
  * @param pin
  * @param flag
  */
-void gpio_od_enable(gpio_port_t port, gpio_pin_t pin, bool flag)
+void gpio_enable_od(gpio_port_t port, gpio_pin_t pin, bool flag)
 {
     if (flag)
     {
-        BITS_SET(*(&(M0P_GPIO->PAOD) + port), pin);
+        SET_BITS(*(&(M0P_GPIO->PAOD) + port), pin);
     }
     else
     {
-        BITS_CLR(*(&(M0P_GPIO->PAOD) + port), pin);
+        CLR_BITS(*(&(M0P_GPIO->PAOD) + port), pin);
     }
 }
 
@@ -122,15 +122,15 @@ void gpio_od_enable(gpio_port_t port, gpio_pin_t pin, bool flag)
  * @param pin
  * @param flag
  */
-void gpio_output_write(gpio_port_t port, gpio_pin_t pin, bool flag)
+void gpio_write_output(gpio_port_t port, gpio_pin_t pin, bool flag)
 {
     if (flag)
     {
-        BITS_SET(*(&(M0P_GPIO->PAOD) + port), pin);
+        SET_BITS(*(&(M0P_GPIO->PAOD) + port), pin);
     }
     else
     {
-        BITS_CLR(*(&(M0P_GPIO->PAOD) + port), pin);
+        CLR_BITS(*(&(M0P_GPIO->PAOD) + port), pin);
     }
 }
 
@@ -140,9 +140,9 @@ void gpio_output_write(gpio_port_t port, gpio_pin_t pin, bool flag)
  * @param port
  * @param pin
  */
-void gpio_output_set(gpio_port_t port, gpio_pin_t pin)
+void gpio_set_output(gpio_port_t port, gpio_pin_t pin)
 {
-    BITS_SET(*(&(M0P_GPIO->PABSET) + port), pin);
+    SET_BITS(*(&(M0P_GPIO->PABSET) + port), pin);
 }
 
 /**
@@ -151,9 +151,9 @@ void gpio_output_set(gpio_port_t port, gpio_pin_t pin)
  * @param port
  * @param pin
  */
-void gpio_output_clear(gpio_port_t port, gpio_pin_t pin)
+void gpio_clear_output(gpio_port_t port, gpio_pin_t pin)
 {
-    BITS_CLR(*(&(M0P_GPIO->PABCLR) + port), pin);
+    CLR_BITS(*(&(M0P_GPIO->PABCLR) + port), pin);
 }
 
 /**
@@ -162,7 +162,7 @@ void gpio_output_clear(gpio_port_t port, gpio_pin_t pin)
  * @param port
  * @param pin
  */
-bool gpio_input_read(gpio_port_t port, gpio_pin_t pin)
+bool gpio_read_input(gpio_port_t port, gpio_pin_t pin)
 {
     return BIT_GET(*(&(M0P_GPIO->PAIN) + port), pin) > 0;
 }
