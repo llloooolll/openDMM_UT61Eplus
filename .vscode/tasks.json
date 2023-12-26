@@ -15,7 +15,7 @@
             "type": "shell",
             "command": "call ./scripts/shell/build.bat",
             "args": [
-                "${fileDirnameBasename}"
+                "${fileDirnameBasename}_binary"
             ],
             "problemMatcher": []
         },

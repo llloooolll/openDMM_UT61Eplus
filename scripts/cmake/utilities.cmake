@@ -3,11 +3,11 @@
 
 function(post_build TARGET)
     if(CMAKE_C_COMPILER_ID STREQUAL "IAR")
-        add_custom_target(${TARGET}.bin ALL
+        add_custom_target(${TARGET}_binary ALL
             DEPENDS ${TARGET}
             COMMAND ${CMAKE_IAR_ELFTOOL} --bin ${TARGET}.elf ${TARGET}.bin)
     elseif(CMAKE_C_COMPILER_ID STREQUAL "GNU")
-        add_custom_target(${TARGET}.bin ALL
+        add_custom_target(${TARGET}_binary ALL
             DEPENDS ${TARGET}
             COMMAND ${CMAKE_OBJCOPY} -Obinary ${TARGET}.elf ${TARGET}.bin
             COMMAND ${CMAKE_OBJCOPY} -Oihex ${TARGET}.elf ${TARGET}.hex)
