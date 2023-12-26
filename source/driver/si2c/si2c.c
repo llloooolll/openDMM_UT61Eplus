@@ -1,6 +1,7 @@
 ﻿#include "si2c.h"
 #include "hc32l13x.h"
 #include "gpio.h"
+#include "delay.h"
 
 #define SOFT_I2C_BUFFER_SIZE 16U
 
@@ -26,13 +27,7 @@ static bool ll_si2c_write_byte(uint8_t data_byte); // 写字节
 static void ll_si2c_delay(void)
 {
     // 延时
-    uint32_t delay = 24000000 / 100000 / 4 / 4;
-    __ASM volatile(
-        ".syntax unified\n"
-        "0:\n\t"
-        "subs %0,%0,#1\n\t"
-        "bne  0b\n"
-        : "+l"(delay) : : "cc");
+    delay_cycle(5);
 }
 
 /**
@@ -161,6 +156,7 @@ void si2c_init(si2c_pin_t *si2c_pin)
 {
     if (_si2c_pin != si2c_pin)
     {
+        delay_init();
         _si2c_pin = si2c_pin;
         ll_si2c_init();
     }

@@ -190,6 +190,10 @@ uint32_t sysctrl_get_pclk_freq(void)
 void sysctrl_set_rch_trim(sysctrl_rch_freq_t freq)
 {
     M0P_SYSCTRL->RCH_CR_f.TRIM = *(&(RCH_TRIM_24M) + freq);
+    while (!(M0P_SYSCTRL->RCH_CR_f.STABLE))
+    {
+        ;
+    }
 }
 
 /**
@@ -200,6 +204,10 @@ void sysctrl_set_rch_trim(sysctrl_rch_freq_t freq)
 void sysctrl_set_rcl_trim(sysctrl_rcl_freq_t freq)
 {
     M0P_SYSCTRL->RCL_CR_f.TRIM = *(&(RCL_TRIM_38_4K) + freq);
+    while (!(M0P_SYSCTRL->RCL_CR_f.STABLE))
+    {
+        ;
+    }
 }
 
 /**
