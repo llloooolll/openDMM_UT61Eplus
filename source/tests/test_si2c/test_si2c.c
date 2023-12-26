@@ -8,7 +8,7 @@
 #define EE_I2C_SCL_PORT gpio_port_b //
 #define EE_I2C_SCL_PIN gpio_pin_13
 
-#define LCD_I2C_ADDR 0x7C
+#define HY2613_I2C_ADDR 0x7C
 
 static bool lcd_scl_option(bool flag)
 {
@@ -52,11 +52,10 @@ int main(void)
 
     while (1)
     {
-        si2c_trans_begin(LCD_I2C_ADDR);
+        si2c_trans_begin(HY2613_I2C_ADDR);
         si2c_write_byte(0xff);
         si2c_write_byte(0xff);
         si2c_trans_end();
-        __NOP();
     }
     return 0;
 }
