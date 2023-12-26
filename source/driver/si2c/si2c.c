@@ -27,7 +27,7 @@ static bool ll_si2c_write_byte(uint8_t data_byte); // 写字节
 static void ll_si2c_delay(void)
 {
     // 延时
-    delay_cycle(5);
+    delay_cycle(60);
 }
 
 /**

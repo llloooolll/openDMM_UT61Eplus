@@ -24,6 +24,25 @@ void gpio_set_mux(gpio_port_t port, gpio_pin_t pin, gpio_mux_t mux)
 }
 
 /**
+ * @brief 使能增强驱动能力输出
+ *
+ * @param port
+ * @param pin
+ * @param flag
+ */
+void gpio_enable_powerful(gpio_port_t port, gpio_pin_t pin, bool flag)
+{
+    if (flag)
+    {
+        CLR_BITS(REG_OFFSET(M0P_GPIO->PADR, port), pin);
+    }
+    else
+    {
+        SET_BITS(REG_OFFSET(M0P_GPIO->PADR, port), pin);
+    }
+}
+
+/**
  * @brief 使能输出
  *
  * @param port

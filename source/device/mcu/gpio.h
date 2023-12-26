@@ -46,6 +46,7 @@ typedef enum _gpio_mux_t
 
 void gpio_set_mux(gpio_port_t port, gpio_pin_t pin, gpio_mux_t mux);
 void gpio_enable_output(gpio_port_t port, gpio_pin_t pin, bool flag);
+void gpio_enable_powerful(gpio_port_t port, gpio_pin_t pin, bool flag);
 void gpio_enable_analog(gpio_port_t port, gpio_pin_t pin, bool flag);
 void gpio_enable_pullup(gpio_port_t port, gpio_pin_t pin, bool flag);
 void gpio_enable_pulldown(gpio_port_t port, gpio_pin_t pin, bool flag);
