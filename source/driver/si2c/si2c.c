@@ -26,12 +26,13 @@ static bool ll_si2c_write_byte(uint8_t data_byte); // 写字节
 static void ll_si2c_delay(void)
 {
     // 延时
-
-    volatile uint32_t i = 0;
-    while (i < 1000)
-    {
-        i++;
-    }
+    uint32_t delay = 24000000 / 100000 / 4 / 4;
+    __ASM volatile(
+        ".syntax unified\n"
+        "0:\n\t"
+        "subs %0,%0,#1\n\t"
+        "bne  0b\n"
+        : "+l"(delay) : : "cc");
 }
 
 /**
@@ -158,8 +159,11 @@ static bool ll_si2c_write_byte(uint8_t data_byte)
  */
 void si2c_init(si2c_pin_t *si2c_pin)
 {
-    _si2c_pin = si2c_pin;
-    ll_si2c_init();
+    if (_si2c_pin != si2c_pin)
+    {
+        _si2c_pin = si2c_pin;
+        ll_si2c_init();
+    }
 }
 
 /**

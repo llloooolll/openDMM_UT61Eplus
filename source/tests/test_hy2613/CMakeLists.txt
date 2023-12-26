@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.8)
 
 # 项目名称
-project(test_lcd LANGUAGES C ASM)
+project(test_hy2613 LANGUAGES C ASM)
 
 # 源文件
 file(GLOB SOURCE_FILES *.c *.s)
@@ -25,7 +25,6 @@ target_link_libraries(${PROJECT_NAME}
     "boot"
     "mcu"
     "hy2613"
-    "lcd"
 )
 
 set_target_linker(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/scripts/ld/hc32l130.ld)
