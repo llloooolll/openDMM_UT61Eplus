@@ -16,7 +16,7 @@ void delay_cycle(uint32_t cycle)
 {
     M0P_TIM0_MODE0->CNT32 = UINT32_MAX - cycle;
     M0P_TIM0_MODE0->M0CR = 0x01;
-    while (!(M0P_TIM0_MODE0->IFR))
+    while (M0P_TIM0_MODE0->IFR == 0U)
     {
         ;
     }

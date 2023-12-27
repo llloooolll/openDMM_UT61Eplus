@@ -25,8 +25,9 @@ bool hy2613_init(void)
                         HY2613_CMD_ICSET_RST | // 复位像素数据
                         HY2613_CMD_ICSET_OSC_IN |
                         HY2613_CMD_ICSET_ADDR_MSB_L);
-
+        si2c_trans_end();
         // 初始化
+        si2c_trans_begin(HY2613_I2C_ADDR);
         si2c_write_byte(HY2613_NEXT_CMD | HY2613_CMD_MODESET |
                         HY2613_CMD_MODESET_DIS_OFF |
                         HY2613_CMD_MODESET_BIAS_1D3);

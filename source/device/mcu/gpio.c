@@ -12,14 +12,13 @@
  */
 void gpio_set_mux(gpio_port_t port, gpio_pin_t pin, gpio_mux_t mux)
 {
-    for (uint8_t i = 0; i < 16;)
+    for (uint8_t i = 0; i < 16; i++)
     {
         if (pin & 0x01)
         {
             REG_OFFSET(M0P_GPIO->PA00_SEL, port + (4 * i)) = mux;
         }
         pin >>= 1;
-        i++;
     }
 }
 
@@ -148,11 +147,11 @@ void gpio_write_pin(gpio_port_t port, gpio_pin_t pin, bool flag)
 {
     if (flag)
     {
-        SET_BITS(REG_OFFSET(M0P_GPIO->PAOUT, port), pin);
+        REG_OFFSET(M0P_GPIO->PABSET, port) = pin;
     }
     else
     {
-        CLR_BITS(REG_OFFSET(M0P_GPIO->PAOUT, port), pin);
+        REG_OFFSET(M0P_GPIO->PABCLR, port) = pin;
     }
 }
 
@@ -164,7 +163,7 @@ void gpio_write_pin(gpio_port_t port, gpio_pin_t pin, bool flag)
  */
 void gpio_set_pin(gpio_port_t port, gpio_pin_t pin)
 {
-    SET_BITS(REG_OFFSET(M0P_GPIO->PABSET, port), pin);
+    REG_OFFSET(M0P_GPIO->PABSET, port) = pin;
 }
 
 /**
@@ -175,7 +174,7 @@ void gpio_set_pin(gpio_port_t port, gpio_pin_t pin)
  */
 void gpio_clear_pin(gpio_port_t port, gpio_pin_t pin)
 {
-    CLR_BITS(REG_OFFSET(M0P_GPIO->PABCLR, port), pin);
+    REG_OFFSET(M0P_GPIO->PABCLR, port) = pin;
 }
 
 /**
