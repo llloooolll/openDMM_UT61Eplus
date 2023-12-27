@@ -331,21 +331,16 @@ int si2c_read_byte(void)
  * @param size
  * @return int
  */
-int HAL_SI2C_read_bytes(uint8_t *buf, uint8_t size)
+int si2c_read_bytes(uint8_t *buf, uint8_t size)
 {
-    uint8_t data;
     uint8_t n;
 
     for (n = 0; n < size; n++)
     {
-        data = si2c_read_byte();
-        if (data == -1)
+        buf[n] = si2c_read_byte();
+        if (!(si2c_available() > 0))
         {
             break;
-        }
-        else
-        {
-            buf[n] = (uint8_t)data;
         }
     }
 

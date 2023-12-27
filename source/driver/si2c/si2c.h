@@ -28,6 +28,6 @@ void si2c_write_bytes(uint8_t *data, uint8_t size);
 int si2c_available(void);
 uint8_t si2c_peek(void);
 int si2c_read_byte(void);
-int HAL_SI2C_read_bytes(uint8_t *buf, uint8_t size);
+int si2c_read_bytes(uint8_t *buf, uint8_t size);
 
 #endif
