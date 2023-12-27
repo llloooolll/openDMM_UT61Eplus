@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "hc32l13x.h"
 
 typedef enum _uart_status_t
 {
@@ -42,5 +43,16 @@ typedef enum _uart_mode_t
     uart_mode_2 = 0x80u, // PCLK/OVER
     uart_mode_3 = 0xc0u, // PCLK/OVER/SCNT 9BIT
 } uart_mode_t;
+
+bool uart_get_status(M0P_UART_TypeDef *UARTx, uart_status_t status);
+void uart_clr_status(M0P_UART_TypeDef *UARTx, uart_status_t status);
+void uart_send_data_poll(M0P_UART_TypeDef *UARTx, uint8_t data);
+void uart_send_data_it(M0P_UART_TypeDef *UARTx, uint8_t data);
+uint8_t uart_receive_data(M0P_UART_TypeDef *UARTx);
+void uart_enable_irq(M0P_UART_TypeDef *UARTx, uart_irq_t uart_irq, bool flag);
+void uart_enable_func(M0P_UART_TypeDef *UARTx, uart_func_t uart_func, bool flag);
+void uart_set_mode(M0P_UART_TypeDef *UARTx, uart_mode_t mode);
+void uart_set_over(M0P_UART_TypeDef *UARTx, bool over);
+void uart_set_baud(M0P_UART_TypeDef *UARTx, uint32_t baud);
 
 #endif

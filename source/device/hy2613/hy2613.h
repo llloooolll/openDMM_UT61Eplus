@@ -1,5 +1,5 @@
-#ifndef __HY2613__H__
-#define __HY2613__H__
+#ifndef __HY2613_H__
+#define __HY2613_H__
 
 #include <stdint.h>
 #include <stdbool.h>

@@ -6,10 +6,10 @@
 
 bool uart_get_status(M0P_UART_TypeDef *UARTx, uart_status_t status)
 {
-    GET_BIT(UARTx->ISR, status);
+    return GET_BIT(UARTx->ISR, status);
 }
 
-bool uart_clr_status(M0P_UART_TypeDef *UARTx, uart_status_t status)
+void uart_clr_status(M0P_UART_TypeDef *UARTx, uart_status_t status)
 {
     CLR_BIT(UARTx->ICR, status);
 }
@@ -48,6 +48,18 @@ void uart_enable_irq(M0P_UART_TypeDef *UARTx, uart_irq_t uart_irq, bool flag)
     }
 }
 
+void uart_enable_func(M0P_UART_TypeDef *UARTx, uart_func_t uart_func, bool flag)
+{
+    if (flag)
+    {
+        SET_BIT(UARTx->SCON, uart_func);
+    }
+    else
+    {
+        CLR_BIT(UARTx->SCON, uart_func);
+    }
+}
+
 /**
  * @brief 设置工作模式
  *
@@ -74,7 +86,7 @@ void uart_set_over(M0P_UART_TypeDef *UARTx, bool over)
 void uart_set_baud(M0P_UART_TypeDef *UARTx, uint32_t baud)
 {
     float pclk_freq = sysctrl_get_pclk_freq();
-    uint32_t freq_div = (UARTx->SCON_f.OVER) ? 16U : 8U;
+    uint32_t freq_div = (UARTx->SCON_f.OVER) ? 8U : 16U;
 
     UARTx->SCNT_f.SCNT = (uint32_t)(pclk_freq / baud / freq_div);
 }

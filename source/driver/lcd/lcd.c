@@ -5,14 +5,15 @@
 
 static void lcd_gpio_init(void)
 {
-    gpio_set_mux(HY2613_I2C_SCL_PORT, HY2613_I2C_SCL_PIN, gpio_mux_0); // IO
-    gpio_set_mux(HY2613_I2C_SDA_PORT, HY2613_I2C_SDA_PIN, gpio_mux_0); // IO
     gpio_enable_output(HY2613_I2C_SCL_PORT, HY2613_I2C_SCL_PIN, 1);
     gpio_enable_output(HY2613_I2C_SDA_PORT, HY2613_I2C_SDA_PIN, 1);
+
     gpio_set_pin(HY2613_I2C_SCL_PORT, HY2613_I2C_SCL_PIN);
     gpio_set_pin(HY2613_I2C_SDA_PORT, HY2613_I2C_SDA_PIN);
+
     gpio_enable_pullup(HY2613_I2C_SCL_PORT, HY2613_I2C_SCL_PIN, 1);
     gpio_enable_pullup(HY2613_I2C_SDA_PORT, HY2613_I2C_SDA_PIN, 1);
+
     gpio_enable_od(HY2613_I2C_SCL_PORT, HY2613_I2C_SCL_PIN, 1);
     gpio_enable_od(HY2613_I2C_SDA_PORT, HY2613_I2C_SDA_PIN, 1);
 }

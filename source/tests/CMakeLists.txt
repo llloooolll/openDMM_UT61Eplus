@@ -6,3 +6,4 @@ add_subdirectory(test_sysctrl)# 测试时钟
 add_subdirectory(test_si2c)# 测试软件I2C
 add_subdirectory(test_hy2613)# 测试HY2316显示
 add_subdirectory(test_lcd)# 测试LCD显示
+add_subdirectory(test_irda)# 测试红外串口
