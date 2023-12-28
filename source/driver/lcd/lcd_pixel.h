@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "cmsis_compiler.h"
 
-typedef __PACKED struct _lcd_pixel_t
+typedef struct _lcd_pixel_t
 {
     // 0x00 - 0x0F
     uint32_t p_min_p : 1; //

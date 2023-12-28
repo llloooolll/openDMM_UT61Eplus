@@ -10,6 +10,9 @@
                 "UNICODE",
                 "_UNICODE"
             ],
+            "compilerArgs": [
+                "-mcpu=cortex-m0plus"
+            ],
             "windowsSdkVersion": "10.0.22621.0",
             "compilerPath": "${workspaceFolder}/tool/gcc/bin/arm-none-eabi-gcc.exe",
             "cStandard": "c99",
