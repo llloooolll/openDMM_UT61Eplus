@@ -2,6 +2,7 @@
 #include "gpio.h"
 #include "hy2613.h"
 #include "io_config.h"
+#include "lcd_pixel.h"
 
 static void lcd_gpio_init(void)
 {
