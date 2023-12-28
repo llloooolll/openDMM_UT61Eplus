@@ -36,7 +36,7 @@
 
 #define Q_PARAM_SIZE            4U
 #define QF_MAX_TICK_RATE        1U
-#define QF_TIMEEVT_CTR_SIZE     2U
+#define QF_TIMEEVT_CTR_SIZE     4U
 #define QF_TIMEEVT_PERIODIC
 
 #endif  /* QPN_CONF_H */

@@ -17,4 +17,9 @@
 #define IRDA_POWER_EN_PORT gpio_port_a // 红外电源
 #define IRDA_POWER_EN_PIN gpio_pin_06
 
+#define LED_RED_ENB_PORT gpio_port_a // 红色LED驱动
+#define LED_RED_ENB_PIN gpio_pin_04
+#define LED_GREEN_ENB_PORT gpio_port_a // 绿色LED驱动
+#define LED_GREEN_ENB_PIN gpio_pin_05
+
 #endif

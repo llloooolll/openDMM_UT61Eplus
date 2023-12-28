@@ -55,114 +55,16 @@
  ******************************************************************************/
 uint32_t SystemCoreClock = 4000000;
 
-/**
- * @brief 获得系统时钟（HCLK）频率值
- *
- * @return uint32_t HCLK频率值
- */
-// static uint32_t Sysctrl_GetHClkFreq(void)
-// {
-// 	uint32_t u32Val = 0;
-// 	const uint32_t u32hcr_tbl[] = {4000000, 8000000, 16000000, 22120000, 24000000};
-// 	const uint16_t u32lcr_tbl[] = {32768, 38400};
-// 	uint16_t u16Trim[5] = {
-// 		(*((volatile uint16_t *)(0x00100C00ul))),
-// 		(*((volatile uint16_t *)(0x00100C02ul))),
-// 		(*((volatile uint16_t *)(0x00100C04ul))),
-// 		(*((volatile uint16_t *)(0x00100C06ul))),
-// 		(*((volatile uint16_t *)(0x00100C20ul))),
-// 	};
+#ifndef RCH_TRIM_24M
+#define RCH_TRIM_24M (*((volatile uint16_t *)(0x00100C00UL)))
+#define RCH_TRIM_22_12M (*((volatile uint16_t *)(0x00100C02UL)))
+#define RCH_TRIM_16M (*((volatile uint16_t *)(0x00100C04UL)))
+#define RCH_TRIM_8M (*((volatile uint16_t *)(0x00100C06UL)))
+#define RCH_TRIM_4M (*((volatile uint16_t *)(0x00100C08UL)))
 
-// 	// 获取当前系统时钟
-// 	uint8_t enSrc = M0P_SYSCTRL->SYSCTRL0_f.CLKSW;
-
-// 	switch (enSrc)
-// 	{
-// 	case 0: // RCH
-// 	{
-// 		if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == (u16Trim[4]))
-// 		{
-// 			u32Val = u32hcr_tbl[4];
-// 		}
-// 		else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == (u16Trim[3]))
-// 		{
-// 			u32Val = u32hcr_tbl[3];
-// 		}
-// 		else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == (u16Trim[2]))
-// 		{
-// 			u32Val = u32hcr_tbl[2];
-// 		}
-// 		else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == (u16Trim[1]))
-// 		{
-// 			u32Val = u32hcr_tbl[1];
-// 		}
-// 		else
-// 		{
-// 			u32Val = u32hcr_tbl[0];
-// 		}
-// 	}
-// 	break;
-// 	case 1: // XTH
-// 		u32Val = SYSTEM_XTH;
-// 		break;
-// 	case 2: // RCL
-// 	{
-// 		if (u16Trim[0] == (M0P_SYSCTRL->RCL_CR_f.TRIM))
-// 		{
-// 			u32Val = u32lcr_tbl[1];
-// 		}
-// 		else
-// 		{
-// 			u32Val = u32lcr_tbl[0];
-// 		}
-// 	}
-// 	break;
-// 	case 3: // XTL
-// 		u32Val = SYSTEM_XTL;
-// 		break;
-// 	case 4: // PLL
-// 	{
-// 		if (0 == M0P_SYSCTRL->PLL_CR_f.REFSEL)
-// 		{
-// 			if (u16Trim[4] == M0P_SYSCTRL->RCH_CR_f.TRIM)
-// 			{
-// 				u32Val = u32hcr_tbl[4];
-// 			}
-// 			else if (u16Trim[3] == M0P_SYSCTRL->RCH_CR_f.TRIM)
-// 			{
-// 				u32Val = u32hcr_tbl[3];
-// 			}
-// 			else if (u16Trim[2] == M0P_SYSCTRL->RCH_CR_f.TRIM)
-// 			{
-// 				u32Val = u32hcr_tbl[2];
-// 			}
-// 			else if (u16Trim[1] == M0P_SYSCTRL->RCH_CR_f.TRIM)
-// 			{
-// 				u32Val = u32hcr_tbl[1];
-// 			}
-// 			else
-// 			{
-// 				u32Val = u32hcr_tbl[0];
-// 			}
-// 		}
-// 		else
-// 		{
-// 			u32Val = SYSTEM_XTH;
-// 		}
-
-// 		u32Val = (u32Val * M0P_SYSCTRL->PLL_CR_f.DIVN);
-// 	}
-// 	break;
-
-// 	default:
-// 		u32Val = 0u;
-// 		break;
-// 	}
-
-// 	u32Val = (u32Val >> M0P_SYSCTRL->SYSCTRL0_f.HCLK_PRS);
-
-// 	return u32Val;
-// }
+#define RCL_TRIM_38_4K (*((volatile uint16_t *)(0x00100C20UL)))
+#define RCL_TRIM_32_768K (*((volatile uint16_t *)(0x00100C21UL)))
+#endif
 
 /**
  * @brief Update SystemCoreClock variable
@@ -170,7 +72,100 @@ uint32_t SystemCoreClock = 4000000;
  */
 void SystemCoreClockUpdate(void)
 {
-	// SystemCoreClock = Sysctrl_GetHClkFreq();
+	typedef enum _sysctrl_clk_source_t
+	{
+		sysctrl_clk_source_rch = 0U,
+		sysctrl_clk_source_xth = 1U,
+		sysctrl_clk_source_rcl = 2U,
+		sysctrl_clk_source_xtl = 3U,
+		sysctrl_clk_source_pll = 4U,
+	} sysctrl_clk_source_t;
+
+	uint32_t hclk_freq = 0;
+	const uint32_t rch_freq_table[] = {24000000, 22120000, 16000000, 8000000, 4000000};
+	const uint32_t rcl_freq_table[] = {32768, 38400};
+
+	sysctrl_clk_source_t corrent_clk_source = (sysctrl_clk_source_t)(M0P_SYSCTRL->SYSCTRL0_f.CLKSW);
+
+	switch (corrent_clk_source)
+	{
+	case sysctrl_clk_source_rch:
+		if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_24M)
+		{
+			hclk_freq = rch_freq_table[0];
+		}
+		else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_22_12M)
+		{
+			hclk_freq = rch_freq_table[1];
+		}
+		else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_16M)
+		{
+			hclk_freq = rch_freq_table[2];
+		}
+		else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_8M)
+		{
+			hclk_freq = rch_freq_table[3];
+		}
+		else
+		{
+			hclk_freq = rch_freq_table[4];
+		}
+		break;
+	case sysctrl_clk_source_xth:
+		hclk_freq = SYSTEM_XTH;
+		break;
+	case sysctrl_clk_source_rcl:
+		if (RCL_TRIM_38_4K == (M0P_SYSCTRL->RCL_CR_f.TRIM))
+		{
+			hclk_freq = rcl_freq_table[1];
+		}
+		else
+		{
+			hclk_freq = rcl_freq_table[0];
+		}
+		break;
+	case sysctrl_clk_source_xtl:
+		hclk_freq = SYSTEM_XTL;
+		break;
+	case sysctrl_clk_source_pll:
+		if (sysctrl_clk_source_rch == M0P_SYSCTRL->PLL_CR_f.REFSEL)
+		{
+			if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_24M)
+			{
+				hclk_freq = rch_freq_table[0];
+			}
+			else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_22_12M)
+			{
+				hclk_freq = rch_freq_table[1];
+			}
+			else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_16M)
+			{
+				hclk_freq = rch_freq_table[2];
+			}
+			else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_8M)
+			{
+				hclk_freq = rch_freq_table[3];
+			}
+			else
+			{
+				hclk_freq = rch_freq_table[4];
+			}
+		}
+		else
+		{
+			hclk_freq = SYSTEM_XTH;
+		}
+
+		hclk_freq = (hclk_freq * (M0P_SYSCTRL->PLL_CR_f.DIVN));
+		break;
+	default:
+		hclk_freq = 0u;
+		break;
+	}
+
+	hclk_freq = (hclk_freq >> (M0P_SYSCTRL->SYSCTRL0_f.HCLK_PRS));
+
+	SystemCoreClock = hclk_freq;
 }
 
 /**
@@ -180,6 +175,11 @@ void SystemCoreClockUpdate(void)
  */
 void SystemInit(void)
 {
-	M0P_SYSCTRL->RCL_CR_f.TRIM = (*((volatile uint16_t *)(0x00100C22ul))); // 32768
-	M0P_SYSCTRL->RCH_CR_f.TRIM = (*((volatile uint16_t *)(0x00100C08ul))); // 4M
+	M0P_SYSCTRL->RCL_CR_f.TRIM = RCL_TRIM_32_768K;
+	M0P_SYSCTRL->RCH_CR_f.TRIM = RCH_TRIM_4M;
+	M0P_SYSCTRL->RCH_CR_f.TRIM = RCH_TRIM_8M;
+	M0P_SYSCTRL->RCH_CR_f.TRIM = RCH_TRIM_16M;
+	M0P_SYSCTRL->RCH_CR_f.TRIM = RCH_TRIM_24M;
+
+	SystemCoreClockUpdate();
 }

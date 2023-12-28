@@ -8,3 +8,4 @@ add_subdirectory(test_hy2613)# 测试HY2316显示
 add_subdirectory(test_lcd)# 测试LCD显示
 add_subdirectory(test_irda)# 测试红外串口
 add_subdirectory(test_buffer)# 测试缓冲区
+add_subdirectory(test_qpn)# 测试QP-nano

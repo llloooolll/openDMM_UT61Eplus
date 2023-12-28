@@ -39,13 +39,13 @@ void buffer_put(buffer_t *buffer, uint8_t data)
 
 uint8_t buffer_get(buffer_t *buffer)
 {
-    uint8_t data;
     if (buffer_can_get(buffer) > 0)
     {
-        data = buffer->buffer_pointer[buffer->buffer_get];
+        uint8_t data = buffer->buffer_pointer[buffer->buffer_get];
         buffer->buffer_get++;
+        return data;
     }
-    return data;
+    return 0;
 }
 
 void buffer_clear(buffer_t *buffer)
