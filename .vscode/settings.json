@@ -2,11 +2,4 @@
     "cortex-debug.liveWatchRefreshRate": 500,
     "cortex-debug.armToolchainPath": "${workspaceFolder}/tool/gcc/bin/",
     "cortex-debug.armToolchainPrefix": "arm-none-eabi",
-    "files.associations": {
-        "stdint.h": "c",
-        "stdbool.h": "c",
-        "hc32l13x.h": "c",
-        "io_config.h": "c",
-        "gpio.h": "c"
-    },
 }
