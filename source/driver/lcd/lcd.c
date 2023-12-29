@@ -8,9 +8,11 @@ static void lcd_gpio_init(void)
 {
     gpio_enable_output(HY2613_I2C_SCL_PORT, HY2613_I2C_SCL_PIN, 1);
     gpio_enable_output(HY2613_I2C_SDA_PORT, HY2613_I2C_SDA_PIN, 1);
+    gpio_enable_output(EEPROM_WP_PORT, EEPROM_WP_PIN, 1);
 
     gpio_set_pin(HY2613_I2C_SCL_PORT, HY2613_I2C_SCL_PIN);
     gpio_set_pin(HY2613_I2C_SDA_PORT, HY2613_I2C_SDA_PIN);
+    gpio_set_pin(EEPROM_WP_PORT, EEPROM_WP_PIN);
 
     gpio_enable_pullup(HY2613_I2C_SCL_PORT, HY2613_I2C_SCL_PIN, 1);
     gpio_enable_pullup(HY2613_I2C_SDA_PORT, HY2613_I2C_SDA_PIN, 1);

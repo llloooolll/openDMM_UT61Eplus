@@ -22,4 +22,7 @@
 #define LED_GREEN_ENB_PORT gpio_port_a // 绿色LED驱动
 #define LED_GREEN_ENB_PIN gpio_pin_05
 
+#define EEPROM_WP_PORT gpio_port_a //
+#define EEPROM_WP_PIN gpio_pin_09
+
 #endif
