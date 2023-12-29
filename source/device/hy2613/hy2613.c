@@ -49,7 +49,7 @@ bool hy2613_init(void)
                         HY2613_CMD_EXCTL_SR_OFF);
         si2c_trans_end();
     }
-    return !((bool)(result == si2c_status_ok));
+    return !(result == si2c_status_ok);
 }
 
 /**

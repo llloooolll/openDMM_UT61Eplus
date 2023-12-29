@@ -9,5 +9,6 @@
 
 bool eeprom_init(void);
 uint8_t eeprom_read_byte(uint8_t addr);
+void eeprom_write_byte(uint8_t addr, uint8_t data);
 
 #endif

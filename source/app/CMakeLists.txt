@@ -28,6 +28,7 @@ target_link_libraries(${PROJECT_NAME}
     "buffer"
     "irda"
     "qpn"
+    "es232"
 )
 
 set_target_linker(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/scripts/ld/hc32l130.ld)

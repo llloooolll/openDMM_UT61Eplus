@@ -1,3 +1,4 @@
+#include <string.h>
 #include "qpn.h"
 #include "ao_lcd.h"
 #include "ao_meter.h"
@@ -19,6 +20,7 @@ void ao_lcd_ctor(void)
 
 static QState ao_lcd_init(ao_lcd_t *const me)
 {
+    memset(&me->lcd_pixel_buffer, 0U, sizeof(lcd_pixel_t));
     return Q_TRAN(&ao_lcd_idle);
 }
 
@@ -34,12 +36,13 @@ static QState ao_lcd_idle(ao_lcd_t *const me)
         {
             lcd_test(1); // 正常，满像素测试
         }
-        QACTIVE_POST(&ao_meter, AO_METER_READY_SIG, lcd_init_result);
+        QACTIVE_POST(&ao_meter, AO_METER_READY_SIG, (uint32_t)lcd_init_result);
         status = Q_HANDLED();
         break;
     }
     case AO_LCD_ACTIVE_SIG:
     {
+        lcd_test(0);
         status = Q_TRAN(&ao_lcd_active);
         break;
     }
@@ -52,11 +55,18 @@ static QState ao_lcd_idle(ao_lcd_t *const me)
     return status;
 }
 
+// 运行
 static QState ao_lcd_active(ao_lcd_t *const me)
 {
     QState status;
     switch (Q_SIG(me))
     {
+    case Q_ENTRY_SIG:
+    {
+        lcd_refresh(&me->lcd_pixel_buffer);
+        status = Q_HANDLED();
+        break;
+    }
     default:
     {
         status = Q_SUPER(&QHsm_top);
