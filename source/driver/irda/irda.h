@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 void irda_test(void);
+void irda_send_byte(uint8_t data);
 void irda_init(uint32_t baud);
 
 #endif

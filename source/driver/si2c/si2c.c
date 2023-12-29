@@ -276,7 +276,7 @@ void si2c_write_bytes(uint8_t *data, uint8_t size)
  *
  * @return int
  */
-int si2c_available(void)
+uint8_t si2c_available(void)
 {
     return (_rx_buffer_put - _rx_buffer_get);
 }
@@ -305,9 +305,9 @@ uint8_t si2c_peek(void)
 /**
  * @brief 从缓冲区读数据，不是从总线上
  *
- * @return int
+ * @return uint8_t
  */
-int si2c_read_byte(void)
+uint8_t si2c_read_byte(void)
 {
     uint8_t data;
 
@@ -329,9 +329,9 @@ int si2c_read_byte(void)
  *
  * @param buf 写入位置
  * @param size
- * @return int
+ * @return uint8_t
  */
-int si2c_read_bytes(uint8_t *buf, uint8_t size)
+uint8_t si2c_read_bytes(uint8_t *buf, uint8_t size)
 {
     uint8_t n;
 

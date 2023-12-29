@@ -1,6 +1,7 @@
 ﻿#include "hc32l13x.h"
 #include "gpio.h"
 #include "hy2613.h"
+#include "eeprom.h"
 #include "io_config.h"
 #include "lcd_pixel.h"
 
@@ -30,7 +31,7 @@ static void lcd_gpio_init(void)
 bool lcd_init(void)
 {
     lcd_gpio_init();
-    return hy2613_init();
+    return (hy2613_init() || eeprom_init());
 }
 
 /**

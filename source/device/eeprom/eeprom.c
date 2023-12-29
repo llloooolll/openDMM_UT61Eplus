@@ -19,3 +19,15 @@ bool eeprom_init(void)
 
     return !((bool)(result == si2c_status_ok));
 }
+
+uint8_t eeprom_read_byte(uint8_t addr)
+{
+    si2c_init(&hy2613_si2c_pin);
+    si2c_trans_begin(EEPROM_I2C_ADDR); // 试探
+    si2c_write_byte(addr);
+    si2c_trans_end();
+
+    si2c_request_from(EEPROM_I2C_ADDR, 1);
+    si2c_trans_end();
+    return si2c_read_byte();
+}

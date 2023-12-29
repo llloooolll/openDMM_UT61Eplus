@@ -7,4 +7,7 @@
 /* LCD地址 */
 #define EEPROM_I2C_ADDR 0xA0
 
+bool eeprom_init(void);
+uint8_t eeprom_read_byte(uint8_t addr);
+
 #endif

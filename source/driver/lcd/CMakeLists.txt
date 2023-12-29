@@ -22,6 +22,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 
 target_link_libraries(${PROJECT_NAME}
-    "hy2613"
     "mcu"
+    "hy2613"
+    "eeprom"
 )

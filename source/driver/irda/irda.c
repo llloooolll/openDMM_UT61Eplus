@@ -32,6 +32,11 @@ void irda_init(uint32_t baud)
     uart_enable_func(IRDA_UART, uart_func_ren, 1);
 }
 
+void irda_send_byte(uint8_t data)
+{
+    uart_send_data_poll(IRDA_UART, data);
+}
+
 void irda_test(void)
 {
     if (uart_get_status(IRDA_UART, uart_status_rc))

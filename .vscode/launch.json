@@ -18,7 +18,7 @@
                 "1000000",
             ],
             "interface": "swd",
-            "runToEntryPoint": "Reset_Handler",
+            "runToEntryPoint": "main",
             "armToolchainPath": "${workspaceFolder}/tool/gcc/bin/",
             "preLaunchTask": "load",
             "svdPath": "${workspaceFolder}/scripts/svd/HC32L130.svd",
