@@ -3,16 +3,19 @@
 #include "ao_meter.h"
 #include "ao_lcd.h"
 #include "ao_es232.h"
+#include "ao_irda.h"
 
 static QEvt l_meter_queue[8];
 static QEvt l_lcd_queue[8];
 static QEvt l_es232_queue[8];
+static QEvt l_irda_queue[8];
 
 QActiveCB const Q_ROM QF_active[] = {
     {(QActive *)0, (QEvt *)0, 0U},
     {(QActive *)&ao_meter, l_meter_queue, Q_DIM(l_meter_queue)},
     {(QActive *)&ao_es232, l_es232_queue, Q_DIM(l_es232_queue)},
     {(QActive *)&ao_lcd, l_lcd_queue, Q_DIM(l_lcd_queue)},
+    {(QActive *)&ao_irda, l_irda_queue, Q_DIM(l_irda_queue)},
 };
 
 int main(void)
@@ -20,6 +23,7 @@ int main(void)
     ao_meter_ctor();
     ao_es232_ctor();
     ao_lcd_ctor();
+    ao_irda_ctor();
 
     QF_init(Q_DIM(QF_active));
     bsp_init();

@@ -1,7 +1,10 @@
 #include "qpn.h"
+#include "ulog.h"
+
 #include "ao_meter.h"
 #include "ao_lcd.h"
 #include "ao_es232.h"
+#include "ao_irda.h"
 
 // 对象
 ao_meter_t ao_meter;
@@ -20,6 +23,7 @@ void ao_meter_ctor(void)
 
 static QState ao_meter_init(ao_meter_t *const me)
 {
+    ulog_set_level(ulog_level_debug);
     return Q_TRAN(&ao_meter_idle);
 }
 
@@ -41,10 +45,11 @@ static QState ao_meter_idle(ao_meter_t *const me)
         if (Q_PAR(me) == 0)
         {
             ready_count++;
-            if (ready_count >= 2)
+            if (ready_count >= 3)
             {
                 QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 0U);
                 QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 0U);
+                ULOG_DEBUG("all hardware done\n");
                 status = Q_TRAN(&ao_meter_active);
                 break;
             }

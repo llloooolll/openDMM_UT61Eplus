@@ -3,6 +3,7 @@
 
 #include "hc32l13x.h"
 #include "sysctrl.h"
+#include "irda.h"
 
 // 中断优先级，数字越大优先级越低
 enum KernelAwareISRs
