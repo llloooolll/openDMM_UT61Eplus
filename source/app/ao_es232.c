@@ -21,7 +21,8 @@ void ao_es232_ctor(void)
 
 static QState ao_es232_init(ao_es232_t *const me)
 {
-    memset(&me->es232_write_cmd, 0, sizeof(es232_write_cmd_t));
+    me->es232_read_interval_time = 100;
+    memset(&me->es232_write_buffer, 0, sizeof(es232_write_t));
     return Q_TRAN(&ao_es232_ready);
 }
 
@@ -48,9 +49,9 @@ static QState ao_es232_ready(ao_es232_t *const me)
         bool es232_init_result = es232_init();
         if (!es232_init_result)
         {
-            es232_write(&me->es232_write_cmd);
+            es232_write(&me->es232_write_buffer);
         }
-        ULOG_DEBUG("es232 done\n");
+        ULOG_DEBUG("ES232 init done\n");
         QACTIVE_POST(&ao_meter, AO_METER_READY_SIG, (uint32_t)es232_init_result);
         status = Q_TRAN(&ao_es232_idle);
         break;
@@ -72,7 +73,7 @@ static QState ao_es232_idle(ao_es232_t *const me)
     {
     case AO_ES232_ACTIVE_SIG:
     {
-        ULOG_DEBUG("es232 active\n");
+        ULOG_DEBUG("ES232 active\n");
         status = Q_TRAN(&ao_es232_active);
         break;
     }
@@ -93,19 +94,30 @@ static QState ao_es232_active(ao_es232_t *const me)
     {
     case Q_ENTRY_SIG:
     {
-        QActive_armX((QActive *)me, 0U, 1000U, 1000U);
+        QACTIVE_POST(me, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
         status = Q_HANDLED();
         break;
     }
     case Q_TIMEOUT_SIG:
     {
-        es232_read(&me->es232_read_cmd);
-        ULOG_DEBUG("ADC done\n");
-        QACTIVE_POST_X(&ao_meter, 4U, AO_METER_ADC_DONE_SIG, (uint32_t)&me->es232_read_cmd);
+        es232_read(&me->es232_read_buffer);
+        // ULOG_DEBUG("ADC done\n");
+        QACTIVE_POST_X(&ao_meter, 4U, AO_METER_ADC_DONE_SIG,
+                       (uint32_t)&me->es232_read_buffer);
         status = Q_HANDLED();
         break;
     }
-
+    case AO_ES232_WRITE_CONFIG_SIG: // 配置
+    {
+        QActive_disarmX((QActive *)me, 0U);
+        memcpy(&me->es232_write_buffer, (es232_write_t *)Q_PAR(me),
+               sizeof(es232_write_t));
+        es232_write(&me->es232_write_buffer);
+        QActive_armX((QActive *)me, 0U, me->es232_read_interval_time,
+                     me->es232_read_interval_time);
+        status = Q_HANDLED();
+        break;
+    }
     default:
     {
         status = Q_SUPER(&QHsm_top);

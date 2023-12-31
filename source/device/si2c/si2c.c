@@ -1,6 +1,7 @@
 ﻿#include "si2c.h"
 #include "delay.h"
 #include "gpio.h"
+#include "bits.h"
 
 #define SOFT_I2C_BUFFER_SIZE 16U
 
@@ -140,7 +141,7 @@ static bool ll_si2c_write_byte(uint8_t data_byte)
 {
     for (uint8_t i = 0; i < 8; i++)
     {
-        ll_si2c_write_bit((bool)(data_byte & 0x80)); // MSB
+        ll_si2c_write_bit(GET_BIT(data_byte, 7)); // MSB
         data_byte <<= 1;
     }
 

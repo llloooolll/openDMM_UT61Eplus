@@ -3,6 +3,8 @@
 #include "gpio.h"
 #include "es232_port.h"
 
+static uint32_t es232_data_invert(uint32_t src);
+
 void es232_gpio_init(void)
 {
     // 电源使能
@@ -51,22 +53,66 @@ void es232_enable_power(bool flag)
     gpio_write_pin(ES232_POWER_EN_PORT, ES232_POWER_EN_PIN, flag);
 }
 
-void es232_write(es232_write_cmd_t *es232_write_cmd)
+/**
+ * @brief 写ES232配置
+ *
+ * @param es232_write
+ */
+void es232_write(es232_write_t *es232_write)
 {
-    gpio_clear_pin(ES232_I2C_CS_PORT, ES232_I2C_CS_PIN);
     si2c_init(&es232_si2c_pin);
     si2c_trans_begin(ES232_I2C_ADDR);
-    si2c_write_bytes((uint8_t *)&es232_write_cmd, sizeof(es232_write_cmd_t));
+    si2c_write_bytes((uint8_t *)es232_write, 4U);
     si2c_trans_end();
-    gpio_set_pin(ES232_I2C_CS_PORT, ES232_I2C_CS_PIN);
 }
 
-void es232_read(es232_read_cmd_t *es232_read_cmd)
+/**
+ * @brief 读ES232数据
+ *
+ * @param es232_read
+ */
+void es232_read(es232_read_t *es232_read)
 {
-    gpio_clear_pin(ES232_I2C_CS_PORT, ES232_I2C_CS_PIN);
     si2c_init(&es232_si2c_pin);
-    si2c_request_from(ES232_I2C_ADDR, sizeof(es232_read_cmd_t));
+    si2c_request_from(ES232_I2C_ADDR, 10U);
     si2c_trans_end();
-    gpio_set_pin(ES232_I2C_CS_PORT, ES232_I2C_CS_PIN);
-    si2c_read_bytes((uint8_t *)es232_read_cmd, sizeof(es232_read_cmd_t));
+    si2c_read_bytes((uint8_t *)es232_read, 10U);
+}
+
+/**
+ * @brief 翻转ES232数据
+ *
+ * @param src
+ * @return uint32_t
+ */
+static uint32_t es232_data_invert(uint32_t src)
+{
+    uint32_t temp = 0;
+    for (uint8_t i = 0; i < 32; i++)
+    {
+        temp <<= 1U;
+        temp |= (src & 0x00000001);
+        src >>= 1U;
+    }
+    return temp;
+}
+
+/**
+ * @brief 获取D0
+ *
+ * @param es232_rea_temp
+ * @return uint32_t
+ */
+int32_t es232_get_D0(es232_read_t *es232_read_temp)
+{
+    uint32_t temp = 0;
+    int32_t result;
+
+    /* 拼成19位数字 */
+    temp = (es232_read_temp->D0_0_2 << (24U + 5U)) |
+           (es232_read_temp->D0_3_10 << (16U + 5U)) |
+           (es232_read_temp->D0_11_18 << (8U + 5U));
+    result = es232_data_invert(temp);
+    // HAL_ASSERT(result < 34000U); // ADC上限
+    return (es232_read_temp->ASIGN == 0) ? result : (-result);
 }

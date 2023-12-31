@@ -63,7 +63,7 @@ uint32_t SystemCoreClock = 4000000;
 #define RCH_TRIM_4M (*((volatile uint16_t *)(0x00100C08UL)))
 
 #define RCL_TRIM_38_4K (*((volatile uint16_t *)(0x00100C20UL)))
-#define RCL_TRIM_32_768K (*((volatile uint16_t *)(0x00100C21UL)))
+#define RCL_TRIM_32_768K (*((volatile uint16_t *)(0x00100C22UL)))
 #endif
 
 /**

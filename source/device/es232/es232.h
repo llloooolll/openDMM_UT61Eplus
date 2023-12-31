@@ -36,7 +36,7 @@ typedef enum _es232_buzzer_freq_t
     F_4_00K = B111,
 } es232_buzzer_freq_t;
 
-typedef struct _es232_write_cmd_t
+typedef struct _es232_write_t
 {
     // uint32_t id_code_7 : 1;   // 1
     // uint32_t id_code_6 : 1;   // 1
@@ -67,9 +67,9 @@ typedef struct _es232_write_cmd_t
     uint32_t rev2 : 3;
     uint32_t pcal : 1; // 校准模式
     uint32_t peak : 1; // peak模式
-} es232_write_cmd_t;
+} es232_write_t;
 
-typedef struct _es232_read_cmd_t
+typedef struct _es232_read_t
 {
     // uint32_t id_code_7 : 1;   // 1
     // uint32_t id_code_6 : 1;   // 1
@@ -113,12 +113,13 @@ typedef struct _es232_read_cmd_t
     uint32_t D3_3_10 : 8;
     /*R10*/
     uint32_t D3_11_18 : 8;
-} es232_read_cmd_t;
+} es232_read_t;
 
 void es232_gpio_init(void);
 bool es232_init(void);
 void es232_enable_power(bool flag);
-void es232_write(es232_write_cmd_t *es232_write_cmd);
-void es232_read(es232_read_cmd_t *es232_read_cmd);
+void es232_write(es232_write_t *es232_write);
+void es232_read(es232_read_t *es232_read);
+int32_t es232_get_D0(es232_read_t *es232_read_temp);
 
 #endif

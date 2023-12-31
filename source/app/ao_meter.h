@@ -3,10 +3,11 @@
 
 #include "qpn.h"
 #include "es232.h"
+#include "lcd.h"
 
 typedef enum _meter_mode_t
 {
-    meter_mode_acv,
+    meter_mode_acv = 0U,
     meter_mode_dcv,
     meter_mode_mv_ac,
     meter_mode_mv_dc,
@@ -29,8 +30,9 @@ typedef enum _meter_mode_t
 typedef enum _ao_meter_signal_t
 {
     AO_METER_READY_SIG = Q_USER_SIG, //
-    AO_METER_ADC_DONE_SIG,
-    AO_METER_KEY_SIG,
+    AO_METER_ADC_DONE_SIG,           // ADC转换完成
+    AO_METER_KEY_SIG,                // 按键
+    AO_METER_MODE_SIG,               // 测量模式
 
     AO_METER_MAX_SIG
 } ao_meter_signal_t;
@@ -39,9 +41,11 @@ typedef struct _ao_meter_t
 {
     QActive super;
     uint8_t ready_count;
-    uint8_t eeprom[256];
-    meter_mode_t mode;
-    es232_write_cmd_t *mode_config;
+    uint8_t eeprom[256];              // EEPROM校准值
+    meter_mode_t mode;                // ES232测量模式
+    es232_write_t es232_write_buffer; // ES232写入缓存
+    es232_read_t es232_read_buffer;   // ES232读出缓存
+    lcd_pixel_t lcd_pixel_buffer;
 } ao_meter_t;
 
 extern ao_meter_t ao_meter;
