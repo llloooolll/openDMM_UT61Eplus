@@ -231,9 +231,13 @@ void QActive_ctor(QActive *const me, QStateHandler initial);
  * @usage
  * @include qfn_postx.c
  */
-#define QACTIVE_POST_X(me_, margin_, sig_, par_)            \
-    ((*((QActiveVtable const *)((me_)->super.vptr))->post)( \
-        (me_), (margin_), (enum_t)(sig_), (QParam)(par_)))
+#define QACTIVE_POST_X(me_, margin_, sig_, par_)                \
+    do                                                          \
+    {                                                           \
+        QActive *const ao_ = QF_ACTIVE_CAST((me_));             \
+        ((*((QActiveVtable const *)((ao_)->super.vptr))->post)( \
+            (ao_), (margin_), (enum_t)(sig_), (QParam)(par_))); \
+    } while (false)
 
 /*! Polymorphically posts an event to an active object (FIFO)
  * with delivery guarantee (ISR context).

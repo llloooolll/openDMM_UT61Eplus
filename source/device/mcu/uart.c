@@ -1,8 +1,6 @@
 #include "uart.h"
-#include "sysctrl.h"
-#include "hc32l13x.h"
-#include "binary.h"
 #include "bits.h"
+#include "sysctrl.h"
 
 bool uart_get_status(M0P_UART_TypeDef *UARTx, uart_status_t status)
 {

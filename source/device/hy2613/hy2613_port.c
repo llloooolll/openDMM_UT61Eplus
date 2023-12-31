@@ -1,7 +1,10 @@
-#include "hy2613.h"
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "io_config.h"
 #include "gpio.h"
 #include "si2c.h"
-#include "io_config.h"
+#include "hy2613.h"
 
 static bool hy2613_scl_option(bool flag)
 {

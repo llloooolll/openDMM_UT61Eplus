@@ -1,8 +1,7 @@
 #ifndef __LCD_H__
 #define __LCD_H__
 
-#include <stdint.h>
-#include <stdbool.h>
+#include "hc32l13x.h"
 #include "lcd_pixel.h"
 
 bool lcd_init(void);

@@ -1,5 +1,4 @@
 #include "delay.h"
-#include "hc32l13x.h"
 #include "sysctrl.h"
 #include "binary.h"
 #include "bits.h"

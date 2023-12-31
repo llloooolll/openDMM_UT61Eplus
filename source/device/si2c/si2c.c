@@ -1,7 +1,6 @@
 ﻿#include "si2c.h"
-#include "hc32l13x.h"
-#include "gpio.h"
 #include "delay.h"
+#include "gpio.h"
 
 #define SOFT_I2C_BUFFER_SIZE 16U
 

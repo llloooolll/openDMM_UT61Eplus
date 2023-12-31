@@ -2,6 +2,7 @@
 #include "gpio.h"
 #include "sysctrl.h"
 #include "eeprom.h"
+#include "lcd_pixel.h"
 #include "lcd.h"
 #include "irda.h"
 #include "io_config.h"

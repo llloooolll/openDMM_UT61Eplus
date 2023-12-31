@@ -1,8 +1,7 @@
 #ifndef __SI2C_H__
 #define __SI2C_H__
 
-#include <stdint.h>
-#include <stdbool.h>
+#include "hc32l13x.h"
 
 typedef enum _si2c_status_t
 {

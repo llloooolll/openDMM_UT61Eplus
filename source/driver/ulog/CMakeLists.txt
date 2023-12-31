@@ -5,12 +5,10 @@ project(ulog LANGUAGES C ASM)
 
 # 源文件
 file(GLOB SOURCE_FILES *.c *.s)
-file(GLOB HEADER_FILES *.h)
 
 # 添加源码
 add_library(${PROJECT_NAME}
     ${SOURCE_FILES}
-    ${HEADER_FILES}
 )
 
 target_link_libraries(${PROJECT_NAME}

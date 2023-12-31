@@ -1,9 +1,7 @@
-#include <string.h>
-#include "es232_port.h"
 #include "es232.h"
-#include "gpio.h"
-#include "si2c.h"
 #include "io_config.h"
+#include "gpio.h"
+#include "es232_port.h"
 
 void es232_gpio_init(void)
 {

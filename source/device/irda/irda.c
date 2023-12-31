@@ -1,8 +1,8 @@
 #include "irda.h"
+#include "io_config.h"
 #include "gpio.h"
 #include "uart.h"
 #include "sysctrl.h"
-#include "io_config.h"
 
 #define IRDA_UART M0P_UART1
 
@@ -45,4 +45,17 @@ void irda_test(void)
         uart_clr_status(IRDA_UART, uart_status_rc);
         uart_send_data_poll(IRDA_UART, uart_data);
     }
+}
+
+/**
+ * @brief
+ *
+ */
+bool irda_is_exist(void)
+{
+    if (!gpio_read_pin(IRDA_HALL_INT_PORT, IRDA_HALL_INT_PIN))
+    {
+        return 1;
+    }
+    return 0;
 }

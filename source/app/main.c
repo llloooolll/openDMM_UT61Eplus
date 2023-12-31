@@ -1,14 +1,17 @@
 #include "qpn.h"
+#include "binary.h"
 #include "bsp.h"
+#include "lcd_pixel.h"
+#include "es232.h"
 #include "ao_meter.h"
 #include "ao_lcd.h"
 #include "ao_es232.h"
 #include "ao_irda.h"
 
-static QEvt l_meter_queue[8];
-static QEvt l_lcd_queue[8];
-static QEvt l_es232_queue[8];
-static QEvt l_irda_queue[8];
+static QEvt l_meter_queue[16];
+static QEvt l_lcd_queue[16];
+static QEvt l_es232_queue[16];
+static QEvt l_irda_queue[16];
 
 QActiveCB const Q_ROM QF_active[] = {
     {(QActive *)0, (QEvt *)0, 0U},

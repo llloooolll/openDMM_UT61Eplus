@@ -1,9 +1,9 @@
-#include <stdarg.h>
 #include "ulog.h"
 #include "printf.h"
 #include "irda.h"
 
-static ulog_level_t log_level = ulog_level_user;
+static ulog_level_t _log_level = ulog_level_user;
+static uint32_t _log_index = 0;
 
 static char *log_level_type[] =
     {
@@ -15,17 +15,17 @@ static char *log_level_type[] =
 
 void ulog_set_level(ulog_level_t level)
 {
-    log_level = level;
+    _log_level = level;
 }
 
 void ulog_printf(ulog_level_t level, char const *const format, ...)
 {
-    if (level <= log_level)
+    if (level <= _log_level)
     {
         if ((level < 0) || (level >= ulog_level_max))
             return;
 
-        printf(log_level_type[level]);
+        printf("%d %s", _log_index++, log_level_type[level]);
 
         va_list args;
         va_start(args, format);

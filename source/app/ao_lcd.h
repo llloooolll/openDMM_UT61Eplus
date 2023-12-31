@@ -6,7 +6,9 @@
 
 typedef enum _ao_lcd_signal_t
 {
-    AO_LCD_ACTIVE_SIG = Q_USER_SIG, // 激活
+    AO_LCD_READY_SIG = Q_USER_SIG,
+    AO_LCD_ACTIVE_SIG,
+    AO_LCD_REFRESH_SIG,
 
     AO_LCD_MAX_SIG
 } ao_lcd_signal_t;

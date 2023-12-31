@@ -2,7 +2,6 @@
 #define __BUFFER_H__
 
 #include <stdint.h>
-#include <stdbool.h>
 
 typedef struct _buffer_t
 {

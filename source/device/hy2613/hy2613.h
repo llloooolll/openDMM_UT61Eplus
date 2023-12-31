@@ -1,8 +1,7 @@
 #ifndef __HY2613_H__
 #define __HY2613_H__
 
-#include <stdint.h>
-#include <stdbool.h>
+#include "hc32l13x.h"
 
 /* LCD地址 */
 #define HY2613_I2C_ADDR 0x7C

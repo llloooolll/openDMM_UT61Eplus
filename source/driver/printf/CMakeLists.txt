@@ -5,12 +5,10 @@ project(printf LANGUAGES C ASM)
 
 # 源文件
 file(GLOB SOURCE_FILES *.c *.s)
-file(GLOB HEADER_FILES *.h)
 
 # 添加源码
 add_library(${PROJECT_NAME}
     ${SOURCE_FILES}
-    ${HEADER_FILES}
 )
 
 # 头文件

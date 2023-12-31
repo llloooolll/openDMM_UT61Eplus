@@ -1,8 +1,7 @@
 #ifndef __SYSCTRL_H__
 #define __SYSCTRL_H__
 
-#include <stdint.h>
-#include <stdbool.h>
+#include "hc32l13x.h"
 
 #define SYSTEM_XTH 8000000UL
 #define SYSTEM_XTL 32768UL

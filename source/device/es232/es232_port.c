@@ -1,7 +1,11 @@
-#include "es232.h"
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "binary.h"
+#include "io_config.h"
 #include "gpio.h"
 #include "si2c.h"
-#include "io_config.h"
+#include "es232.h"
 
 static bool es232_scl_option(bool flag)
 {

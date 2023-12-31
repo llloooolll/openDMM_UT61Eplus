@@ -1,5 +1,6 @@
 #include "hc32l13x.h"
 #include "sysctrl.h"
+#include "irda.h"
 #include "ulog.h"
 #include "io_config.h"
 

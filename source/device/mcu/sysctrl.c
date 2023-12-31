@@ -1,6 +1,4 @@
 #include "sysctrl.h"
-#include "hc32l13x.h"
-#include "binary.h"
 #include "bits.h"
 
 static void sysctrl_unlock(void);

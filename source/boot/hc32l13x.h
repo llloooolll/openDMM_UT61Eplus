@@ -9072,7 +9072,6 @@ extern "C"
 #define M0P_VC ((M0P_VC_TypeDef *)0x40002400UL)
 #define M0P_WDT ((M0P_WDT_TypeDef *)0x40000F00UL)
 
-#include "core_cm0plus.h"
 #include "system_hc32l13x.h"
 
 #ifdef __cplusplus

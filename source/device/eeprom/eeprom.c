@@ -1,7 +1,7 @@
-#include "hy2613_port.h" // 共用I2C
 #include "eeprom.h"
 #include "gpio.h"
 #include "si2c.h"
+#include "hy2613_port.h" // 共用I2C
 
 // AT24C02 256*8 byte
 
@@ -51,4 +51,12 @@ void eeprom_write_byte(uint8_t addr, uint8_t data)
     si2c_write_byte(addr);
     si2c_write_byte(data);
     si2c_trans_end();
+}
+
+void eeprom_read_all(uint8_t *data)
+{
+    for (uint32_t i = 0; i < (255 - 1); i++)
+    {
+        data[i] = eeprom_read_byte(i + 1);
+    }
 }

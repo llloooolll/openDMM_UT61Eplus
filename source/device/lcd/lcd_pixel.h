@@ -1,9 +1,6 @@
 #ifndef __LCD_PIXEL_H__
 #define __LCD_PIXEL_H__
 
-#include <stdint.h>
-#include "cmsis_compiler.h"
-
 typedef struct _lcd_pixel_t
 {
     // 0x00 - 0x0F

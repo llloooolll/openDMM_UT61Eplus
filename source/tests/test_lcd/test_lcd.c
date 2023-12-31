@@ -1,6 +1,7 @@
 #include "hc32l13x.h"
 #include "sysctrl.h"
 #include "hy2613.h"
+#include "lcd_pixel.h"
 #include "lcd.h"
 #include "io_config.h"
 

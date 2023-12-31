@@ -1,6 +1,10 @@
 #ifndef __ULOG_H__
 #define __ULOG_H__
 
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdint.h>
+
 typedef enum _ulog_level_t
 {
     ulog_level_user,

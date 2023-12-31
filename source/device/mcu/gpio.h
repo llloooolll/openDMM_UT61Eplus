@@ -1,8 +1,7 @@
 #ifndef __GPIO_H__
 #define __GPIO_H__
 
-#include <stdint.h>
-#include <stdbool.h>
+#include "hc32l13x.h"
 
 typedef enum _gpio_port_t
 {

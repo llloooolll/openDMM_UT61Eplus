@@ -1,7 +1,7 @@
-#include "hy2613_port.h"
 #include "hy2613.h"
 #include "gpio.h"
 #include "si2c.h"
+#include "hy2613_port.h"
 
 // HY2613_B/SF2613B
 

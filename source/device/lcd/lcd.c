@@ -1,9 +1,8 @@
-﻿#include "hc32l13x.h"
+﻿#include "lcd.h"
+#include "io_config.h"
 #include "gpio.h"
 #include "hy2613.h"
 #include "eeprom.h"
-#include "io_config.h"
-#include "lcd_pixel.h"
 
 static void lcd_gpio_init(void)
 {

@@ -1,6 +1,5 @@
-#include "qpn.h"
 #include "bsp.h"
-
+#include "qpn.h"
 #include "hc32l13x.h"
 #include "sysctrl.h"
 #include "irda.h"

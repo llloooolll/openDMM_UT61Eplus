@@ -1,8 +1,6 @@
 #ifndef __UART_H__
 #define __UART_H__
 
-#include <stdint.h>
-#include <stdbool.h>
 #include "hc32l13x.h"
 
 typedef enum _uart_status_t
