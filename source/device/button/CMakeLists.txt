@@ -11,13 +11,11 @@ add_library(${PROJECT_NAME}
     ${SOURCE_FILES}
 )
 
-target_link_libraries(${PROJECT_NAME}
-    "mcu"
-)
-
 # 头文件
 target_include_directories(${PROJECT_NAME} PUBLIC
     .
-    ${CMAKE_SOURCE_DIR}/source/device/CMSIS/core/include
-    ${CMAKE_SOURCE_DIR}/source/device/base
+)
+
+target_link_libraries(${PROJECT_NAME}
+    "mcu"
 )

@@ -21,7 +21,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     .
     ./include
     ./ports/arm-cm/qv/gnu
-    ${CMAKE_SOURCE_DIR}/source/device/CMSIS/core/include
-    ${CMAKE_SOURCE_DIR}/source/device/base
-    ${CMAKE_SOURCE_DIR}/source/boot
+)
+
+# 库
+target_link_libraries(${PROJECT_NAME}
+    "mcu"
 )

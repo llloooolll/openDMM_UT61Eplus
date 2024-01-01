@@ -11,13 +11,14 @@ add_library(${PROJECT_NAME}
     ${SOURCE_FILES}
 )
 
-target_link_libraries(${PROJECT_NAME}
-    "printf"
-    "irda"
-)
-
 # 头文件
 target_include_directories(${PROJECT_NAME} PUBLIC
     .
-    ${CMAKE_SOURCE_DIR}/source/device/CMSIS/core/include
+)
+
+# 库
+target_link_libraries(${PROJECT_NAME}
+    "mcu"
+    "printf"
+    "irda"
 )
