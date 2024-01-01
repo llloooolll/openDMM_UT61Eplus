@@ -107,12 +107,26 @@ int32_t es232_get_D0(es232_read_t *es232_read_temp)
 {
     uint32_t temp = 0;
     int32_t result;
-
     /* 拼成19位数字 */
     temp = (es232_read_temp->D0_0_2 << (24U + 5U)) |
            (es232_read_temp->D0_3_10 << (16U + 5U)) |
            (es232_read_temp->D0_11_18 << (8U + 5U));
     result = es232_data_invert(temp);
-    // HAL_ASSERT(result < 34000U); // ADC上限
     return (es232_read_temp->ASIGN == 0) ? result : (-result);
+}
+
+int32_t es232_get_D1(es232_read_t *es232_read_temp)
+{
+    uint32_t temp = 0;
+    int32_t result;
+    /* 拼成10位数字 */
+    temp = (es232_read_temp->D1_0_7 << (24U)) |
+           (es232_read_temp->D1_8_9 << (16U + 6U));
+    result = es232_data_invert(temp);
+    return (es232_read_temp->BSIGN == 0) ? result : (-result);
+}
+
+bool es232_is_data_ready(void)
+{
+    return gpio_read_pin(ES232_DATA_NEW_PORT, ES232_DATA_NEW_PIN);
 }

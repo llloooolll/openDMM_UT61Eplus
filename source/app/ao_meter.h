@@ -48,6 +48,7 @@ typedef struct _ao_meter_t
     lcd_pixel_t lcd_pixel_buffer;     // LCD缓存
     uint8_t es232_range_max;          // 量程最大值
     uint8_t es232_range_min;          // 量程最小值
+    bool es232_range_auto;            // 自动量程切换
     uint8_t es232_range_delay_cycle;  // 量程切换延迟周期
 } ao_meter_t;
 

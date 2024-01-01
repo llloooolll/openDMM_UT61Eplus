@@ -21,7 +21,7 @@ void ao_es232_ctor(void)
 
 static QState ao_es232_init(ao_es232_t *const me)
 {
-    me->es232_read_interval_time = 100;
+    me->es232_read_interval_time = 30;
     memset(&me->es232_write_buffer, 0, sizeof(es232_write_t));
     return Q_TRAN(&ao_es232_ready);
 }
@@ -87,10 +87,13 @@ static QState ao_es232_active(ao_es232_t *const me)
         status = Q_HANDLED();
         break;
     case Q_TIMEOUT_SIG:
-        es232_read(&me->es232_read_buffer);
-        // ULOG_DEBUG("ADC done\n");
-        QACTIVE_POST_X(&ao_meter, 4U, AO_METER_ADC_DONE_SIG,
-                       (uint32_t)&me->es232_read_buffer);
+        if (es232_is_data_ready())
+        {
+            es232_read(&me->es232_read_buffer);
+            // ULOG_DEBUG("ADC done\n");
+            QACTIVE_POST_X(&ao_meter, 4U, AO_METER_ADC_DONE_SIG,
+                           (uint32_t)&me->es232_read_buffer);
+        }
         status = Q_HANDLED();
         break;
     case AO_ES232_WRITE_CONFIG_SIG: // 配置

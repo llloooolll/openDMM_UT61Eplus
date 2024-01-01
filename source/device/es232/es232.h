@@ -104,5 +104,7 @@ void es232_enable_power(bool flag);
 void es232_write(es232_write_t *es232_write);
 void es232_read(es232_read_t *es232_read);
 int32_t es232_get_D0(es232_read_t *es232_read_temp);
+int32_t es232_get_D1(es232_read_t *es232_read_temp);
+bool es232_is_data_ready(void);
 
 #endif

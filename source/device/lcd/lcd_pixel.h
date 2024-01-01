@@ -72,15 +72,15 @@ typedef struct _lcd_pixel_t
     uint32_t serial : 1;    // 串口连接[S]
     uint32_t ac : 1;        // 交流AC
     // 0x40 - 0x4F
-    uint32_t thousand : 1; // 千k
-    uint32_t omen : 1;     // 兆M
-    uint32_t ampere : 1;   // 安培A
-    uint32_t volt : 1;     // 伏V
-    uint32_t nanon : 1;    // 纳
-    uint32_t micron : 1;   // 微u
-    uint32_t milli : 1;    // 毫m
-    uint32_t farad : 1;    // 法拉
-    uint32_t auto_off : 1; // auto符号
+    uint32_t thousand : 1;   // 千k
+    uint32_t omen : 1;       // 兆M
+    uint32_t ampere : 1;     // 安培A
+    uint32_t volt : 1;       // 伏V
+    uint32_t nanon : 1;      // 纳
+    uint32_t micron : 1;     // 微u
+    uint32_t milli : 1;      // 毫m
+    uint32_t farad : 1;      // 法拉
+    uint32_t range_auto : 1; // auto符号
     uint32_t digitron_4_e : 1;
     uint32_t digitron_4_f : 1;
     uint32_t digitron_4_a : 1;
