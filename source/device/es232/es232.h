@@ -38,81 +38,64 @@ typedef enum _es232_buzzer_freq_t
 
 typedef struct _es232_write_t
 {
-    // uint32_t id_code_7 : 1;   // 1
-    // uint32_t id_code_6 : 1;   // 1
-    // uint32_t id_code_5 : 1;   // 0
-    // uint32_t id_code_4 : 1;   // 0
-    // uint32_t id_code_3 : 1;   // 1
-    // uint32_t id_code_2 : 1;   // 0
-    // uint32_t id_cmd_buz : 1;  // 鸣响
-    // uint32_t id_cmd_wr : 1;   // 写0
+    uint8_t q_msb : 3;        // 量程选择
+    uint8_t function_msb : 4; // 测量功能控制位
+    uint8_t shbp_dcsel : 1;   // 连续性和二极管模式/ AC+DC模式
 
-    uint32_t q_msb : 3;        // 量程选择
-    uint32_t function_msb : 4; // 测量功能控制位
-    uint32_t shbp_dcsel : 1;   // 连续性和二极管模式/ AC+DC模式
+    uint8_t fq2_msb : 3;         // 频率量程选择
+    uint8_t rev1 : 2;            // NC
+    uint8_t buzzer_freq_lsb : 3; // 蜂鸣器频率选择
+    uint8_t rp : 1;              // 交流+直流模式的频率模式电阻控制位
+    uint8_t lpf_msb : 2;         // 低通滤波器选择的3dB BW：
+    uint8_t fd : 1;              // 30kHz范围内的F+工作模式辅助控制位：FD
+    uint8_t ext : 1;             // 二极管模式控制位的外部电源
+    uint8_t buf_acdc : 1;        // AC+DC模式的缓冲控制位
+    uint8_t bufcal : 1;          // AC+DC模式的缓冲控制位
+    uint8_t ac : 1;              // 交流测量模式使能
 
-    uint32_t fq2_msb : 3; // 频率量程选择
-    uint32_t rev1 : 2;
-    uint32_t buzzer_freq_lsb : 3; // 蜂鸣器频率选择
-    uint32_t rp : 1;              // 交流+直流模式的频率模式电阻控制位
-    uint32_t lpf_msb : 2;         // 低通滤波器选择的3dB BW：
-    uint32_t fd : 1;              // 30kHz范围内的F+工作模式辅助控制位：FD
-    uint32_t ext : 1;             // 二极管模式控制位的外部电源
-    uint32_t buf_acdc : 1;        // AC+DC模式的缓冲控制位
-    uint32_t bufcal : 1;          // AC+DC模式的缓冲控制位
-    uint32_t ac : 1;              // 交流测量模式使能
-
-    uint32_t ext_adp : 1; // ADP模式
-    uint32_t op_lsb : 2;  // 运放控制位
-    uint32_t rev2 : 3;
-    uint32_t pcal : 1; // 校准模式
-    uint32_t peak : 1; // peak模式
+    uint8_t ext_adp : 1; // ADP模式
+    uint8_t op_lsb : 2;  // 运放控制位
+    uint8_t rev2 : 3;    // NC
+    uint8_t pcal : 1;    // 校准模式
+    uint8_t peak : 1;    // peak模式
 } es232_write_t;
 
 typedef struct _es232_read_t
 {
-    // uint32_t id_code_7 : 1;   // 1
-    // uint32_t id_code_6 : 1;   // 1
-    // uint32_t id_code_5 : 1;   // 0
-    // uint32_t id_code_4 : 1;   // 0
-    // uint32_t id_code_3 : 1;   // 1
-    // uint32_t id_code_2 : 1;   // 0
-    // uint32_t id_cmd_buz : 1;  // 鸣响
-    // uint32_t id_cmd_wr : 1;   // 读1
     /*R1*/
-    uint32_t ALARM : 1;
-    uint32_t STA0 : 1;
-    uint32_t BTS1 : 1;
-    uint32_t BTS0 : 1;
-    uint32_t PMIN : 1;
-    uint32_t PMAX : 1;
-    uint32_t BSIGN : 1;
-    uint32_t ASIGN : 1; // 负
+    uint8_t ALARM : 1; // 超量程警告
+    uint8_t STA0 : 1;
+    uint8_t BTS1 : 1;  // 电池电压标志
+    uint8_t BTS0 : 1;  // 电池电压标志
+    uint8_t PMIN : 1;  // 输出的是最小值
+    uint8_t PMAX : 1;  // 输出的是最大值
+    uint8_t BSIGN : 1; // FADC负号
+    uint8_t ASIGN : 1; // SADC负号
     /*R2*/
-    uint32_t D0_0_2 : 3;
-    uint32_t F_FIN : 1;
-    uint32_t STA1 : 1;
-    uint32_t LDUTY : 1;
-    uint32_t LF : 1;
-    uint32_t HF : 1;
+    uint8_t D0_0_2 : 3;
+    uint8_t F_FIN : 1;
+    uint8_t STA1 : 1;
+    uint8_t LDUTY : 1;
+    uint8_t LF : 1;
+    uint8_t HF : 1;
     /*R3*/
-    uint32_t D0_3_10 : 8;
+    uint8_t D0_3_10 : 8;
     /*R4*/
-    uint32_t D0_11_18 : 8;
+    uint8_t D0_11_18 : 8;
     /*R5*/
-    uint32_t D1_0_7 : 8;
+    uint8_t D1_0_7 : 8;
     /*R6*/
-    uint32_t D2_0_5 : 6;
-    uint32_t D1_8_9 : 2;
+    uint8_t D2_0_5 : 6;
+    uint8_t D1_8_9 : 2;
     /*R7*/
-    uint32_t D2_6_13 : 8;
+    uint8_t D2_6_13 : 8;
     /*R8*/
-    uint32_t D3_0_2 : 3;
-    uint32_t D2_14_18 : 5;
+    uint8_t D3_0_2 : 3;
+    uint8_t D2_14_18 : 5;
     /*R9*/
-    uint32_t D3_3_10 : 8;
+    uint8_t D3_3_10 : 8;
     /*R10*/
-    uint32_t D3_11_18 : 8;
+    uint8_t D3_11_18 : 8;
 } es232_read_t;
 
 void es232_gpio_init(void);

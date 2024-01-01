@@ -1,21 +1,18 @@
-#include "meter_dcv.h"
+#include "meter_acv.h"
 #include "ao_lcd.h"
 #include "ulog.h"
 
-static int32_t meter_dcv_cal(ao_meter_t *const me, int32_t value, uint8_t range);
+static int32_t meter_acv_cal(ao_meter_t *const me, int32_t value, uint8_t range);
 
 /**
  * @brief 初始化
  *
  * @param me
  */
-void meter_dcv_lcd_init(ao_meter_t *const me)
+void meter_acv_lcd_init(ao_meter_t *const me)
 {
     me->lcd_pixel_buffer.dc = 1;
     me->lcd_pixel_buffer.volt = 1;
-
-    me->es232_range_max = B001; // 3.0000V
-    me->es232_range_min = B100; // 1000.0V
 }
 
 /**
@@ -24,10 +21,10 @@ void meter_dcv_lcd_init(ao_meter_t *const me)
  * @param me
  * @return QState
  */
-QState meter_dcv_adc(ao_meter_t *const me)
+QState meter_acv_adc(ao_meter_t *const me)
 {
     int32_t data = es232_get_D0(&me->es232_read_buffer);
-    data = meter_dcv_cal(me, data, 0);
+    data = meter_acv_cal(me, data, 0);
     lcd_show_value(&me->lcd_pixel_buffer, data, 4);
     QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
 
@@ -40,7 +37,7 @@ QState meter_dcv_adc(ao_meter_t *const me)
  * @param me
  * @return QState
  */
-QState meter_dcv_key(ao_meter_t *const me)
+QState meter_acv_key(ao_meter_t *const me)
 {
     QState status;
     switch (Q_PAR(me))
@@ -61,7 +58,7 @@ QState meter_dcv_key(ao_meter_t *const me)
  * @param range
  * @return int32_t
  */
-static int32_t meter_dcv_cal(ao_meter_t *const me, int32_t value, uint8_t range)
+static int32_t meter_acv_cal(ao_meter_t *const me, int32_t value, uint8_t range)
 {
     return value;
 }

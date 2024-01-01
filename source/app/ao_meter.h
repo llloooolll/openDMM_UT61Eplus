@@ -45,7 +45,10 @@ typedef struct _ao_meter_t
     meter_mode_t mode;                // ES232测量模式
     es232_write_t es232_write_buffer; // ES232写入缓存
     es232_read_t es232_read_buffer;   // ES232读出缓存
-    lcd_pixel_t lcd_pixel_buffer;
+    lcd_pixel_t lcd_pixel_buffer;     // LCD缓存
+    uint8_t es232_range_max;          // 量程最大值
+    uint8_t es232_range_min;          // 量程最小值
+    uint8_t es232_range_delay_cycle;  // 量程切换延迟周期
 } ao_meter_t;
 
 extern ao_meter_t ao_meter;

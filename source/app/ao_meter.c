@@ -6,6 +6,7 @@
 #include "ao_es232.h"
 #include "ao_irda.h"
 #include "meter_dcv.h"
+#include "meter_acv.h"
 
 static const uint8_t es232_init_config[][4] = {
     {0x09, 0x43, 0x80, 0x00}, // ACV
@@ -46,6 +47,8 @@ void ao_meter_ctor(void)
 static QState ao_meter_init(ao_meter_t *const me)
 {
     me->ready_count = 0;
+    me->es232_range_delay_cycle = 5;
+    me->mode = meter_mode_acv;
     return Q_TRAN(&ao_meter_idle);
 }
 
@@ -55,12 +58,9 @@ static QState ao_meter_idle(ao_meter_t *const me)
     switch (Q_SIG(me))
     {
     case Q_ENTRY_SIG:
-    {
         status = Q_HANDLED();
         break;
-    }
     case AO_METER_READY_SIG:
-    {
         if (Q_PAR(me) == 0)
         {
             me->ready_count++;
@@ -75,7 +75,6 @@ static QState ao_meter_idle(ao_meter_t *const me)
                 }
                 QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 0U);
                 QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 0U);
-
                 QACTIVE_POST(me, AO_METER_MODE_SIG, meter_mode_dcv);
                 status = Q_TRAN(&ao_meter_active);
                 break;
@@ -87,12 +86,9 @@ static QState ao_meter_idle(ao_meter_t *const me)
         }
         status = Q_HANDLED();
         break;
-    }
     default:
-    {
         status = Q_SUPER(&QHsm_top);
         break;
-    }
     }
     return status;
 }
@@ -102,57 +98,61 @@ static QState ao_meter_active(ao_meter_t *const me)
     QState status;
     switch (Q_SIG(me))
     {
+    case Q_ENTRY_SIG:
+        // QACTIVE_POST(&ao_lcd, AO_LCD_BL_SIG, 10000U);
+        status = Q_HANDLED();
+        break;
     case AO_METER_MODE_SIG: // 模式
-    {
         me->mode = Q_PAR(me);
         ULOG_DEBUG("ES232 mode: %d\n", me->mode);
         memcpy(&me->es232_write_buffer, &es232_init_config[me->mode][0],
                sizeof(es232_write_t));
         QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
+        switch (me->mode)
+        {
+        case meter_mode_acv:
+            meter_acv_lcd_init(me);
+            break;
+        case meter_mode_dcv:
+            meter_dcv_lcd_init(me);
+            break;
+        default:
+            break;
+        }
         status = Q_HANDLED();
         break;
-    }
     case AO_METER_ADC_DONE_SIG: // 数据
-    {
         memcpy(&me->es232_read_buffer, (es232_read_t *)Q_PAR(me), sizeof(es232_read_t));
         switch (me->mode)
         {
+        case meter_mode_acv:
+            status = meter_acv_adc(me);
+            break;
         case meter_mode_dcv:
-        {
             status = meter_dcv_adc(me);
             break;
-            
-        }
         default:
-        {
             status = Q_HANDLED();
             break;
         }
-        }
         break;
-    }
     case AO_METER_KEY_SIG: // 按键
-    {
         switch (me->mode)
         {
+        case meter_mode_acv:
+            status = meter_acv_key(me);
+            break;
         case meter_mode_dcv:
-        {
             status = meter_dcv_key(me);
             break;
-        }
         default:
-        {
             status = Q_HANDLED();
             break;
         }
-        }
         break;
-    }
     default:
-    {
         status = Q_SUPER(&QHsm_top);
         break;
-    }
     }
     return status;
 }

@@ -6,6 +6,9 @@
 #define HY2613_I2C_SCL_PORT gpio_port_b // SCL
 #define HY2613_I2C_SCL_PIN gpio_pin_13
 
+#define LCD_BL_EN_PORT gpio_port_a // 背光
+#define LCD_BL_EN_PIN gpio_pin_07
+
 #define IRDA_HALL_PWR_PORT gpio_port_a // 霍尔电源
 #define IRDA_HALL_PWR_PIN gpio_pin_14
 #define IRDA_HALL_INT_PORT gpio_port_c // 红外插入检测霍尔

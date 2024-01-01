@@ -41,6 +41,9 @@ static void lcd_gpio_init(void)
 
     gpio_enable_od(HY2613_I2C_SCL_PORT, HY2613_I2C_SCL_PIN, 1);
     gpio_enable_od(HY2613_I2C_SDA_PORT, HY2613_I2C_SDA_PIN, 1);
+
+    gpio_enable_output(LCD_BL_EN_PORT, LCD_BL_EN_PIN, 1);
+    gpio_clear_pin(LCD_BL_EN_PORT, LCD_BL_EN_PIN);
 }
 
 /**
@@ -278,4 +281,9 @@ void lcd_show_value(lcd_pixel_t *lcd_pixel, int32_t Value, uint8_t u8Power)
             }
         }
     }
+}
+
+void lcd_enable_bl(bool flag)
+{
+    gpio_write_pin(LCD_BL_EN_PORT, LCD_BL_EN_PIN, flag);
 }

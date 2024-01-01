@@ -33,19 +33,16 @@ static QState ao_es232_ready(ao_es232_t *const me)
     switch (Q_SIG(me))
     {
     case Q_ENTRY_SIG: // 进入
-    {
         QACTIVE_POST(me, AO_ES232_READY_SIG, 0U);
-    }
+        status = Q_HANDLED();
+        break;
     case AO_ES232_READY_SIG:
-    {
         es232_gpio_init();
         es232_enable_power(1);
         QActive_armX((QActive *)me, 0U, 200U, 0U); // 等待上电
         status = Q_HANDLED();
         break;
-    }
     case Q_TIMEOUT_SIG:
-    {
         bool es232_init_result = es232_init();
         if (!es232_init_result)
         {
@@ -55,12 +52,9 @@ static QState ao_es232_ready(ao_es232_t *const me)
         QACTIVE_POST(&ao_meter, AO_METER_READY_SIG, (uint32_t)es232_init_result);
         status = Q_TRAN(&ao_es232_idle);
         break;
-    }
     default:
-    {
         status = Q_SUPER(&QHsm_top);
         break;
-    }
     }
     return status;
 }
@@ -72,16 +66,12 @@ static QState ao_es232_idle(ao_es232_t *const me)
     switch (Q_SIG(me))
     {
     case AO_ES232_ACTIVE_SIG:
-    {
         ULOG_DEBUG("ES232 active\n");
         status = Q_TRAN(&ao_es232_active);
         break;
-    }
     default:
-    {
         status = Q_SUPER(&QHsm_top);
         break;
-    }
     }
     return status;
 }
@@ -93,22 +83,17 @@ static QState ao_es232_active(ao_es232_t *const me)
     switch (Q_SIG(me))
     {
     case Q_ENTRY_SIG:
-    {
         QACTIVE_POST(me, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
         status = Q_HANDLED();
         break;
-    }
     case Q_TIMEOUT_SIG:
-    {
         es232_read(&me->es232_read_buffer);
         // ULOG_DEBUG("ADC done\n");
         QACTIVE_POST_X(&ao_meter, 4U, AO_METER_ADC_DONE_SIG,
                        (uint32_t)&me->es232_read_buffer);
         status = Q_HANDLED();
         break;
-    }
     case AO_ES232_WRITE_CONFIG_SIG: // 配置
-    {
         QActive_disarmX((QActive *)me, 0U);
         memcpy(&me->es232_write_buffer, (es232_write_t *)Q_PAR(me),
                sizeof(es232_write_t));
@@ -117,12 +102,9 @@ static QState ao_es232_active(ao_es232_t *const me)
                      me->es232_read_interval_time);
         status = Q_HANDLED();
         break;
-    }
     default:
-    {
         status = Q_SUPER(&QHsm_top);
         break;
-    }
     }
     return status;
 }

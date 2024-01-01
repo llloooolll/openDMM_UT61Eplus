@@ -30,13 +30,10 @@ static QState ao_irda_ready(ao_irda_t *const me)
     switch (Q_SIG(me))
     {
     case Q_ENTRY_SIG:
-    {
         QACTIVE_POST(me, AO_IRDA_READY_SIG, 0U);
         status = Q_HANDLED();
         break;
-    }
     case AO_IRDA_READY_SIG:
-    {
         irda_init(9600);
         if (irda_is_exist())
         {
@@ -47,12 +44,9 @@ static QState ao_irda_ready(ao_irda_t *const me)
         QACTIVE_POST(&ao_meter, AO_METER_READY_SIG, 0U);
         status = Q_TRAN(&ao_irda_idle);
         break;
-    }
     default:
-    {
         status = Q_SUPER(&QHsm_top);
         break;
-    }
     }
     return status;
 }
@@ -63,15 +57,11 @@ static QState ao_irda_idle(ao_irda_t *const me)
     switch (Q_SIG(me))
     {
     case AO_IRDA_ACTIVE_SIG:
-    {
         status = Q_TRAN(&ao_irda_active);
         break;
-    }
     default:
-    {
         status = Q_SUPER(&QHsm_top);
         break;
-    }
     }
     return status;
 }
@@ -83,16 +73,12 @@ static QState ao_irda_active(ao_irda_t *const me)
     switch (Q_SIG(me))
     {
     case Q_ENTRY_SIG:
-    {
         ULOG_DEBUG("IRDA active\n");
         status = Q_HANDLED();
         break;
-    }
     default:
-    {
         status = Q_SUPER(&QHsm_top);
         break;
-    }
     }
     return status;
 }
