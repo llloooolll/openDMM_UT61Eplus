@@ -19,6 +19,7 @@ Q_ASSERT_COMPILE(MAX_KERNEL_AWARE_CMSIS_PRI <= (0xFF >> (8 - __NVIC_PRIO_BITS)))
 void SysTick_Handler(void)
 {
     QF_tickXISR(0U);
+    QF_tickXISR(1U);
 }
 
 void bsp_init(void)

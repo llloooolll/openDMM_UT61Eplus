@@ -46,10 +46,15 @@ typedef struct _ao_meter_t
     es232_write_t es232_write_buffer; // ES232写入缓存
     es232_read_t es232_read_buffer;   // ES232读出缓存
     lcd_pixel_t lcd_pixel_buffer;     // LCD缓存
-    uint8_t es232_range_max;          // 量程最大值
-    uint8_t es232_range_min;          // 量程最小值
-    bool es232_range_auto;            // 自动量程切换
-    uint8_t es232_range_delay_cycle;  // 量程切换延迟周期
+
+    uint32_t es232_range_value_max;  // 换挡上限
+    uint32_t es232_range_value_min;  // 换挡下限
+    uint8_t es232_range_max;         // 量程最大值
+    uint8_t es232_range_min;         // 量程最小值
+    bool es232_range_auto;           // 自动量程切换
+    uint8_t delay_cycle_count;       // 自动切换计数
+    uint8_t es232_range_delay_cycle; // 量程切换延迟周期
+
 } ao_meter_t;
 
 extern ao_meter_t ao_meter;

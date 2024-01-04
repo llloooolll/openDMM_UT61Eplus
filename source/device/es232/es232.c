@@ -3,6 +3,8 @@
 #include "gpio.h"
 #include "es232_port.h"
 
+static uint8_t es232_buz_enable;
+
 static uint32_t es232_data_invert(uint32_t src);
 
 void es232_gpio_init(void)
@@ -37,6 +39,7 @@ void es232_gpio_init(void)
  */
 bool es232_init(void)
 {
+    es232_buz_enable = 0;
     si2c_init(&es232_si2c_pin);
     si2c_trans_begin(ES232_I2C_ADDR); // 试探
     si2c_status_t result = si2c_trans_end();
@@ -61,7 +64,7 @@ void es232_enable_power(bool flag)
 void es232_write(es232_write_t *es232_write)
 {
     si2c_init(&es232_si2c_pin);
-    si2c_trans_begin(ES232_I2C_ADDR);
+    si2c_trans_begin(ES232_I2C_ADDR | es232_buz_enable);
     si2c_write_bytes((uint8_t *)es232_write, 4U);
     si2c_trans_end();
 }
@@ -74,7 +77,7 @@ void es232_write(es232_write_t *es232_write)
 void es232_read(es232_read_t *es232_read)
 {
     si2c_init(&es232_si2c_pin);
-    si2c_request_from(ES232_I2C_ADDR, 10U);
+    si2c_request_from(ES232_I2C_ADDR | es232_buz_enable, 10U);
     si2c_trans_end();
     si2c_read_bytes((uint8_t *)es232_read, 10U);
 }
@@ -129,4 +132,9 @@ int32_t es232_get_D1(es232_read_t *es232_read_temp)
 bool es232_is_data_ready(void)
 {
     return gpio_read_pin(ES232_DATA_NEW_PORT, ES232_DATA_NEW_PIN);
+}
+
+void es232_enable_buz(bool flag)
+{
+    es232_buz_enable = (flag) ? 0x02 : 0x00;
 }

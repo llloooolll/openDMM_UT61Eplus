@@ -21,7 +21,7 @@ void ao_es232_ctor(void)
 
 static QState ao_es232_init(ao_es232_t *const me)
 {
-    me->es232_read_interval_time = 30;
+    me->es232_read_interval_time = 45;
     memset(&me->es232_write_buffer, 0, sizeof(es232_write_t));
     return Q_TRAN(&ao_es232_ready);
 }
@@ -38,7 +38,8 @@ static QState ao_es232_ready(ao_es232_t *const me)
         break;
     case AO_ES232_READY_SIG:
         es232_gpio_init();
-        es232_enable_power(1);
+        es232_enable_buz(0);                       // 关哔哔
+        es232_enable_power(1);                     // 开电源
         QActive_armX((QActive *)me, 0U, 200U, 0U); // 等待上电
         status = Q_HANDLED();
         break;
@@ -65,6 +66,11 @@ static QState ao_es232_idle(ao_es232_t *const me)
     QState status;
     switch (Q_SIG(me))
     {
+    case Q_ENTRY_SIG:
+        es232_enable_buz(0);
+        es232_read(&me->es232_read_buffer);
+        status = Q_HANDLED();
+        break;
     case AO_ES232_ACTIVE_SIG:
         ULOG_DEBUG("ES232 active\n");
         status = Q_TRAN(&ao_es232_active);
@@ -103,6 +109,22 @@ static QState ao_es232_active(ao_es232_t *const me)
         es232_write(&me->es232_write_buffer);
         QActive_armX((QActive *)me, 0U, me->es232_read_interval_time,
                      me->es232_read_interval_time);
+        status = Q_HANDLED();
+        break;
+    case AO_ES232_ENABLE_BUZ_SIG:
+        if (Q_PAR(me) > 0)
+        {
+            es232_enable_buz(1);
+            QActive_armX((QActive *)me, 1U, Q_PAR(me), 0U);
+        }
+        else
+        {
+            es232_enable_buz(0);
+        }
+        status = Q_HANDLED();
+        break;
+    case Q_TIMEOUT1_SIG:
+        QACTIVE_POST(me, AO_ES232_ENABLE_BUZ_SIG, 0);
         status = Q_HANDLED();
         break;
     default:

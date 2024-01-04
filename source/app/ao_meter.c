@@ -104,6 +104,7 @@ static QState ao_meter_active(ao_meter_t *const me)
         status = Q_HANDLED();
         break;
     case AO_METER_MODE_SIG: // 模式
+        // QACTIVE_POST(&ao_es232, AO_ES232_ENABLE_BUZ_SIG, 100);
         me->mode = Q_PAR(me);
         ULOG_DEBUG("ES232 mode: %d\n", me->mode);
         memcpy(&me->es232_write_buffer, &es232_init_config[me->mode][0],
