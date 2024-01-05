@@ -47,8 +47,8 @@ void ao_meter_ctor(void)
 static QState ao_meter_init(ao_meter_t *const me)
 {
     me->ready_count = 0;
-    me->es232_range_delay_cycle = 2;
-    me->mode = meter_mode_acv;
+    me->es232_range_delay_cycle = 3;
+    me->mode = meter_mode_dcv;
     me->es232_range_auto = 1;
     return Q_TRAN(&ao_meter_idle);
 }

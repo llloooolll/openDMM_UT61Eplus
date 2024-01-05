@@ -5,7 +5,7 @@
 #include "ao_es232.h"
 #include "meter_help_range.h"
 
-static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value, uint8_t range);
+static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value);
 
 /**
  * @brief 初始化
@@ -34,7 +34,7 @@ QState meter_dcv_adc(ao_meter_t *const me)
 {
     int32_t adc_data = es232_get_D0(&me->es232_read_buffer);  //
     int32_t fadc_data = es232_get_D1(&me->es232_read_buffer); //
-    adc_data = meter_help_dcv_cal(me, adc_data, me->es232_write_buffer.q_msb);
+    adc_data = meter_help_dcv_cal(me, adc_data);
     lcd_show_value(&me->lcd_pixel_buffer, adc_data, 5U - me->es232_write_buffer.q_msb);
     QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
 
@@ -71,7 +71,7 @@ QState meter_dcv_key(ao_meter_t *const me)
  * @param range
  * @return int32_t
  */
-static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value, uint8_t range)
+static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value)
 {
     return value;
 }
