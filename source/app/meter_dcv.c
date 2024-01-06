@@ -3,7 +3,7 @@
 #include "ulog.h"
 #include "meter_help_range.h"
 
-static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value, uint8_t range);
+static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value);
 
 /**
  * @brief 初始化
@@ -69,7 +69,7 @@ QState meter_dcv_key(ao_meter_t *const me)
  * @param range
  * @return int32_t
  */
-static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value, uint8_t range)
+static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value)
 {
     return value;
 }
