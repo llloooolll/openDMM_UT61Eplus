@@ -5,8 +5,8 @@
 #include "eeprom.h"
 #include "stdlib.h"
 
-// 积极前移小数点
-#define LCD_POINT_ACTIVE 1
+#define LCD_POINT_ACTIVE 1          // 积极前移小数点
+#define LCD_SHOW_OL_THRESHOLD 30000 // 显示OL的判断阈值
 
 static const uint8_t digitron_mapping[128] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 0-7
@@ -99,6 +99,13 @@ void lcd_refresh(lcd_pixel_t *lcd_pixel)
     hy2613_refresh(lcd_pixel);
 }
 
+/**
+ * @brief LCD数码管显示字符
+ *
+ * @param lcd_pixel
+ * @param index 位置
+ * @param value 字符
+ */
 void lcd_show_char(lcd_pixel_t *lcd_pixel, uint8_t index, char value)
 {
     uint8_t temp = digitron_mapping[(uint8_t)value];
@@ -154,6 +161,13 @@ void lcd_show_char(lcd_pixel_t *lcd_pixel, uint8_t index, char value)
     }
 }
 
+/**
+ * @brief 在数字后显示小数点
+ *
+ * @param lcd_pixel
+ * @param index 数字的位置[1,2,3,4]
+ * @param flag
+ */
 void lcd_show_point(lcd_pixel_t *lcd_pixel, uint8_t index, bool flag)
 {
     switch (index)
@@ -176,7 +190,7 @@ void lcd_show_point(lcd_pixel_t *lcd_pixel, uint8_t index, bool flag)
 }
 
 /**
- * @brief
+ * @brief 显示数字值
  *
  * @param lcd_pixel
  * @param i32_value 显示值
@@ -190,7 +204,7 @@ void lcd_show_value(lcd_pixel_t *lcd_pixel, int32_t i32_value, int8_t i8_power_r
 
     lcd_pixel->minus = (bool)(i32_value < 0); // 显示正负号
 
-    /* 缩减有效数字 */
+    /* 缩减有效数字，必然小于5位 */
     while (u32_value > 99999)
     {
         u32_value /= 10;
@@ -213,10 +227,24 @@ void lcd_show_value(lcd_pixel_t *lcd_pixel, int32_t i32_value, int8_t i8_power_r
     else if (i8_power_relative < 0)
     {
         u8_point_position = abs(i8_power_relative % 3); // 小数点往前
+        if (i8_thousands_extern < -3)                   // 超出n
+        {
+            if (((u8_point_position + 3) < 5) && ((i8_thousands_extern + 1) >= -3)) // 尝试移动小数抵消幂
+            {
+                i8_thousands_extern++;
+                u8_point_position += 3;
+            }
+            else
+            {
+                i8_thousands_extern = -3;
+                u32_value = 0;         // 归零
+                u8_point_position = 0; // 小数点无意义
+            }
+        }
     }
 
 #if (LCD_POINT_ACTIVE)
-    if ((i8_significant_number > 3) && (u8_point_position < 2))
+    if ((i8_significant_number > 2) && ((u8_point_position + 3) < 5))
     {
         i8_thousands_extern++;
         u8_point_position += 3;
@@ -230,7 +258,7 @@ void lcd_show_value(lcd_pixel_t *lcd_pixel, int32_t i32_value, int8_t i8_power_r
     lcd_pixel->thousand = (bool)(i8_thousands_extern == 1); // 千 +3
     lcd_pixel->omen = (bool)(i8_thousands_extern == 2);     // 兆 +6
 
-    if ((i8_thousands_extern > 2) || (i8_thousands_extern < -3) || (u32_value > 30000))
+    if ((i8_thousands_extern > 2) || (u32_value > LCD_SHOW_OL_THRESHOLD))
     {
         for (uint8_t i = 0; i < 5; i++)
         {
@@ -249,7 +277,219 @@ void lcd_show_value(lcd_pixel_t *lcd_pixel, int32_t i32_value, int8_t i8_power_r
     }
 }
 
+/**
+ * @brief 使能LCD背光
+ *
+ * @param flag
+ */
 void lcd_enable_bl(bool flag)
 {
     gpio_write_pin(LCD_BL_EN_PORT, LCD_BL_EN_PIN, flag);
+}
+
+/**
+ * @brief 显示模拟条
+ *
+ * @param lcd_pixel
+ * @param Value 值
+ */
+void lcd_show_scale(lcd_pixel_t *lcd_pixel, int32_t Value)
+{
+    lcd_pixel->s_minus = (bool)(Value < 0);
+    uint32_t u32Value = abs(Value);
+    /* 可显示范围 */
+    while (u32Value > 22)
+    {
+        u32Value /= 10;
+    }
+
+    switch (u32Value)
+    {
+    case 44:
+        lcd_pixel->s_ol = 1;
+    case 43:
+        lcd_pixel->s_43 = 1;
+    case 42:
+        lcd_pixel->s_42 = 1;
+    case 41:
+        lcd_pixel->s_41 = 1;
+    case 40:
+        lcd_pixel->s_40 = 1;
+    case 39:
+        lcd_pixel->s_39 = 1;
+    case 38:
+        lcd_pixel->s_38 = 1;
+    case 37:
+        lcd_pixel->s_37 = 1;
+    case 36:
+        lcd_pixel->s_36 = 1;
+    case 35:
+        lcd_pixel->s_35 = 1;
+    case 34:
+        lcd_pixel->s_34 = 1;
+    case 33:
+        lcd_pixel->s_33 = 1;
+    case 32:
+        lcd_pixel->s_32 = 1;
+    case 31:
+        lcd_pixel->s_31 = 1;
+    case 30:
+        lcd_pixel->s_30 = 1;
+    case 29:
+        lcd_pixel->s_29 = 1;
+    case 28:
+        lcd_pixel->s_28 = 1;
+    case 27:
+        lcd_pixel->s_27 = 1;
+    case 26:
+        lcd_pixel->s_26 = 1;
+    case 25:
+        lcd_pixel->s_25 = 1;
+    case 24:
+        lcd_pixel->s_24 = 1;
+    case 23:
+        lcd_pixel->s_23 = 1;
+    case 22:
+        lcd_pixel->s_22 = 1;
+    case 21:
+        lcd_pixel->s_21 = 1;
+    case 20:
+        lcd_pixel->s_20 = 1;
+    case 19:
+        lcd_pixel->s_19 = 1;
+    case 18:
+        lcd_pixel->s_18 = 1;
+    case 17:
+        lcd_pixel->s_17 = 1;
+    case 16:
+        lcd_pixel->s_16 = 1;
+    case 15:
+        lcd_pixel->s_15 = 1;
+    case 14:
+        lcd_pixel->s_14 = 1;
+    case 13:
+        lcd_pixel->s_13 = 1;
+    case 12:
+        lcd_pixel->s_12 = 1;
+    case 11:
+        lcd_pixel->s_11 = 1;
+    case 10:
+        lcd_pixel->s_10 = 1;
+    case 9:
+        lcd_pixel->s_9 = 1;
+    case 8:
+        lcd_pixel->s_8 = 1;
+    case 7:
+        lcd_pixel->s_7 = 1;
+    case 6:
+        lcd_pixel->s_6 = 1;
+    case 5:
+        lcd_pixel->s_5 = 1;
+    case 4:
+        lcd_pixel->s_4 = 1;
+    case 3:
+        lcd_pixel->s_3 = 1;
+    case 2:
+        lcd_pixel->s_2 = 1;
+    case 1:
+        lcd_pixel->s_1 = 1;
+        break;
+    default:
+        break;
+    }
+
+    switch (u32Value)
+    {
+    case 0:
+        lcd_pixel->s_1 = 0;
+    case 1:
+        lcd_pixel->s_2 = 0;
+    case 2:
+        lcd_pixel->s_3 = 0;
+    case 3:
+        lcd_pixel->s_4 = 0;
+    case 4:
+        lcd_pixel->s_5 = 0;
+    case 5:
+        lcd_pixel->s_6 = 0;
+    case 6:
+        lcd_pixel->s_7 = 0;
+    case 7:
+        lcd_pixel->s_8 = 0;
+    case 8:
+        lcd_pixel->s_9 = 0;
+    case 9:
+        lcd_pixel->s_10 = 0;
+    case 10:
+        lcd_pixel->s_11 = 0;
+    case 11:
+        lcd_pixel->s_12 = 0;
+    case 12:
+        lcd_pixel->s_13 = 0;
+    case 13:
+        lcd_pixel->s_14 = 0;
+    case 14:
+        lcd_pixel->s_15 = 0;
+    case 15:
+        lcd_pixel->s_16 = 0;
+    case 16:
+        lcd_pixel->s_17 = 0;
+    case 17:
+        lcd_pixel->s_18 = 0;
+    case 18:
+        lcd_pixel->s_19 = 0;
+    case 19:
+        lcd_pixel->s_20 = 0;
+    case 20:
+        lcd_pixel->s_21 = 0;
+    case 21:
+        lcd_pixel->s_22 = 0;
+    case 22:
+        lcd_pixel->s_23 = 0;
+    case 23:
+        lcd_pixel->s_24 = 0;
+    case 24:
+        lcd_pixel->s_25 = 0;
+    case 25:
+        lcd_pixel->s_26 = 0;
+    case 26:
+        lcd_pixel->s_27 = 0;
+    case 27:
+        lcd_pixel->s_28 = 0;
+    case 28:
+        lcd_pixel->s_29 = 0;
+    case 29:
+        lcd_pixel->s_30 = 0;
+    case 30:
+        lcd_pixel->s_31 = 0;
+    case 31:
+        lcd_pixel->s_32 = 0;
+    case 32:
+        lcd_pixel->s_33 = 0;
+    case 33:
+        lcd_pixel->s_34 = 0;
+    case 34:
+        lcd_pixel->s_35 = 0;
+    case 35:
+        lcd_pixel->s_36 = 0;
+    case 36:
+        lcd_pixel->s_37 = 0;
+    case 37:
+        lcd_pixel->s_38 = 0;
+    case 38:
+        lcd_pixel->s_39 = 0;
+    case 39:
+        lcd_pixel->s_40 = 0;
+    case 40:
+        lcd_pixel->s_41 = 0;
+    case 41:
+        lcd_pixel->s_42 = 0;
+    case 42:
+        lcd_pixel->s_43 = 0;
+    case 43:
+        lcd_pixel->s_ol = 0;
+        break;
+    default:
+        break;
+    }
 }

@@ -8,6 +8,7 @@
 #include "meter_dcv.h"
 #include "meter_acv.h"
 #include "meter_om_om.h"
+#include "meter_om_cap.h"
 
 static const uint8_t es232_init_config[][4] = {
     {0x09, 0x43, 0x80, 0x00}, // ACV
@@ -48,7 +49,7 @@ void ao_meter_ctor(void)
 static QState ao_meter_init(ao_meter_t *const me)
 {
     me->ready_count = 0;
-    me->es232_range_delay_cycle = 3;
+    me->es232_range_delay_cycle = 2;
     me->mode = meter_mode_dcv;
     me->es232_range_auto = 1;
     return Q_TRAN(&ao_meter_idle);
@@ -77,7 +78,7 @@ static QState ao_meter_idle(ao_meter_t *const me)
                 }
                 QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 1U);
                 QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 1U);
-                QACTIVE_POST(me, AO_METER_MODE_SIG, meter_mode_dcv);
+                QACTIVE_POST(me, AO_METER_MODE_SIG, meter_mode_om_cap);
                 status = Q_TRAN(&ao_meter_active);
                 break;
             }
@@ -122,6 +123,9 @@ static QState ao_meter_active(ao_meter_t *const me)
         case meter_mode_om_om:
             meter_om_om_lcd_init(me);
             break;
+        case meter_mode_om_cap:
+            meter_om_cap_lcd_init(me);
+            break;
         default:
             break;
         }
@@ -140,6 +144,9 @@ static QState ao_meter_active(ao_meter_t *const me)
         case meter_mode_om_om:
             status = meter_om_om_adc(me);
             break;
+        case meter_mode_om_cap:
+            status = meter_om_cap_adc(me);
+            break;
         default:
             status = Q_HANDLED();
             break;
@@ -156,6 +163,9 @@ static QState ao_meter_active(ao_meter_t *const me)
             break;
         case meter_mode_om_om:
             status = meter_om_om_key(me);
+            break;
+        case meter_mode_om_cap:
+            status = meter_om_cap_key(me);
             break;
         default:
             status = Q_HANDLED();

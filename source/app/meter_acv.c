@@ -30,14 +30,16 @@ void meter_acv_lcd_init(ao_meter_t *const me)
  */
 QState meter_acv_adc(ao_meter_t *const me)
 {
-    int32_t adc_data = es232_get_D0(&me->es232_read_buffer);  //
+    int32_t sadc_data = es232_get_D0(&me->es232_read_buffer); //
     int32_t fadc_data = es232_get_D1(&me->es232_read_buffer); //
-    adc_data = meter_help_acv_cal(me, adc_data, 0);
-    lcd_show_value(&me->lcd_pixel_buffer, adc_data, -5 + (int8_t)me->es232_write_buffer.q_msb);
-    QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
+    sadc_data = meter_help_acv_cal(me, sadc_data, 0);
 
     // ULOG_DEBUG("sadc = %d\n", abs(fadc_data));
-    meter_help_range_sel(me, fadc_data * 100); // 有效值
+    if (meter_help_range_sel(me, fadc_data * 100))
+    {
+        lcd_show_value(&me->lcd_pixel_buffer, sadc_data, -5 + (int8_t)me->es232_write_buffer.q_msb);
+        QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
+    }
 
     return Q_HANDLED();
 }

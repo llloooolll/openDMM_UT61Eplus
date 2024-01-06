@@ -21,7 +21,7 @@ void ao_es232_ctor(void)
 
 static QState ao_es232_init(ao_es232_t *const me)
 {
-    me->es232_read_interval_time = 45;
+    me->es232_read_interval_time = 30;
     memset(&me->es232_write_buffer, 0, sizeof(es232_write_t));
     return Q_TRAN(&ao_es232_ready);
 }
@@ -38,9 +38,9 @@ static QState ao_es232_ready(ao_es232_t *const me)
         break;
     case AO_ES232_READY_SIG:
         es232_gpio_init();
-        es232_enable_buz(0);                       // 关哔哔
+        es232_enable_buz(0);                       // 关蜂鸣器
         es232_enable_power(1);                     // 开电源
-        QActive_armX((QActive *)me, 0U, 200U, 0U); // 等待上电
+        QActive_armX((QActive *)me, 0U, 300U, 0U); // 等待上电
         status = Q_HANDLED();
         break;
     case Q_TIMEOUT_SIG:
@@ -103,10 +103,11 @@ static QState ao_es232_active(ao_es232_t *const me)
         if (es232_is_data_ready())
         {
             es232_read(&me->es232_read_buffer);
-            // ULOG_DEBUG("ADC done\n");
+            ULOG_DEBUG("ADC done\n");
             QACTIVE_POST_X(&ao_meter, 4U, AO_METER_ADC_DONE_SIG,
                            (uint32_t)&me->es232_read_buffer);
         }
+        QActive_armX((QActive *)me, 0U, me->es232_read_interval_time, 0U);
         status = Q_HANDLED();
         break;
     case AO_ES232_WRITE_CONFIG_SIG: // 配置
@@ -114,8 +115,8 @@ static QState ao_es232_active(ao_es232_t *const me)
         memcpy(&me->es232_write_buffer, (es232_write_t *)Q_PAR(me),
                sizeof(es232_write_t));
         es232_write(&me->es232_write_buffer);
-        QActive_armX((QActive *)me, 0U, me->es232_read_interval_time,
-                     me->es232_read_interval_time);
+        es232_read(&me->es232_read_buffer); // 消除就绪标志
+        QActive_armX((QActive *)me, 0U, me->es232_read_interval_time, 0U);
         status = Q_HANDLED();
         break;
     case AO_ES232_ENABLE_BUZ_SIG:

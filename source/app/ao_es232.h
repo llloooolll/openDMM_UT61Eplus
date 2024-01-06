@@ -9,7 +9,7 @@ typedef enum _ao_es232_signal_t
     AO_ES232_READY_SIG = Q_USER_SIG, // 初始化
     AO_ES232_ACTIVE_SIG,
     AO_ES232_WRITE_CONFIG_SIG, // 写入配置
-    AO_ES232_ENABLE_BUZ_SIG,   // 使能哔哔
+    AO_ES232_ENABLE_BUZ_SIG,   // 使能蜂鸣器
 
     AO_ES232_MAX_SIG
 } ao_es232_signal_t;

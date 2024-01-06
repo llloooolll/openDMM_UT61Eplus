@@ -104,7 +104,7 @@ static uint32_t es232_data_invert(uint32_t src)
  * @brief 获取D0
  *
  * @param es232_rea_temp
- * @return uint32_t
+ * @return int32_t
  */
 int32_t es232_get_D0(es232_read_t *es232_read_temp)
 {
@@ -118,6 +118,12 @@ int32_t es232_get_D0(es232_read_t *es232_read_temp)
     return (es232_read_temp->ASIGN == 0) ? result : (-result);
 }
 
+/**
+ * @brief 获取D1
+ *
+ * @param es232_read_temp
+ * @return int32_t
+ */
 int32_t es232_get_D1(es232_read_t *es232_read_temp)
 {
     uint32_t temp = 0;
@@ -129,11 +135,22 @@ int32_t es232_get_D1(es232_read_t *es232_read_temp)
     return (es232_read_temp->BSIGN == 0) ? result : (-result);
 }
 
+/**
+ * @brief 检测转换数据可用
+ *
+ * @return true
+ * @return false
+ */
 bool es232_is_data_ready(void)
 {
     return gpio_read_pin(ES232_DATA_NEW_PORT, ES232_DATA_NEW_PIN);
 }
 
+/**
+ * @brief 使能ES232的蜂鸣器驱动
+ *
+ * @param flag
+ */
 void es232_enable_buz(bool flag)
 {
     es232_buz_enable = (flag) ? 0x02 : 0x00;
