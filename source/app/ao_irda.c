@@ -57,7 +57,14 @@ static QState ao_irda_idle(ao_irda_t *const me)
     switch (Q_SIG(me))
     {
     case AO_IRDA_ACTIVE_SIG:
-        status = Q_TRAN(&ao_irda_active);
+        if (Q_PAR(me) > 0U)
+        {
+            status = Q_TRAN(&ao_irda_active);
+        }
+        else
+        {
+            status = Q_HANDLED();
+        }
         break;
     default:
         status = Q_SUPER(&QHsm_top);

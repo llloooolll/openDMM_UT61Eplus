@@ -61,9 +61,16 @@ static QState ao_lcd_idle(ao_lcd_t *const me)
     switch (Q_SIG(me))
     {
     case AO_LCD_ACTIVE_SIG:
-        lcd_test(0);
-        ULOG_DEBUG("LCD init active\n");
-        status = Q_TRAN(&ao_lcd_active);
+        if (Q_PAR(me) > 0U)
+        {
+            lcd_test(0);
+            // ULOG_DEBUG("LCD init active\n");
+            status = Q_TRAN(&ao_lcd_active);
+        }
+        else
+        {
+            status = Q_HANDLED();
+        }
         break;
     default:
         status = Q_SUPER(&QHsm_top);

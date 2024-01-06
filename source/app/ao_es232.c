@@ -72,8 +72,15 @@ static QState ao_es232_idle(ao_es232_t *const me)
         status = Q_HANDLED();
         break;
     case AO_ES232_ACTIVE_SIG:
-        ULOG_DEBUG("ES232 active\n");
-        status = Q_TRAN(&ao_es232_active);
+        if (Q_PAR(me) > 0U)
+        {
+            ULOG_DEBUG("ES232 active\n");
+            status = Q_TRAN(&ao_es232_active);
+        }
+        else
+        {
+            status = Q_HANDLED();
+        }
         break;
     default:
         status = Q_SUPER(&QHsm_top);

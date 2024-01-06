@@ -7,12 +7,13 @@
 #include "ao_irda.h"
 #include "meter_dcv.h"
 #include "meter_acv.h"
+#include "meter_om_om.h"
 
 static const uint8_t es232_init_config[][4] = {
     {0x09, 0x43, 0x80, 0x00}, // ACV
     {0x01, 0x40, 0x00, 0x00}, // DCV
     {0x50, 0x43, 0x80, 0x01}, // MV AC
-    {0x48, 0x00, 0x00, 0x00}, // MV  DC
+    {0x48, 0x00, 0x00, 0x00}, // MV DC
     {0x20, 0x40, 0x00, 0x00}, // OM 电阻
     {0xA8, 0x40, 0x00, 0x00}, // OM 蜂鸣
     {0x30, 0x40, 0x00, 0x00}, // OM 二极管
@@ -21,7 +22,7 @@ static const uint8_t es232_init_config[][4] = {
     {0x38, 0x41, 0x00, 0x00}, // HZ 占空比
     {0x48, 0x00, 0x00, 0x00}, // hfe
     {0x10, 0x40, 0x00, 0x00}, // UA DC
-    {0x18, 0x43, 0x80, 0x00}, // UA  AC
+    {0x18, 0x43, 0x80, 0x00}, // UA AC
     {0x10, 0x40, 0x00, 0x00}, // MA DC
     {0x18, 0x43, 0x80, 0x00}, // MA AC
     {0x11, 0x40, 0x00, 0x00}, // A DC
@@ -74,8 +75,8 @@ static QState ao_meter_idle(ao_meter_t *const me)
                     ULOG_DEBUG("eeprom calibration value exit\n");
                     eeprom_read_all(&me->eeprom[0]);
                 }
-                QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 0U);
-                QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 0U);
+                QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 1U);
+                QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 1U);
                 QACTIVE_POST(me, AO_METER_MODE_SIG, meter_mode_dcv);
                 status = Q_TRAN(&ao_meter_active);
                 break;
@@ -118,6 +119,9 @@ static QState ao_meter_active(ao_meter_t *const me)
         case meter_mode_dcv:
             meter_dcv_lcd_init(me);
             break;
+        case meter_mode_om_om:
+            meter_om_om_lcd_init(me);
+            break;
         default:
             break;
         }
@@ -133,6 +137,9 @@ static QState ao_meter_active(ao_meter_t *const me)
         case meter_mode_dcv:
             status = meter_dcv_adc(me);
             break;
+        case meter_mode_om_om:
+            status = meter_om_om_adc(me);
+            break;
         default:
             status = Q_HANDLED();
             break;
@@ -146,6 +153,9 @@ static QState ao_meter_active(ao_meter_t *const me)
             break;
         case meter_mode_dcv:
             status = meter_dcv_key(me);
+            break;
+        case meter_mode_om_om:
+            status = meter_om_om_key(me);
             break;
         default:
             status = Q_HANDLED();

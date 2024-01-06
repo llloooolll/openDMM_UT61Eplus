@@ -1,8 +1,6 @@
 #include "meter_dcv.h"
 #include "ao_lcd.h"
 #include "ulog.h"
-#include <stdlib.h>
-#include "ao_es232.h"
 #include "meter_help_range.h"
 
 static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value, uint8_t range);
@@ -35,7 +33,7 @@ QState meter_dcv_adc(ao_meter_t *const me)
     int32_t adc_data = es232_get_D0(&me->es232_read_buffer);  //
     int32_t fadc_data = es232_get_D1(&me->es232_read_buffer); //
     adc_data = meter_help_dcv_cal(me, adc_data, me->es232_write_buffer.q_msb);
-    lcd_show_value(&me->lcd_pixel_buffer, adc_data, 5U - me->es232_write_buffer.q_msb);
+    lcd_show_value(&me->lcd_pixel_buffer, adc_data, -5 + (int8_t)me->es232_write_buffer.q_msb);
     QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
 
     // ULOG_DEBUG("sadc = %d\n", abs(fadc_data));

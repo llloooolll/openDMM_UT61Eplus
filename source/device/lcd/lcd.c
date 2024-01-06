@@ -5,7 +5,8 @@
 #include "eeprom.h"
 #include "stdlib.h"
 
-static uint32_t lcd_positive_power(uint32_t u32x, uint32_t u32y);
+// 积极前移小数点
+#define LCD_POINT_ACTIVE 1
 
 static const uint8_t digitron_mapping[128] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 0-7
@@ -26,7 +27,10 @@ static const uint8_t digitron_mapping[128] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // xyz      120-127
 };
 
-static void lcd_gpio_init(void)
+static const char digitron_show_overflow[] = {'L', 'O', ' ', ' ', ' '};
+
+static void
+lcd_gpio_init(void)
 {
     gpio_enable_output(HY2613_I2C_SCL_PORT, HY2613_I2C_SCL_PIN, 1);
     gpio_enable_output(HY2613_I2C_SDA_PORT, HY2613_I2C_SDA_PIN, 1);
@@ -171,115 +175,77 @@ void lcd_show_point(lcd_pixel_t *lcd_pixel, uint8_t index, bool flag)
     }
 }
 
-static uint32_t lcd_positive_power(uint32_t u32x, uint32_t u32y)
+/**
+ * @brief
+ *
+ * @param lcd_pixel
+ * @param i32_value 显示值
+ * @param i8_power_relative 值的相对幂
+ */
+void lcd_show_value(lcd_pixel_t *lcd_pixel, int32_t i32_value, int8_t i8_power_relative)
 {
-    uint32_t result = 1;
-    for (; u32y > 0; u32y--)
+    int8_t i8_significant_number = 0;    // 有效的位数
+    uint32_t u32_value = abs(i32_value); // 数字绝对值
+    uint8_t u8_point_position = 0;
+
+    lcd_pixel->minus = (bool)(i32_value < 0); // 显示正负号
+
+    /* 缩减有效数字 */
+    while (u32_value > 99999)
     {
-        result *= u32x;
+        u32_value /= 10;
+        i8_power_relative++;
     }
-    return result;
-}
 
-void lcd_show_value(lcd_pixel_t *lcd_pixel, int32_t Value, uint8_t u8Power)
-{
-    uint8_t u8MaxValidIndex = 0; // 最高有效位
-
-    uint32_t u32ShowValue; // 实际显示的数字
-    uint8_t u8ShowPower;   // 实际显示的幂
-
-    lcd_pixel->minus = (bool)(Value < 0);
-    u32ShowValue = abs(Value);
-    u8ShowPower = u8Power;
-
-    // 寻找最高有效位
-    for (uint32_t temp = u32ShowValue; temp > 0; u8MaxValidIndex++)
+    /* 计算有效数字位数 */
+    for (uint32_t temp = u32_value; temp > 0; i8_significant_number++)
     {
         temp /= 10;
     }
 
-    if (u8Power >= u8MaxValidIndex)
+    /* 适配合适的千位分隔符 */
+    int8_t i8_thousands_extern = i8_power_relative / 3; // 额外的千分隔符
+    if (i8_power_relative > 0)
     {
-        // 没有整数 0.123
-        if (u8Power > 4)
-        { // 有效位数超屏幕，需要减位数
-            u32ShowValue =
-                u32ShowValue / lcd_positive_power(10, u8Power - 4);
-            /*小数点后退*/
-            u8ShowPower = u8Power - (u8Power - 4);
-        }
-        else
-        {
-            u32ShowValue = u32ShowValue;
-            u8ShowPower = u8Power;
-        }
-        /* 显示五个数字 */
+        i8_thousands_extern++;                              // 整数继续除千
+        u8_point_position = abs(3 - i8_power_relative % 3); // 小数点往前
+    }
+    else if (i8_power_relative < 0)
+    {
+        u8_point_position = abs(i8_power_relative % 3); // 小数点往前
+    }
+
+#if (LCD_POINT_ACTIVE)
+    if ((i8_significant_number > 3) && (u8_point_position < 2))
+    {
+        i8_thousands_extern++;
+        u8_point_position += 3;
+    }
+#endif
+
+    /* 显示额外小数点 */
+    lcd_pixel->nanon = (bool)(i8_thousands_extern == -3);   // 纳 -9
+    lcd_pixel->micron = (bool)(i8_thousands_extern == -2);  // 微 -6
+    lcd_pixel->milli = (bool)(i8_thousands_extern == -1);   // 毫 -3
+    lcd_pixel->thousand = (bool)(i8_thousands_extern == 1); // 千 +3
+    lcd_pixel->omen = (bool)(i8_thousands_extern == 2);     // 兆 +6
+
+    if ((i8_thousands_extern > 2) || (i8_thousands_extern < -3) || (u32_value > 30000))
+    {
         for (uint8_t i = 0; i < 5; i++)
         {
-            char cNum;
-            if (i < u8ShowPower)
-            { // 有效位
-                cNum = ((u32ShowValue % lcd_positive_power(10, i + 1)) /
-                        lcd_positive_power(10, i)) +
-                       '0';
-            }
-            else if (i == u8ShowPower)
-            {
-                cNum = '0';
-            }
-            else
-            {
-                cNum = ' '; // 显示空
-            }
-            lcd_show_char(lcd_pixel, i, cNum);
-            lcd_show_point(lcd_pixel, i, (i == u8ShowPower) ? true : false);
+            lcd_show_point(lcd_pixel, i, 1);
+            lcd_show_char(lcd_pixel, i, digitron_show_overflow[i]);
         }
+        return;
     }
-    else
+
+    /* 显示有效位 */
+    for (uint8_t i = 0; i < 5; i++)
     {
-        // 有整数 1.23
-        if ((u8MaxValidIndex - u8Power) > 5)
-        {
-            // 整数超过5位，显示不开
-            lcd_show_char(lcd_pixel, 0, 'L');
-            lcd_show_char(lcd_pixel, 1, 'O');
-            lcd_show_char(lcd_pixel, 2, ' ');
-            lcd_show_char(lcd_pixel, 3, ' ');
-            lcd_show_char(lcd_pixel, 4, ' ');
-            lcd_show_point(lcd_pixel, 1, true);
-            lcd_show_point(lcd_pixel, 2, false);
-            lcd_show_point(lcd_pixel, 3, false);
-            lcd_show_point(lcd_pixel, 4, false);
-        }
-        else
-        {
-            // 可以显示
-            if (u8MaxValidIndex > 5)
-            { // 有效位数超屏幕，需要减位数
-                u32ShowValue = u32ShowValue /
-                               lcd_positive_power(10, u8MaxValidIndex - 5);
-                /*小数点后退*/
-                u8ShowPower = u8Power - (u8MaxValidIndex - 5);
-            }
-            /* 显示五个数字 */
-            for (uint8_t i = 0; i < 5; i++)
-            {
-                char cNum;
-                if (i < u8MaxValidIndex)
-                { // 有效位
-                    cNum = ((u32ShowValue % lcd_positive_power(10, i + 1)) /
-                            lcd_positive_power(10, i)) +
-                           '0';
-                }
-                else
-                {
-                    cNum = ' '; // 显示空
-                }
-                lcd_show_char(lcd_pixel, i, cNum);
-                lcd_show_point(lcd_pixel, i,
-                               (i == u8ShowPower) ? true : false);
-            }
-        }
+        lcd_show_char(lcd_pixel, i, u32_value % 10 + '0');
+        u32_value /= 10;
+        lcd_show_point(lcd_pixel, i, (bool)(i == u8_point_position));
     }
 }
 
