@@ -61,7 +61,7 @@ bool meter_help_range_sel(ao_meter_t *const me, int32_t value)
         {
             me->delay_cycle_count = 0;
             QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
-            ULOG_DEBUG("faster change range: %d\n", me->es232_write_buffer.q_msb);
+            // ULOG_DEBUG("faster change range: %d\n", me->es232_write_buffer.q_msb);
             return 0;
         }
     }

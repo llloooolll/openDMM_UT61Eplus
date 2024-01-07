@@ -22,7 +22,7 @@ void meter_om_cap_lcd_init(ao_meter_t *const me)
     me->es232_range_value_max = 30000; // 最大
     me->es232_range_value_min = 2900;  // 最小
     me->es232_range_max = B111;        // 300.00M
-    me->es232_range_min = B000;        // 300.00
+    me->es232_range_min = B010;        // 300.00
 }
 
 /**

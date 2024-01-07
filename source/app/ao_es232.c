@@ -103,7 +103,7 @@ static QState ao_es232_active(ao_es232_t *const me)
         if (es232_is_data_ready())
         {
             es232_read(&me->es232_read_buffer);
-            ULOG_DEBUG("ADC done\n");
+            // ULOG_DEBUG("ADC done\n");
             QACTIVE_POST_X(&ao_meter, 4U, AO_METER_ADC_DONE_SIG,
                            (uint32_t)&me->es232_read_buffer);
         }
