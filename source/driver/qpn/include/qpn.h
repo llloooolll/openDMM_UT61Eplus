@@ -46,8 +46,7 @@
  */
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #include "qpn_conf.h" /* QP-nano configuration file (from the application) */
@@ -80,14 +79,14 @@ extern "C"
 /****************************************************************************/
 #if (QP_API_VERSION < 580U)
 
-    /*! @deprecated QMActive Control Block; instead use: ::QActiveCB. */
-    typedef QActiveCB QMActiveCB;
+/*! @deprecated QMActive Control Block; instead use: ::QActiveCB. */
+typedef QActiveCB QMActiveCB;
 
-    /*! @deprecated QMActive; instead use: ::QActive. */
-    typedef QActive QMActive;
+/*! @deprecated QMActive; instead use: ::QActive. */
+typedef QActive QMActive;
 
-    /*! @deprecated QMsm state machine; instead use: ::QHsm. */
-    typedef QHsm QMsm;
+/*! @deprecated QMsm state machine; instead use: ::QHsm. */
+typedef QHsm QMsm;
 
 /*! @deprecated QMActive constructor; instead use: QActive_ctor() */
 #define QMActive_ctor QActive_ctor
@@ -96,7 +95,7 @@ extern "C"
 #define QMsm_ctor QHsm_ctor
 
 #endif /* QP_API_VERSION < 580U */
-    /****************************************************************************/
+/****************************************************************************/
 
 #ifdef __cplusplus
 }

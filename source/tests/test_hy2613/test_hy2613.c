@@ -1,12 +1,11 @@
-#include "hc32l13x.h"
 #include "gpio.h"
-#include "sysctrl.h"
-#include "si2c.h"
+#include "hc32l13x.h"
 #include "hy2613.h"
 #include "io_config.h"
+#include "si2c.h"
+#include "sysctrl.h"
 
-static void gpio_init(void)
-{
+static void gpio_init(void) {
     sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_gpio, 1);
     sysctrl_set_rch_trim(sysctrl_rch_freq_24M);
 
@@ -22,14 +21,12 @@ static void gpio_init(void)
     gpio_set_pin(HY2613_I2C_SDA_PORT, HY2613_I2C_SDA_PIN);
 }
 
-int main(void)
-{
+int main(void) {
     gpio_init();
     hy2613_init();
     hy2613_test(1);
 
-    while (1)
-    {
+    while (1) {
     }
     return 0;
 }

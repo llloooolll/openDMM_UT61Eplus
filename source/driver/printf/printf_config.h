@@ -8,4 +8,4 @@
 #define PRINTF_DISABLE_SUPPORT_PTRDIFF_T        // 禁用ptrdiff_t支持
 // clang-format on
 
-#endif // _PRINTF_CONFIG_H_
+#endif  // _PRINTF_CONFIG_H_

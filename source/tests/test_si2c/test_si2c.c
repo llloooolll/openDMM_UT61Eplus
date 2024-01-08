@@ -1,23 +1,21 @@
-#include "hc32l13x.h"
 #include "gpio.h"
-#include "sysctrl.h"
+#include "hc32l13x.h"
 #include "si2c.h"
+#include "sysctrl.h"
 
-#define EE_I2C_SDA_PORT gpio_port_b //
+#define EE_I2C_SDA_PORT gpio_port_b  //
 #define EE_I2C_SDA_PIN gpio_pin_12
-#define EE_I2C_SCL_PORT gpio_port_b //
+#define EE_I2C_SCL_PORT gpio_port_b  //
 #define EE_I2C_SCL_PIN gpio_pin_13
 
 #define HY2613_I2C_ADDR 0x7C
 
-static bool lcd_scl_option(bool flag)
-{
+static bool lcd_scl_option(bool flag) {
     gpio_write_pin(EE_I2C_SCL_PORT, EE_I2C_SCL_PIN, flag);
     return gpio_read_pin(EE_I2C_SCL_PORT, EE_I2C_SCL_PIN);
 }
 
-static bool lcd_sda_option(bool flag)
-{
+static bool lcd_sda_option(bool flag) {
     gpio_write_pin(EE_I2C_SDA_PORT, EE_I2C_SDA_PIN, flag);
     return gpio_read_pin(EE_I2C_SDA_PORT, EE_I2C_SDA_PIN);
 }
@@ -27,8 +25,7 @@ static si2c_pin_t lcd_si2c_pin = {
     .sda_option = lcd_sda_option,
 };
 
-int main(void)
-{
+int main(void) {
     sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_gpio, 1);
     sysctrl_set_rch_trim(sysctrl_rch_freq_24M);
 
@@ -50,8 +47,7 @@ int main(void)
 
     si2c_init(&lcd_si2c_pin);
 
-    while (1)
-    {
+    while (1) {
         si2c_trans_begin(HY2613_I2C_ADDR);
         si2c_write_byte(0xff);
         si2c_write_byte(0xff);

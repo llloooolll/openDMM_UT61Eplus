@@ -138,9 +138,8 @@ typedef int int_t;
  * @note the @p test_ is __not__ evaluated if assertions are disabled
  * with the #Q_NASSERT switch.
  */
-#define Q_ASSERT(test_) ((test_)       \
-                             ? (void)0 \
-                             : Q_onAssert(&Q_this_module_[0], (int_t)__LINE__))
+#define Q_ASSERT(test_) \
+    ((test_) ? (void)0 : Q_onAssert(&Q_this_module_[0], (int_t)__LINE__))
 
 /*! General purpose assertion with user-specified assertion-id. */
 /**
@@ -158,9 +157,8 @@ typedef int int_t;
  * @note the @p test_ expression is __not__ evaluated if assertions are
  * disabled with the #Q_NASSERT switch.
  */
-#define Q_ASSERT_ID(id_, test_) ((test_)       \
-                                     ? (void)0 \
-                                     : Q_onAssert(&Q_this_module_[0], (int_t)(id_)))
+#define Q_ASSERT_ID(id_, test_) \
+    ((test_) ? (void)0 : Q_onAssert(&Q_this_module_[0], (int_t)(id_)))
 
 /*! General purpose assertion that __always__ evaluates the @p test_
  * expression. */
@@ -199,8 +197,7 @@ typedef int int_t;
  *
  * @note Does noting if assertions are disabled with the #Q_NASSERT switch.
  */
-#define Q_ERROR() \
-    Q_onAssert(&Q_this_module_[0], (int_t)__LINE__)
+#define Q_ERROR() Q_onAssert(&Q_this_module_[0], (int_t)__LINE__)
 
 /*! Assertion with user-specified assertion-id for a wrong path. */
 /**
@@ -215,15 +212,13 @@ typedef int int_t;
  *
  * @note Does noting if assertions are disabled with the #Q_NASSERT switch.
  */
-#define Q_ERROR_ID(id_) \
-    Q_onAssert(&Q_this_module_[0], (int_t)(id_))
+#define Q_ERROR_ID(id_) Q_onAssert(&Q_this_module_[0], (int_t)(id_))
 
 #endif /* Q_NASSERT */
 
 /****************************************************************************/
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #ifndef Q_NORETURN
@@ -231,35 +226,35 @@ extern "C"
 #define Q_NORETURN void
 #endif /*  Q_NORETURN */
 
-    /*! Callback function invoked in case of any assertion failure. */
-    /**
-     * @description
-     * This is an application-specific callback function needs to be defined in
-     * the application to perform the clean system shutdown and perhaps a reset.
-     *
-     * @param[in] module name of the file/module in which the assertion failed
-     *                   (constant, zero-terminated C string)
-     * @param[in] location location of the assertion within the module. This could
-     *                   be a line number or a user-specified ID-number.
-     *
-     * @note This callback function should _not_ return, as continuation after
-     * an assertion failure does not make sense.
-     *
-     * @note The Q_onAssert() function is the last line of defense after the
-     * system failure and its implementation shouild be very __carefully__
-     * designed and __tested__ under various fault conditions, including but
-     * not limited to: stack overflow, stack corruption, or calling Q_onAssert()
-     * from an interrupt.
-     *
-     * @note It is typically a __bad idea__ to implement Q_onAssert() as an
-     * endless loop that ties up the CPU. During debuggin, Q_onAssert() is an
-     * ideal place to put a breakpoint.
-     *
-     * Called by the following macros: #Q_ASSERT, #Q_REQUIRE, #Q_ENSURE,
-     * #Q_ERROR, #Q_ALLEGE as well as #Q_ASSERT_ID, #Q_REQUIRE_ID, #Q_ENSURE_ID,
-     * #Q_ERROR_ID, and #Q_ALLEGE_ID.
-     */
-    Q_NORETURN Q_onAssert(char_t const Q_ROM *const module, int_t const location);
+/*! Callback function invoked in case of any assertion failure. */
+/**
+ * @description
+ * This is an application-specific callback function needs to be defined in
+ * the application to perform the clean system shutdown and perhaps a reset.
+ *
+ * @param[in] module name of the file/module in which the assertion failed
+ *                   (constant, zero-terminated C string)
+ * @param[in] location location of the assertion within the module. This could
+ *                   be a line number or a user-specified ID-number.
+ *
+ * @note This callback function should _not_ return, as continuation after
+ * an assertion failure does not make sense.
+ *
+ * @note The Q_onAssert() function is the last line of defense after the
+ * system failure and its implementation shouild be very __carefully__
+ * designed and __tested__ under various fault conditions, including but
+ * not limited to: stack overflow, stack corruption, or calling Q_onAssert()
+ * from an interrupt.
+ *
+ * @note It is typically a __bad idea__ to implement Q_onAssert() as an
+ * endless loop that ties up the CPU. During debuggin, Q_onAssert() is an
+ * ideal place to put a breakpoint.
+ *
+ * Called by the following macros: #Q_ASSERT, #Q_REQUIRE, #Q_ENSURE,
+ * #Q_ERROR, #Q_ALLEGE as well as #Q_ASSERT_ID, #Q_REQUIRE_ID, #Q_ENSURE_ID,
+ * #Q_ERROR_ID, and #Q_ALLEGE_ID.
+ */
+Q_NORETURN Q_onAssert(char_t const Q_ROM *const module, int_t const location);
 
 #ifdef __cplusplus
 }
@@ -336,8 +331,7 @@ extern "C"
  *
  * @param[in] test_ Compile-time Boolean expression
  */
-#define Q_ASSERT_STATIC(test_) \
-    extern int_t Q_assert_static[(test_) ? 1 : -1]
+#define Q_ASSERT_STATIC(test_) extern int_t Q_assert_static[(test_) ? 1 : -1]
 
 #define Q_ASSERT_COMPILE(test_) Q_ASSERT_STATIC(test_)
 

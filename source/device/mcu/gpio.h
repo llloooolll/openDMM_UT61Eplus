@@ -3,16 +3,14 @@
 
 #include "hc32l13x.h"
 
-typedef enum _gpio_port_t
-{
+typedef enum _gpio_port_t {
     gpio_port_a = 0x00UL,
     gpio_port_b = 0x40UL,
     gpio_port_c = 0x80UL,
     gpio_port_d = 0xC0UL,
 } gpio_port_t;
 
-typedef enum _gpio_pin_t
-{
+typedef enum _gpio_pin_t {
     gpio_pin_00 = 1UL << 0,
     gpio_pin_01 = 1UL << 1,
     gpio_pin_02 = 1UL << 2,
@@ -31,8 +29,7 @@ typedef enum _gpio_pin_t
     gpio_pin_15 = 1UL << 15,
 } gpio_pin_t;
 
-typedef enum _gpio_mux_t
-{
+typedef enum _gpio_mux_t {
     gpio_mux_0 = 0U,
     gpio_mux_1 = 1U,
     gpio_mux_2 = 2U,

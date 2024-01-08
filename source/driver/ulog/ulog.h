@@ -5,8 +5,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef enum _ulog_level_t
-{
+typedef enum _ulog_level_t {
     ulog_level_user,
     ulog_level_error,
     ulog_level_warn,

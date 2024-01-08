@@ -31,16 +31,16 @@
  * <www.state-machine.com/licensing>
  * <info@state-machine.com>
  *****************************************************************************/
-#include "qpn.h"
 #include "blinky.h"
+
 #include "bsp.h"
+#include "qpn.h"
 
 // Q_DEFINE_THIS_FILE
 
 /*..........................................................................*/
-typedef struct BlinkyTag
-{                  /* the Blinky active object */
-    QActive super; /* inherit QActive */
+typedef struct BlinkyTag { /* the Blinky active object */
+    QActive super;         /* inherit QActive */
 } Blinky;
 
 /* hierarchical state machine ... */
@@ -52,66 +52,54 @@ static QState Blinky_on(Blinky *const me);
 Blinky AO_Blinky; /* the single instance of the Blinky AO */
 
 /*..........................................................................*/
-void Blinky_ctor(void)
-{
+void Blinky_ctor(void) {
     Blinky *const me = &AO_Blinky;
     QActive_ctor(&me->super, Q_STATE_CAST(&Blinky_initial));
 }
 
 /* HSM definition ----------------------------------------------------------*/
-QState Blinky_initial(Blinky *const me)
-{
+QState Blinky_initial(Blinky *const me) {
     QActive_armX((QActive *)me, 0U, BSP_TICKS_PER_SEC / 2U,
                  BSP_TICKS_PER_SEC / 2U);
     return Q_TRAN(&Blinky_off);
 }
 /*..........................................................................*/
-QState Blinky_off(Blinky *const me)
-{
+QState Blinky_off(Blinky *const me) {
     QState status;
-    switch (Q_SIG(me))
-    {
-    case Q_ENTRY_SIG:
-    {
-        BSP_ledOff();
-        status = Q_HANDLED();
-        break;
-    }
-    case Q_TIMEOUT_SIG:
-    {
-        status = Q_TRAN(&Blinky_on);
-        break;
-    }
-    default:
-    {
-        status = Q_SUPER(&QHsm_top);
-        break;
-    }
+    switch (Q_SIG(me)) {
+        case Q_ENTRY_SIG: {
+            BSP_ledOff();
+            status = Q_HANDLED();
+            break;
+        }
+        case Q_TIMEOUT_SIG: {
+            status = Q_TRAN(&Blinky_on);
+            break;
+        }
+        default: {
+            status = Q_SUPER(&QHsm_top);
+            break;
+        }
     }
     return status;
 }
 /*..........................................................................*/
-QState Blinky_on(Blinky *const me)
-{
+QState Blinky_on(Blinky *const me) {
     QState status;
-    switch (Q_SIG(me))
-    {
-    case Q_ENTRY_SIG:
-    {
-        BSP_ledOn();
-        status = Q_HANDLED();
-        break;
-    }
-    case Q_TIMEOUT_SIG:
-    {
-        status = Q_TRAN(&Blinky_off);
-        break;
-    }
-    default:
-    {
-        status = Q_SUPER(&QHsm_top);
-        break;
-    }
+    switch (Q_SIG(me)) {
+        case Q_ENTRY_SIG: {
+            BSP_ledOn();
+            status = Q_HANDLED();
+            break;
+        }
+        case Q_TIMEOUT_SIG: {
+            status = Q_TRAN(&Blinky_off);
+            break;
+        }
+        default: {
+            status = Q_SUPER(&QHsm_top);
+            break;
+        }
     }
     return status;
 }

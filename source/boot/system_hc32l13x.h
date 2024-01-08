@@ -43,14 +43,15 @@
 #ifndef __SYSTEM_HC32L13X_H__
 #define __SYSTEM_HC32L13X_H__
 
+#include "hc32l13x.h"
+
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-    extern uint32_t SystemCoreClock;
-    extern void SystemInit(void);
-    extern void SystemCoreClockUpdate(void);
+extern uint32_t SystemCoreClock;
+extern void SystemInit(void);
+extern void SystemCoreClockUpdate(void);
 
 #ifdef __cplusplus
 }

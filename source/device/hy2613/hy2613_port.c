@@ -1,19 +1,18 @@
-#include <string.h>
-#include <stdint.h>
 #include <stdbool.h>
-#include "io_config.h"
-#include "gpio.h"
-#include "si2c.h"
-#include "hy2613.h"
+#include <stdint.h>
+#include <string.h>
 
-static bool hy2613_scl_option(bool flag)
-{
+#include "gpio.h"
+#include "hy2613.h"
+#include "io_config.h"
+#include "si2c.h"
+
+static bool hy2613_scl_option(bool flag) {
     gpio_write_pin(HY2613_I2C_SCL_PORT, HY2613_I2C_SCL_PIN, flag);
     return gpio_read_pin(HY2613_I2C_SCL_PORT, HY2613_I2C_SCL_PIN);
 }
 
-static bool hy2613_sda_option(bool flag)
-{
+static bool hy2613_sda_option(bool flag) {
     gpio_write_pin(HY2613_I2C_SDA_PORT, HY2613_I2C_SDA_PIN, flag);
     return gpio_read_pin(HY2613_I2C_SDA_PORT, HY2613_I2C_SDA_PIN);
 }

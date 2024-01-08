@@ -43,8 +43,9 @@
 /******************************************************************************/
 /* Include files                                                              */
 /******************************************************************************/
-#include "hc32l13x.h"
 #include "system_hc32l13x.h"
+
+#include "hc32l13x.h"
 
 #define SYSTEM_XTH 8000000U
 #define SYSTEM_XTL 32768U
@@ -70,102 +71,77 @@ uint32_t SystemCoreClock = 4000000;
  * @brief Update SystemCoreClock variable
  *
  */
-void SystemCoreClockUpdate(void)
-{
-	typedef enum _sysctrl_clk_source_t
-	{
-		sysctrl_clk_source_rch = 0U,
-		sysctrl_clk_source_xth = 1U,
-		sysctrl_clk_source_rcl = 2U,
-		sysctrl_clk_source_xtl = 3U,
-		sysctrl_clk_source_pll = 4U,
-	} sysctrl_clk_source_t;
+void SystemCoreClockUpdate(void) {
+    typedef enum _sysctrl_clk_source_t {
+        sysctrl_clk_source_rch = 0U,
+        sysctrl_clk_source_xth = 1U,
+        sysctrl_clk_source_rcl = 2U,
+        sysctrl_clk_source_xtl = 3U,
+        sysctrl_clk_source_pll = 4U,
+    } sysctrl_clk_source_t;
 
-	uint32_t hclk_freq = 0;
-	const uint32_t rch_freq_table[] = {24000000, 22120000, 16000000, 8000000, 4000000};
-	const uint32_t rcl_freq_table[] = {32768, 38400};
+    uint32_t hclk_freq = 0;
+    const uint32_t rch_freq_table[] = {24000000, 22120000, 16000000, 8000000,
+                                       4000000};
+    const uint32_t rcl_freq_table[] = {32768, 38400};
 
-	sysctrl_clk_source_t corrent_clk_source = (sysctrl_clk_source_t)(M0P_SYSCTRL->SYSCTRL0_f.CLKSW);
+    sysctrl_clk_source_t corrent_clk_source =
+        (sysctrl_clk_source_t)(M0P_SYSCTRL->SYSCTRL0_f.CLKSW);
 
-	switch (corrent_clk_source)
-	{
-	case sysctrl_clk_source_rch:
-		if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_24M)
-		{
-			hclk_freq = rch_freq_table[0];
-		}
-		else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_22_12M)
-		{
-			hclk_freq = rch_freq_table[1];
-		}
-		else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_16M)
-		{
-			hclk_freq = rch_freq_table[2];
-		}
-		else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_8M)
-		{
-			hclk_freq = rch_freq_table[3];
-		}
-		else
-		{
-			hclk_freq = rch_freq_table[4];
-		}
-		break;
-	case sysctrl_clk_source_xth:
-		hclk_freq = SYSTEM_XTH;
-		break;
-	case sysctrl_clk_source_rcl:
-		if (RCL_TRIM_38_4K == (M0P_SYSCTRL->RCL_CR_f.TRIM))
-		{
-			hclk_freq = rcl_freq_table[1];
-		}
-		else
-		{
-			hclk_freq = rcl_freq_table[0];
-		}
-		break;
-	case sysctrl_clk_source_xtl:
-		hclk_freq = SYSTEM_XTL;
-		break;
-	case sysctrl_clk_source_pll:
-		if (sysctrl_clk_source_rch == M0P_SYSCTRL->PLL_CR_f.REFSEL)
-		{
-			if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_24M)
-			{
-				hclk_freq = rch_freq_table[0];
-			}
-			else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_22_12M)
-			{
-				hclk_freq = rch_freq_table[1];
-			}
-			else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_16M)
-			{
-				hclk_freq = rch_freq_table[2];
-			}
-			else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_8M)
-			{
-				hclk_freq = rch_freq_table[3];
-			}
-			else
-			{
-				hclk_freq = rch_freq_table[4];
-			}
-		}
-		else
-		{
-			hclk_freq = SYSTEM_XTH;
-		}
+    switch (corrent_clk_source) {
+        case sysctrl_clk_source_rch:
+            if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_24M) {
+                hclk_freq = rch_freq_table[0];
+            } else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_22_12M) {
+                hclk_freq = rch_freq_table[1];
+            } else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_16M) {
+                hclk_freq = rch_freq_table[2];
+            } else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_8M) {
+                hclk_freq = rch_freq_table[3];
+            } else {
+                hclk_freq = rch_freq_table[4];
+            }
+            break;
+        case sysctrl_clk_source_xth:
+            hclk_freq = SYSTEM_XTH;
+            break;
+        case sysctrl_clk_source_rcl:
+            if (RCL_TRIM_38_4K == (M0P_SYSCTRL->RCL_CR_f.TRIM)) {
+                hclk_freq = rcl_freq_table[1];
+            } else {
+                hclk_freq = rcl_freq_table[0];
+            }
+            break;
+        case sysctrl_clk_source_xtl:
+            hclk_freq = SYSTEM_XTL;
+            break;
+        case sysctrl_clk_source_pll:
+            if (sysctrl_clk_source_rch == M0P_SYSCTRL->PLL_CR_f.REFSEL) {
+                if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_24M) {
+                    hclk_freq = rch_freq_table[0];
+                } else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_22_12M) {
+                    hclk_freq = rch_freq_table[1];
+                } else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_16M) {
+                    hclk_freq = rch_freq_table[2];
+                } else if ((M0P_SYSCTRL->RCH_CR_f.TRIM) == RCH_TRIM_8M) {
+                    hclk_freq = rch_freq_table[3];
+                } else {
+                    hclk_freq = rch_freq_table[4];
+                }
+            } else {
+                hclk_freq = SYSTEM_XTH;
+            }
 
-		hclk_freq = (hclk_freq * (M0P_SYSCTRL->PLL_CR_f.DIVN));
-		break;
-	default:
-		hclk_freq = 0u;
-		break;
-	}
+            hclk_freq = (hclk_freq * (M0P_SYSCTRL->PLL_CR_f.DIVN));
+            break;
+        default:
+            hclk_freq = 0u;
+            break;
+    }
 
-	hclk_freq = (hclk_freq >> (M0P_SYSCTRL->SYSCTRL0_f.HCLK_PRS));
+    hclk_freq = (hclk_freq >> (M0P_SYSCTRL->SYSCTRL0_f.HCLK_PRS));
 
-	SystemCoreClock = hclk_freq;
+    SystemCoreClock = hclk_freq;
 }
 
 /**
@@ -173,13 +149,12 @@ void SystemCoreClockUpdate(void)
  * the SystemCoreClock variable.
  *
  */
-void SystemInit(void)
-{
-	M0P_SYSCTRL->RCL_CR_f.TRIM = RCL_TRIM_32_768K;
-	M0P_SYSCTRL->RCH_CR_f.TRIM = RCH_TRIM_4M;
-	M0P_SYSCTRL->RCH_CR_f.TRIM = RCH_TRIM_8M;
-	M0P_SYSCTRL->RCH_CR_f.TRIM = RCH_TRIM_16M;
-	M0P_SYSCTRL->RCH_CR_f.TRIM = RCH_TRIM_24M;
+void SystemInit(void) {
+    M0P_SYSCTRL->RCL_CR_f.TRIM = RCL_TRIM_32_768K;
+    M0P_SYSCTRL->RCH_CR_f.TRIM = RCH_TRIM_4M;
+    M0P_SYSCTRL->RCH_CR_f.TRIM = RCH_TRIM_8M;
+    M0P_SYSCTRL->RCH_CR_f.TRIM = RCH_TRIM_16M;
+    M0P_SYSCTRL->RCH_CR_f.TRIM = RCH_TRIM_24M;
 
-	SystemCoreClockUpdate();
+    SystemCoreClockUpdate();
 }

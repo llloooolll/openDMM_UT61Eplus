@@ -3,16 +3,14 @@
 
 #include "qpn.h"
 
-typedef enum _ao_key_signal_t
-{
-    AO_KEY_READY_SIG = Q_USER_SIG, // 初始化
+typedef enum _ao_key_signal_t {
+    AO_KEY_READY_SIG = Q_USER_SIG,  // 初始化
     AO_KEY_ACTIVE_SIG,
 
     AO_KEY_MAX_SIG
 } ao_key_signal_t;
 
-typedef struct _ao_key_t
-{
+typedef struct _ao_key_t {
     QActive super;
 } ao_key_t;
 

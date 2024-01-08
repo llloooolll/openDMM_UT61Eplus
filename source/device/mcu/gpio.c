@@ -1,7 +1,8 @@
 #include "gpio.h"
-#include "hc32l13x.h"
+
 #include "binary.h"
 #include "bits.h"
+#include "hc32l13x.h"
 
 /**
  * @brief 设置IO复用功能
@@ -10,12 +11,9 @@
  * @param pin
  * @param mux
  */
-void gpio_set_mux(gpio_port_t port, gpio_pin_t pin, gpio_mux_t mux)
-{
-    for (uint8_t i = 0; i < 16; i++)
-    {
-        if (pin & 0x01)
-        {
+void gpio_set_mux(gpio_port_t port, gpio_pin_t pin, gpio_mux_t mux) {
+    for (uint8_t i = 0; i < 16; i++) {
+        if (pin & 0x01) {
             REG_OFFSET(M0P_GPIO->PA00_SEL, port + (4 * i)) = mux;
         }
         pin >>= 1;
@@ -29,14 +27,10 @@ void gpio_set_mux(gpio_port_t port, gpio_pin_t pin, gpio_mux_t mux)
  * @param pin
  * @param flag
  */
-void gpio_enable_powerful(gpio_port_t port, gpio_pin_t pin, bool flag)
-{
-    if (flag)
-    {
+void gpio_enable_powerful(gpio_port_t port, gpio_pin_t pin, bool flag) {
+    if (flag) {
         CLR_BITS(REG_OFFSET(M0P_GPIO->PADR, port), pin);
-    }
-    else
-    {
+    } else {
         SET_BITS(REG_OFFSET(M0P_GPIO->PADR, port), pin);
     }
 }
@@ -48,14 +42,10 @@ void gpio_enable_powerful(gpio_port_t port, gpio_pin_t pin, bool flag)
  * @param pin
  * @param flag
  */
-void gpio_enable_output(gpio_port_t port, gpio_pin_t pin, bool flag)
-{
-    if (flag)
-    {
+void gpio_enable_output(gpio_port_t port, gpio_pin_t pin, bool flag) {
+    if (flag) {
         CLR_BITS(REG_OFFSET(M0P_GPIO->PADIR, port), pin);
-    }
-    else
-    {
+    } else {
         SET_BITS(REG_OFFSET(M0P_GPIO->PADIR, port), pin);
     }
 }
@@ -67,14 +57,10 @@ void gpio_enable_output(gpio_port_t port, gpio_pin_t pin, bool flag)
  * @param pin
  * @param flag
  */
-void gpio_enable_analog(gpio_port_t port, gpio_pin_t pin, bool flag)
-{
-    if (flag)
-    {
+void gpio_enable_analog(gpio_port_t port, gpio_pin_t pin, bool flag) {
+    if (flag) {
         SET_BITS(REG_OFFSET(M0P_GPIO->PAADS, port), pin);
-    }
-    else
-    {
+    } else {
         CLR_BITS(REG_OFFSET(M0P_GPIO->PAADS, port), pin);
     }
 }
@@ -86,14 +72,10 @@ void gpio_enable_analog(gpio_port_t port, gpio_pin_t pin, bool flag)
  * @param pin
  * @param flag
  */
-void gpio_enable_pullup(gpio_port_t port, gpio_pin_t pin, bool flag)
-{
-    if (flag)
-    {
+void gpio_enable_pullup(gpio_port_t port, gpio_pin_t pin, bool flag) {
+    if (flag) {
         SET_BITS(REG_OFFSET(M0P_GPIO->PAPU, port), pin);
-    }
-    else
-    {
+    } else {
         CLR_BITS(REG_OFFSET(M0P_GPIO->PAPU, port), pin);
     }
 }
@@ -105,14 +87,10 @@ void gpio_enable_pullup(gpio_port_t port, gpio_pin_t pin, bool flag)
  * @param pin
  * @param flag
  */
-void gpio_enable_pulldown(gpio_port_t port, gpio_pin_t pin, bool flag)
-{
-    if (flag)
-    {
+void gpio_enable_pulldown(gpio_port_t port, gpio_pin_t pin, bool flag) {
+    if (flag) {
         SET_BITS(REG_OFFSET(M0P_GPIO->PAPD, port), pin);
-    }
-    else
-    {
+    } else {
         CLR_BITS(REG_OFFSET(M0P_GPIO->PAPD, port), pin);
     }
 }
@@ -124,14 +102,10 @@ void gpio_enable_pulldown(gpio_port_t port, gpio_pin_t pin, bool flag)
  * @param pin
  * @param flag
  */
-void gpio_enable_od(gpio_port_t port, gpio_pin_t pin, bool flag)
-{
-    if (flag)
-    {
+void gpio_enable_od(gpio_port_t port, gpio_pin_t pin, bool flag) {
+    if (flag) {
         SET_BITS(REG_OFFSET(M0P_GPIO->PAOD, port), pin);
-    }
-    else
-    {
+    } else {
         CLR_BITS(REG_OFFSET(M0P_GPIO->PAOD, port), pin);
     }
 }
@@ -143,14 +117,10 @@ void gpio_enable_od(gpio_port_t port, gpio_pin_t pin, bool flag)
  * @param pin
  * @param flag
  */
-void gpio_write_pin(gpio_port_t port, gpio_pin_t pin, bool flag)
-{
-    if (flag)
-    {
+void gpio_write_pin(gpio_port_t port, gpio_pin_t pin, bool flag) {
+    if (flag) {
         REG_OFFSET(M0P_GPIO->PABSET, port) = pin;
-    }
-    else
-    {
+    } else {
         REG_OFFSET(M0P_GPIO->PABCLR, port) = pin;
     }
 }
@@ -161,8 +131,7 @@ void gpio_write_pin(gpio_port_t port, gpio_pin_t pin, bool flag)
  * @param port
  * @param pin
  */
-void gpio_set_pin(gpio_port_t port, gpio_pin_t pin)
-{
+void gpio_set_pin(gpio_port_t port, gpio_pin_t pin) {
     REG_OFFSET(M0P_GPIO->PABSET, port) = pin;
 }
 
@@ -172,8 +141,7 @@ void gpio_set_pin(gpio_port_t port, gpio_pin_t pin)
  * @param port
  * @param pin
  */
-void gpio_clear_pin(gpio_port_t port, gpio_pin_t pin)
-{
+void gpio_clear_pin(gpio_port_t port, gpio_pin_t pin) {
     REG_OFFSET(M0P_GPIO->PABCLR, port) = pin;
 }
 
@@ -183,7 +151,6 @@ void gpio_clear_pin(gpio_port_t port, gpio_pin_t pin)
  * @param port
  * @param pin
  */
-bool gpio_read_pin(gpio_port_t port, gpio_pin_t pin)
-{
+bool gpio_read_pin(gpio_port_t port, gpio_pin_t pin) {
     return ((REG_OFFSET(M0P_GPIO->PAIN, port) & pin) > 0);
 }

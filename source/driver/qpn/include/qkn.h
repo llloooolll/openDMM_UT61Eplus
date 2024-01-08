@@ -42,8 +42,7 @@
 
 /****************************************************************************/
 /*! attributes of the QK kernel */
-typedef struct
-{
+typedef struct {
     uint8_t volatile actPrio;    /*!< prio of the active AO */
     uint8_t volatile nextPrio;   /*!< prio of the next AO to execute */
     uint8_t volatile lockPrio;   /*!< lock prio (0 == no-lock) */
@@ -64,25 +63,20 @@ uint_fast8_t QK_sched_(void);
 void QK_activate_(void);
 
 #ifndef QF_ISR_NEST
-#define QK_SCHEDULE_()         \
-    do                         \
-    {                          \
-        if (QK_sched_() != 0U) \
-        {                      \
-            QK_activate_();    \
-        }                      \
+#define QK_SCHEDULE_()           \
+    do {                         \
+        if (QK_sched_() != 0U) { \
+            QK_activate_();      \
+        }                        \
     } while (false)
 #else
 /*! The macro to invoke the QK scheduler in the QK_ISR_EXIT() */
-#define QK_SCHEDULE_()          \
-    if (QK_attr_.intNest == 0U) \
-    {                           \
-        if (QK_sched_() != 0U)  \
-        {                       \
-            QK_activate_();     \
-        }                       \
-    }                           \
-    else                        \
+#define QK_SCHEDULE_()            \
+    if (QK_attr_.intNest == 0U) { \
+        if (QK_sched_() != 0U) {  \
+            QK_activate_();       \
+        }                         \
+    } else                        \
         ((void)0)
 
 #endif

@@ -31,14 +31,14 @@
  * <www.state-machine.com/licensing>
  * <info@state-machine.com>
  *****************************************************************************/
-#include "qpn.h"
-#include "blinky.h"
 #include "bsp.h"
 
-#include "hc32l13x.h"
-#include "sysctrl.h"
+#include "blinky.h"
 #include "gpio.h"
+#include "hc32l13x.h"
 #include "io_config.h"
+#include "qpn.h"
+#include "sysctrl.h"
 /* add other drivers if necessary... */
 
 // Q_DEFINE_THIS_FILE
@@ -47,22 +47,21 @@
  * Assign a priority to EVERY ISR explicitly by calling NVIC_SetPriority().
  * DO NOT LEAVE THE ISR PRIORITIES AT THE DEFAULT VALUE!
  */
-enum KernelUnawareISRs
-{ /* see NOTE00 */
-  /* ... */
-  MAX_KERNEL_UNAWARE_CMSIS_PRI /* keep always last */
+enum KernelUnawareISRs { /* see NOTE00 */
+                         /* ... */
+                         MAX_KERNEL_UNAWARE_CMSIS_PRI /* keep always last */
 };
 /* "kernel-unaware" interrupts can't overlap "kernel-aware" interrupts */
 Q_ASSERT_COMPILE(MAX_KERNEL_UNAWARE_CMSIS_PRI <= QF_AWARE_ISR_CMSIS_PRI);
 
-enum KernelAwareISRs
-{
+enum KernelAwareISRs {
     SYSTICK_PRIO = QF_AWARE_ISR_CMSIS_PRI, /* see NOTE00 */
     /* ... */
     MAX_KERNEL_AWARE_CMSIS_PRI /* keep always last */
 };
 /* "kernel-aware" interrupts should not overlap the PendSV priority */
-Q_ASSERT_COMPILE(MAX_KERNEL_AWARE_CMSIS_PRI <= (0xFF >> (8 - __NVIC_PRIO_BITS)));
+Q_ASSERT_COMPILE(MAX_KERNEL_AWARE_CMSIS_PRI <=
+                 (0xFF >> (8 - __NVIC_PRIO_BITS)));
 
 /* ISRs defined in this BSP ------------------------------------------------*/
 void SysTick_Handler(void);
@@ -70,14 +69,12 @@ void SysTick_Handler(void);
 /* Local-scope objects -----------------------------------------------------*/
 
 /* ISRs used in this project ===============================================*/
-void SysTick_Handler(void)
-{
+void SysTick_Handler(void) {
     QF_tickXISR(0U); /* process time events for rate 0 */
 }
 
 /* BSP functions ===========================================================*/
-void BSP_init(void)
-{
+void BSP_init(void) {
     sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_gpio, 1);
     sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_tick, 1);
     /* NOTE: SystemInit() already called from the startup code
@@ -89,19 +86,12 @@ void BSP_init(void)
     gpio_set_pin(LED_GREEN_ENB_PORT, LED_GREEN_ENB_PIN);
 }
 /*..........................................................................*/
-void BSP_ledOff(void)
-{
-    gpio_set_pin(LED_GREEN_ENB_PORT, LED_GREEN_ENB_PIN);
-}
+void BSP_ledOff(void) { gpio_set_pin(LED_GREEN_ENB_PORT, LED_GREEN_ENB_PIN); }
 /*..........................................................................*/
-void BSP_ledOn(void)
-{
-    gpio_clear_pin(LED_GREEN_ENB_PORT, LED_GREEN_ENB_PIN);
-}
+void BSP_ledOn(void) { gpio_clear_pin(LED_GREEN_ENB_PORT, LED_GREEN_ENB_PIN); }
 
 /* QF callbacks ============================================================*/
-void QF_onStartup(void)
-{
+void QF_onStartup(void) {
     /* set up the SysTick timer to fire at BSP_TICKS_PER_SEC rate */
     SysTick_Config(SystemCoreClock / BSP_TICKS_PER_SEC);
 
@@ -120,8 +110,7 @@ void QF_onStartup(void)
     /* enable IRQs... */
 }
 /*..........................................................................*/
-void QV_onIdle(void)
-{ /* CATION: called with interrupts DISABLED, NOTE01 */
+void QV_onIdle(void) { /* CATION: called with interrupts DISABLED, NOTE01 */
 
 #ifdef NDEBUG
     /* Put the CPU and peripherals to the low-power mode.
@@ -135,8 +124,7 @@ void QV_onIdle(void)
 }
 
 /*..........................................................................*/
-Q_NORETURN Q_onAssert(char const Q_ROM *const module, int loc)
-{
+Q_NORETURN Q_onAssert(char const Q_ROM *const module, int loc) {
     /*
      * NOTE: add here your application-specific error handling
      */

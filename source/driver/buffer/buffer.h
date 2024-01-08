@@ -3,8 +3,7 @@
 
 #include <stdint.h>
 
-typedef struct _buffer_t
-{
+typedef struct _buffer_t {
     uint8_t *buffer_pointer;
     uint32_t buffer_size;
     uint32_t buffer_put;

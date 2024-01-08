@@ -81,8 +81,7 @@ typedef uint32_t QTimeEvtCtr;
 
 #if (QF_TIMEEVT_CTR_SIZE != 0U)
 /*! Timer structure the active objects */
-typedef struct
-{
+typedef struct {
     QTimeEvtCtr nTicks; /*!< timer tick counter */
 #ifdef QF_TIMEEVT_PERIODIC
     QTimeEvtCtr interval; /*!< timer interval */
@@ -120,8 +119,7 @@ typedef struct
  * the __first__ member of the derived struct.
  * @include qfn_qactive.c
  */
-typedef struct QActive
-{
+typedef struct QActive {
     QHsm super; /**< derives from the ::QHsm base class */
 
 #if (QF_TIMEEVT_CTR_SIZE != 0U)
@@ -148,8 +146,7 @@ typedef struct QActive
 /*! Virtual table for the QActive class
  * @extends QHsmVtable
  */
-typedef struct
-{
+typedef struct {
     QHsmVtable super; /*!< inherits QHsmVtable */
 
 #if (Q_PARAM_SIZE != 0U)
@@ -157,8 +154,8 @@ typedef struct
      * (task context).
      */
     /** @sa QACTIVE_POST() and QACTIVE_POST_X() */
-    bool (*post)(QActive *const me, uint_fast8_t const margin,
-                 enum_t const sig, QParam const par);
+    bool (*post)(QActive *const me, uint_fast8_t const margin, enum_t const sig,
+                 QParam const par);
 
     /*! virtual function to asynchronously post (FIFO) an event to an AO
      * (ISR context).
@@ -201,8 +198,7 @@ void QActive_ctor(QActive *const me, QStateHandler initial);
  * @include qfn_post.c
  */
 #define QACTIVE_POST(me_, sig_, par_)                               \
-    do                                                              \
-    {                                                               \
+    do {                                                            \
         QActive *const ao_ = QF_ACTIVE_CAST((me_));                 \
         ((void)(*((QActiveVtable const *)(ao_->super.vptr))->post)( \
             ao_, QF_NO_MARGIN, (enum_t)(sig_), (QParam)(par_)));    \
@@ -232,8 +228,7 @@ void QActive_ctor(QActive *const me, QStateHandler initial);
  * @include qfn_postx.c
  */
 #define QACTIVE_POST_X(me_, margin_, sig_, par_)                \
-    do                                                          \
-    {                                                           \
+    do {                                                        \
         QActive *const ao_ = QF_ACTIVE_CAST((me_));             \
         ((*((QActiveVtable const *)((ao_)->super.vptr))->post)( \
             (ao_), (margin_), (enum_t)(sig_), (QParam)(par_))); \
@@ -256,8 +251,7 @@ void QActive_ctor(QActive *const me, QStateHandler initial);
  * @include qfn_post.c
  */
 #define QACTIVE_POST_ISR(me_, sig_, par_)                              \
-    do                                                                 \
-    {                                                                  \
+    do {                                                               \
         QActive *const ao_ = QF_ACTIVE_CAST((me_));                    \
         ((void)(*((QActiveVtable const *)(ao_->super.vptr))->postISR)( \
             ao_, QF_NO_MARGIN, (enum_t)(sig_), (QParam)(par_)));       \
@@ -288,41 +282,37 @@ void QActive_ctor(QActive *const me, QStateHandler initial);
  */
 #define QACTIVE_POST_X_ISR(me_, margin_, sig_, par_)                           \
     ((*((QActiveVtable const *)(QF_ACTIVE_CAST((me_))->super.vptr))->postISR)( \
-        QF_ACTIVE_CAST((me_)), (margin_),                                      \
-        (enum_t)(sig_), (QParam)(par_)))
+        QF_ACTIVE_CAST((me_)), (margin_), (enum_t)(sig_), (QParam)(par_)))
 
 /*! Implementation of the task-level event posting
  * @private @memberof QActive
  */
-bool QActive_postX_(QActive *const me, uint_fast8_t margin,
-                    enum_t const sig, QParam const par);
+bool QActive_postX_(QActive *const me, uint_fast8_t margin, enum_t const sig,
+                    QParam const par);
 
 /*! Implementation of the ISR-level event posting
  * @private @memberof QActive
  */
-bool QActive_postXISR_(QActive *const me, uint_fast8_t margin,
-                       enum_t const sig, QParam const par);
+bool QActive_postXISR_(QActive *const me, uint_fast8_t margin, enum_t const sig,
+                       QParam const par);
 
 #else /* no event parameter */
 
 #define QACTIVE_POST(me_, sig_)                                     \
-    do                                                              \
-    {                                                               \
+    do {                                                            \
         QActive *const ao_ = QF_ACTIVE_CAST((me_));                 \
         ((void)(*((QActiveVtable const *)(ao_->super.vptr))->post)( \
             ao_, QF_NO_MARGIN, (enum_t)(sig_)));                    \
     } while (false)
 
-#define QACTIVE_POST_X(me_, margin_, sig_)                        \
-    ((*((QActiveVtable const *)((me_)->super.vptr))->post)((me_), \
-                                                           (margin_), (sig_)))
+#define QACTIVE_POST_X(me_, margin_, sig_)                                   \
+    ((*((QActiveVtable const *)((me_)->super.vptr))->post)((me_), (margin_), \
+                                                           (sig_)))
 
-bool QActive_postX_(QActive *const me, uint_fast8_t margin,
-                    enum_t const sig);
+bool QActive_postX_(QActive *const me, uint_fast8_t margin, enum_t const sig);
 
 #define QACTIVE_POST_ISR(me_, sig_)                                    \
-    do                                                                 \
-    {                                                                  \
+    do {                                                               \
         QActive *const ao_ = QF_ACTIVE_CAST((me_));                    \
         ((void)(*((QActiveVtable const *)(ao_->super.vptr))->postISR)( \
             ao_, QF_NO_MARGIN, (enum_t)(sig_)));                       \
@@ -404,15 +394,15 @@ int_t QF_run(void);
  * ::QActive control blocks in the array QF_active[].
  * @include qfn_main.c
  */
-typedef struct
-{
+typedef struct {
     QActive *act; /*!< pointer to the active object structure */
     QEvt *queue;  /*!< pointer to the event queue buffer */
     uint8_t qlen; /*!< the length of the queue ring buffer */
 } QActiveCB;
 
 /** active object control blocks */
-/*lint -save -e9067 MISRA-C:2012 Rule 8.11, extern array declared without size */
+/*lint -save -e9067 MISRA-C:2012 Rule 8.11, extern array declared without size
+ */
 extern QActiveCB const Q_ROM QF_active[];
 /*lint -restore */
 

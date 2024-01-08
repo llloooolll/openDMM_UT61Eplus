@@ -1,7 +1,8 @@
 #include "key_button.h"
+
+#include "ao_meter.h"
 #include "gpio.h"
 #include "io_config.h"
-#include "ao_meter.h"
 #include "ulog.h"
 
 static struct Button button_select;
@@ -11,8 +12,7 @@ static struct Button button_rel;
 static struct Button button_peak;
 static struct Button button_hold;
 
-static void key_gpio_init(void)
-{
+static void key_gpio_init(void) {
     gpio_enable_output(KNOB_CH1_PORT, KNOB_CH1_PIN, 0);
     gpio_enable_output(KNOB_CH2_PORT, KNOB_CH2_PIN, 0);
     gpio_enable_output(KNOB_CH3_PORT, KNOB_CH3_PIN, 0);
@@ -36,43 +36,40 @@ static void key_gpio_init(void)
     gpio_enable_pullup(KEY_HOLD_PORT, KEY_HOLD_PIN, 1);
 }
 
-static uint8_t key_read_button(uint8_t button_id)
-{
-    switch (button_id)
-    {
-    case button_select_id:
-        return gpio_read_pin(KEY_SELECT_PORT, KEY_SELECT_PIN);
-        break;
-    case button_range_id:
-        return gpio_read_pin(KEY_RANGE_PORT, KEY_RANGE_PIN);
-        break;
-    case button_hz_id:
-        return gpio_read_pin(KEY_HZ_PORT, KEY_HZ_PIN);
-        break;
-    case button_rel_id:
-        return gpio_read_pin(KEY_REL_PORT, KEY_REL_PIN);
-        break;
-    case button_peak_id:
-        return gpio_read_pin(KEY_PEAK_PORT, KEY_PEAK_PIN);
-        break;
-    case button_hold_id:
-        return gpio_read_pin(KEY_HOLD_PORT, KEY_HOLD_PIN);
-        break;
+static uint8_t key_read_button(uint8_t button_id) {
+    switch (button_id) {
+        case button_select_id:
+            return gpio_read_pin(KEY_SELECT_PORT, KEY_SELECT_PIN);
+            break;
+        case button_range_id:
+            return gpio_read_pin(KEY_RANGE_PORT, KEY_RANGE_PIN);
+            break;
+        case button_hz_id:
+            return gpio_read_pin(KEY_HZ_PORT, KEY_HZ_PIN);
+            break;
+        case button_rel_id:
+            return gpio_read_pin(KEY_REL_PORT, KEY_REL_PIN);
+            break;
+        case button_peak_id:
+            return gpio_read_pin(KEY_PEAK_PORT, KEY_PEAK_PIN);
+            break;
+        case button_hold_id:
+            return gpio_read_pin(KEY_HOLD_PORT, KEY_HOLD_PIN);
+            break;
 
-    default:
-        return 1;
-        break;
+        default:
+            return 1;
+            break;
     }
 }
 
-void key_button_call_back(void *btn)
-{
+void key_button_call_back(void *btn) {
     QACTIVE_POST((QActive *)&ao_meter, AO_METER_KEY_SIG,
-                 (((uint32_t)((Button *)btn)->button_id) << 4) | (((Button *)btn)->event));
+                 (((uint32_t)((Button *)btn)->button_id) << 4) |
+                     (((Button *)btn)->event));
 }
 
-void key_init(void)
-{
+void key_init(void) {
     key_gpio_init();
 
     button_init(&button_select, key_read_button, 0, button_select_id);

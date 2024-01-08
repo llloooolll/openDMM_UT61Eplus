@@ -54,8 +54,7 @@
 
 /* macro to put the CPU to sleep inside QV_onIdle() */
 #define QV_CPU_SLEEP()         \
-    do                         \
-    {                          \
+    do {                       \
         __asm volatile("wfi"); \
         QF_INT_ENABLE();       \
     } while (false)
@@ -78,8 +77,7 @@
 
 /* macro to put the CPU to sleep inside QV_onIdle() */
 #define QV_CPU_SLEEP()         \
-    do                         \
-    {                          \
+    do {                       \
         QF_PRIMASK_DISABLE();  \
         QF_INT_ENABLE();       \
         __asm volatile("wfi"); \
@@ -90,8 +88,8 @@
 #define QF_LOG2(n_) ((uint_fast8_t)(32U - __builtin_clz(n_)))
 
 /* macro for setting the BASEPRI register */
-#define QF_SET_BASEPRI(basepri_) __asm volatile( \
-    "msr BASEPRI,%0" ::"r"(basepri_) :)
+#define QF_SET_BASEPRI(basepri_) \
+    __asm volatile("msr BASEPRI,%0" ::"r"(basepri_) :)
 
 /* initialization of the QV kernel for Cortex-M3/M4 */
 #define QV_INIT() QV_init()
@@ -101,8 +99,8 @@ void QV_init(void);
 /* interrupt nesting policy for ISR level (ISRs can nest) */
 #define QF_ISR_NEST
 
-#include <stdint.h>  /* Exact-width types. WG14/N843 C99 Standard */
 #include <stdbool.h> /* Boolean type.      WG14/N843 C99 Standard */
+#include <stdint.h>  /* Exact-width types. WG14/N843 C99 Standard */
 
 #include "qepn.h" /* QEP-nano platform-independent public interface */
 #include "qfn.h"  /* QF-nano platform-independent public interface */

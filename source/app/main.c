@@ -1,13 +1,13 @@
-#include "qpn.h"
-#include "binary.h"
-#include "bsp.h"
-#include "lcd_pixel.h"
-#include "es232.h"
-#include "ao_meter.h"
-#include "ao_lcd.h"
 #include "ao_es232.h"
 #include "ao_irda.h"
 #include "ao_key.h"
+#include "ao_lcd.h"
+#include "ao_meter.h"
+#include "binary.h"
+#include "bsp.h"
+#include "es232.h"
+#include "lcd_pixel.h"
+#include "qpn.h"
 
 static QEvt l_meter_queue[16];
 static QEvt l_lcd_queue[16];
@@ -24,8 +24,7 @@ QActiveCB const Q_ROM QF_active[] = {
     {(QActive *)&ao_key, l_key_queue, Q_DIM(l_key_queue)},
 };
 
-int main(void)
-{
+int main(void) {
     ao_meter_ctor();
     ao_es232_ctor();
     ao_lcd_ctor();
@@ -35,5 +34,5 @@ int main(void)
     QF_init(Q_DIM(QF_active));
     bsp_init();
 
-    return QF_run(); // 开始调度
+    return QF_run();  // 开始调度
 }

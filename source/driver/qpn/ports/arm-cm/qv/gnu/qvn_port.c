@@ -61,8 +61,7 @@
  * The interrupt priorities established in QV_init() can be later
  * changed by the application-level code.
  */
-void QV_init(void)
-{
+void QV_init(void) {
     uint32_t n;
 
     /* set exception priorities to QF_BASEPRI...
@@ -78,10 +77,10 @@ void QV_init(void)
 
     /* set all implemented IRQ priories to QF_BASEPRI... */
     n = 8U + ((*SCnSCB_ICTR & 0x7U) << 3); /* (# NVIC_PRIO registers)/4 */
-    do
-    {
+    do {
         --n;
-        NVIC_IP[n] = (QF_BASEPRI << 24) | (QF_BASEPRI << 16) | (QF_BASEPRI << 8) | QF_BASEPRI;
+        NVIC_IP[n] = (QF_BASEPRI << 24) | (QF_BASEPRI << 16) |
+                     (QF_BASEPRI << 8) | QF_BASEPRI;
     } while (n != 0);
 }
 

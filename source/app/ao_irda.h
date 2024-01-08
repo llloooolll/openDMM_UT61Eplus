@@ -3,16 +3,14 @@
 
 #include "qpn.h"
 
-typedef enum _ao_irda_signal_t
-{
-    AO_IRDA_READY_SIG = Q_USER_SIG, // 初始化
+typedef enum _ao_irda_signal_t {
+    AO_IRDA_READY_SIG = Q_USER_SIG,  // 初始化
     AO_IRDA_ACTIVE_SIG,
 
     AO_IRDA_MAX_SIG
 } ao_irda_signal_t;
 
-typedef struct _ao_irda_t
-{
+typedef struct _ao_irda_t {
     QActive super;
 } ao_irda_t;
 

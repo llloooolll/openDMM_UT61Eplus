@@ -4,8 +4,7 @@
 #include "hc32l13x.h"
 #include "multi_button.h"
 
-enum
-{
+enum {
     button_select_id,
     button_range_id,
     button_hz_id,

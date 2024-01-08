@@ -127,8 +127,7 @@ typedef uint64_t QParam;
  * @sa Q_PARAM_SIZE
  * @sa ::QParam
  */
-typedef struct
-{
+typedef struct {
     QSignal sig; /*!< signal of the event */
 #if (Q_PARAM_SIZE != 0U)
     QParam par; /*!< scalar parameter of the event */
@@ -180,17 +179,15 @@ typedef struct QHsmVtable QHsmVtable;
  *
  * @sa @ref oop
  */
-typedef struct
-{
+typedef struct {
     QHsmVtable const *vptr; /*!< virtual pointer */
     QStateHandler state;    /*!< current active state (state-variable) */
     QStateHandler temp;     /*!< temporary: tran. chain, target state, etc. */
-    QEvt evt;               /*!< currently processed event in the HSM (protected) */
+    QEvt evt; /*!< currently processed event in the HSM (protected) */
 } QHsm;
 
 /*! Virtual table for the QHsm class */
-struct QHsmVtable
-{
+struct QHsmVtable {
     /*! Triggers the top-most initial transition in a HSM. */
     void (*init)(QHsm *const me);
 
@@ -210,8 +207,7 @@ struct QHsmVtable
  * @include qepn_qhsm_use.c
  */
 #define QHSM_INIT(me_)               \
-    do                               \
-    {                                \
+    do {                             \
         Q_ASSERT((me_)->vptr);       \
         (*(me_)->vptr->init)((me_)); \
     } while (false)
@@ -254,8 +250,7 @@ void QHsm_ctor(QHsm *const me, QStateHandler initial);
     QHsm_childState_(Q_HSM_UPCAST(me_), Q_STATE_CAST(parent_))
 
 /*! Helper function to obtain the current active child state of a parent */
-QStateHandler QHsm_childState_(QHsm *const me,
-                               QStateHandler const parent);
+QStateHandler QHsm_childState_(QHsm *const me, QStateHandler const parent);
 
 /*! Implementation of the top-most initial transition in QHsm.
  * @private @memberof QHsm

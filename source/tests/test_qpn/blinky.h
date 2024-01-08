@@ -34,8 +34,9 @@
 #ifndef BLINKY_H
 #define BLINKY_H
 
-enum BlinkySignals
-{
+#include "qpn.h"
+
+enum BlinkySignals {
     DUMMY_SIG = Q_USER_SIG,
     MAX_PUB_SIG, /* the last published signal */
 

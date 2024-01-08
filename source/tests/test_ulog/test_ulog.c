@@ -1,11 +1,10 @@
 #include "hc32l13x.h"
-#include "sysctrl.h"
-#include "irda.h"
-#include "ulog.h"
 #include "io_config.h"
+#include "irda.h"
+#include "sysctrl.h"
+#include "ulog.h"
 
-int main(void)
-{
+int main(void) {
     sysctrl_set_rch_trim(sysctrl_rch_freq_24M);
     sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_gpio, 1);
 
@@ -35,8 +34,7 @@ int main(void)
     ULOG_WARN("level = user\n");
     ULOG_DEBUG("level = user\n");
 
-    while (1)
-    {
+    while (1) {
     }
     return 0;
 }
