@@ -97,6 +97,8 @@ static QState ao_es232_active(ao_es232_t *const me) {
                 // ULOG_DEBUG("ADC done\n");
                 QACTIVE_POST_X(&ao_meter, 4U, AO_METER_ADC_DONE_SIG,
                                (uint32_t)&me->es232_read_buffer);
+            } else {
+                es232_peek();
             }
             QActive_armX((QActive *)me, 0U, me->es232_read_interval_time, 0U);
             status = Q_HANDLED();

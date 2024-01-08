@@ -17,7 +17,7 @@ static int32_t meter_help_om_buz_cal(ao_meter_t *const me, int32_t value);
  */
 void meter_om_buz_lcd_init(ao_meter_t *const me) {
     lcd_set_ol_threshold(30000);
-    me->lcd_pixel_buffer.ohm = 1;     // 欧姆
+    me->lcd_pixel_buffer.ohm = 1;     // 单位欧姆
     me->lcd_pixel_buffer.buzzer = 1;  // 蜂鸣
 }
 

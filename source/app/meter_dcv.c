@@ -13,9 +13,9 @@ static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value);
  */
 void meter_dcv_lcd_init(ao_meter_t *const me) {
     lcd_set_ol_threshold(30000);
-    me->lcd_pixel_buffer.dc = 1;          // 直流
-    me->lcd_pixel_buffer.volt = 1;        // 电压
-    me->lcd_pixel_buffer.range_auto = 1;  // 自动档位
+    me->lcd_pixel_buffer.dc = 1;          // 直流档
+    me->lcd_pixel_buffer.volt = 1;        // 单位伏特
+    me->lcd_pixel_buffer.range_auto = 1;  // 自动档
 
     me->es232_range_value_max = 30000;  // 最大
     me->es232_range_value_min = 2900;   // 最小

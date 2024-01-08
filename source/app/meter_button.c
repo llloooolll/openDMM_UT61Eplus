@@ -60,7 +60,7 @@ void meter_button_call_back(void *btn) {
     QACTIVE_POST((QActive *)&ao_meter, AO_METER_KEY_SIG,
                  (((uint32_t)((Button *)btn)->button_id) << 4) |
                      (((Button *)btn)->event));
-    QACTIVE_POST((QActive *)&ao_es232, AO_ES232_ENABLE_BUZ_SIG, 30);
+    QACTIVE_POST((QActive *)&ao_es232, AO_ES232_ENABLE_BUZ_SIG, 100);
 }
 
 void meter_button_init(void) {

@@ -130,7 +130,7 @@ int32_t es232_get_D1(es232_read_t *es232_read_temp) {
 /**
  * @brief 检测转换数据可用
  *
- * @return true
+ * @return true 可用
  * @return false
  */
 bool es232_is_data_ready(void) {
@@ -143,3 +143,14 @@ bool es232_is_data_ready(void) {
  * @param flag
  */
 void es232_enable_buz(bool flag) { es232_buz_enable = (flag) ? 0x02 : 0x00; }
+
+/**
+ * @brief 消除转换完成标志
+ *
+ * @param es232_read
+ */
+void es232_peek(void) {
+    si2c_init(&es232_si2c_pin);
+    si2c_trans_begin(ES232_I2C_ADDR | es232_buz_enable);
+    si2c_trans_end();
+}

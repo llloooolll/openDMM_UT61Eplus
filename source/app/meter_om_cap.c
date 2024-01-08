@@ -19,8 +19,8 @@ void meter_om_cap_lcd_init(ao_meter_t *const me) {
     lcd_set_ol_threshold(30000);
     me->es232_range_delay_cycle = 0;  // 电容档FADC不工作，每个结果都是准的
 
-    me->lcd_pixel_buffer.farad = 1;       // 法拉
-    me->lcd_pixel_buffer.range_auto = 1;  // 自动档位
+    me->lcd_pixel_buffer.farad = 1;       // 单位法拉
+    me->lcd_pixel_buffer.range_auto = 1;  // 自动档
 
     me->es232_range_value_max = 30000;  // 最大
     me->es232_range_value_min = 2900;   // 最小

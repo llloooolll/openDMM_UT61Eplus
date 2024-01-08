@@ -77,8 +77,9 @@ static QState ao_lcd_active(ao_lcd_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
         case Q_ENTRY_SIG:
-            lcd_enable(1);
+            memset(&me->lcd_pixel_buffer, 0xFF, sizeof(lcd_pixel_t));
             QACTIVE_POST(me, AO_LCD_REFRESH_SIG, &me->lcd_pixel_buffer);
+            lcd_enable(1);
             status = Q_HANDLED();
             break;
         case AO_LCD_REFRESH_SIG:  // 刷新

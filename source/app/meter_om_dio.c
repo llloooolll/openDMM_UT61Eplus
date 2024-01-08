@@ -17,7 +17,7 @@ static int32_t meter_help_om_dio_cal(ao_meter_t *const me, int32_t value);
  */
 void meter_om_dio_lcd_init(ao_meter_t *const me) {
     lcd_set_ol_threshold(25000);
-    me->lcd_pixel_buffer.volt = 1;   // 伏特
+    me->lcd_pixel_buffer.volt = 1;   // 单位伏特
     me->lcd_pixel_buffer.diode = 1;  // 二极管档
 }
 
