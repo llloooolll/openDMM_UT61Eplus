@@ -37,9 +37,7 @@
  ******************************************************************************
  * @endcond
  */
-#include "qpn_conf.h" /* QP-nano configuration file (from the application) */
 #include "qfn_port.h" /* QF-nano port from the port directory */
-#include "qassert.h"  /* embedded systems-friendly assertions */
 
 Q_DEFINE_THIS_MODULE("qvn")
 
@@ -61,8 +59,7 @@ Q_DEFINE_THIS_MODULE("qvn")
  * success). Typically the value returned from QF_run() is subsequently
  * passed on as return from main().
  */
-int_t QF_run(void)
-{
+int_t QF_run(void) {
     uint_fast8_t p;
     QActive *a;
 
@@ -79,8 +76,7 @@ int_t QF_run(void)
 #endif
 
     /* set priorities all registered active objects... */
-    for (p = 1U; p <= QF_maxActive_; ++p)
-    {
+    for (p = 1U; p <= QF_maxActive_; ++p) {
         a = QF_ROM_ACTIVE_GET_(p);
 
         /* QF_active[p] must be initialized */
@@ -90,8 +86,7 @@ int_t QF_run(void)
     }
 
     /* trigger initial transitions in all registered active objects... */
-    for (p = 1U; p <= QF_maxActive_; ++p)
-    {
+    for (p = 1U; p <= QF_maxActive_; ++p) {
         a = QF_ROM_ACTIVE_GET_(p);
         QHSM_INIT(&a->super); /* take the initial transition in the SM */
     }
@@ -100,22 +95,18 @@ int_t QF_run(void)
 
     /* the event loop of the cooperative QV-nano kernel... */
     QF_INT_DISABLE();
-    for (;;)
-    {
-        if (QF_readySet_ != 0U)
-        {
+    for (;;) {
+        if (QF_readySet_ != 0U) {
             QActiveCB const Q_ROM *acb;
 
 #ifdef QF_LOG2
             p = QF_LOG2(QF_readySet_);
 #else
             /* hi nibble non-zero? */
-            if ((QF_readySet_ & 0xF0U) != 0U)
-            {
-                p = (uint_fast8_t)Q_ROM_BYTE(QF_log2Lkup[QF_readySet_ >> 4]) + 4U;
-            }
-            else
-            { /* hi nibble of QF_readySet_ is zero */
+            if ((QF_readySet_ & 0xF0U) != 0U) {
+                p = (uint_fast8_t)Q_ROM_BYTE(QF_log2Lkup[QF_readySet_ >> 4]) +
+                    4U;
+            } else { /* hi nibble of QF_readySet_ is zero */
                 p = (uint_fast8_t)Q_ROM_BYTE(QF_log2Lkup[QF_readySet_]);
             }
 #endif /* QF_LOG2 */
@@ -131,8 +122,7 @@ int_t QF_run(void)
 #if (Q_PARAM_SIZE != 0U)
             Q_PAR(a) = QF_ROM_QUEUE_AT_(acb, a->tail).par;
 #endif
-            if (a->tail == 0U)
-            { /* wrap around? */
+            if (a->tail == 0U) { /* wrap around? */
                 a->tail = Q_ROM_BYTE(acb->qlen);
             }
             --a->tail;
@@ -142,14 +132,11 @@ int_t QF_run(void)
 
             QF_INT_DISABLE();
             /* empty queue? */
-            if (a->nUsed == 0U)
-            {
+            if (a->nUsed == 0U) {
                 /* clear the bit corresponding to 'p' */
                 QF_readySet_ &= (uint_fast8_t) ~(1U << (p - 1U));
             }
-        }
-        else
-        {
+        } else {
             /* QV_onIdle() must be called with interrupts DISABLED because
              * the determination of the idle condition (no events in the
              * queues) can change at any time by an interrupt posting events

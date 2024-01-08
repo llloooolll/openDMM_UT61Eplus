@@ -9,13 +9,9 @@
 enum KernelAwareISRs {
     SYSTICK_PRIO = QF_AWARE_ISR_CMSIS_PRI,  // tick优先级最高
     UART0_PRIO = QF_AWARE_ISR_CMSIS_PRI + 1U,
-    GPIO_PRIO = QF_AWARE_ISR_CMSIS_PRI + 2U,
     // ...
     MAX_KERNEL_AWARE_CMSIS_PRI
 };
-/* 最低优先级不能比Pend_SV更低 */
-Q_ASSERT_COMPILE(MAX_KERNEL_AWARE_CMSIS_PRI <=
-                 (0xFF >> (8 - __NVIC_PRIO_BITS)));
 
 void SysTick_Handler(void) {
     QF_tickXISR(0U);

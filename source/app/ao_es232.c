@@ -21,7 +21,7 @@ void ao_es232_ctor(void) {
 }
 
 static QState ao_es232_init(ao_es232_t *const me) {
-    me->es232_read_interval_time = 30;
+    me->es232_read_interval_time = 10;
     memset(&me->es232_write_buffer, 0, sizeof(es232_write_t));
     return Q_TRAN(&ao_es232_ready);
 }

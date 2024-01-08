@@ -60,8 +60,7 @@ enum KernelAwareISRs {
     MAX_KERNEL_AWARE_CMSIS_PRI /* keep always last */
 };
 /* "kernel-aware" interrupts should not overlap the PendSV priority */
-Q_ASSERT_COMPILE(MAX_KERNEL_AWARE_CMSIS_PRI <=
-                 (0xFF >> (8 - __NVIC_PRIO_BITS)));
+Q_ASSERT_COMPILE(MAX_KERNEL_AWARE_CMSIS_PRI < (0xFF >> (8 - __NVIC_PRIO_BITS)));
 
 /* ISRs defined in this BSP ------------------------------------------------*/
 void SysTick_Handler(void);

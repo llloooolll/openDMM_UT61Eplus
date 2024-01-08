@@ -29,7 +29,7 @@
         {
             "label": "load",
             "type": "shell",
-            "command": "call ./scripts/shell/load.bat",
+            "command": "call call ./scripts/shell/build.bat all & call ./scripts/shell/load.bat",
             "args": [
                 "./build/${relativeFileDirname}/${fileDirnameBasename}.hex"
             ],

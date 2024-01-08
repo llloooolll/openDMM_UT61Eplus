@@ -39,8 +39,7 @@
 #ifndef QFN_PORT_H
 #define QFN_PORT_H
 
-/* GNU-ARM function attribute for "no-return" function */
-#define Q_NORETURN __attribute__((noreturn)) void
+#include "qassert.h" /* embedded systems-friendly assertions */
 
 /* QF interrupt disable/enable and log2()... */
 #if (__ARM_ARCH == 6) /* Cortex-M0/M0+/M1 ?, see NOTE1 */

@@ -10,10 +10,10 @@ typedef enum _meter_mode_t {
     meter_mode_dcv,
     meter_mode_mv_ac,
     meter_mode_mv_dc,
-    meter_mode_om_om,
-    meter_mode_om_buz,
-    meter_mode_om_dio,
-    meter_mode_om_cap,
+    meter_mode_ohm_ohm,
+    meter_mode_ohm_buz,
+    meter_mode_ohm_dio,
+    meter_mode_ohm_cap,
     meter_mode_hz_freq,
     meter_mode_hz_duty,
     meter_mode_hfe,
@@ -24,6 +24,7 @@ typedef enum _meter_mode_t {
     meter_mode_a_dc,
     meter_mode_a_ac,
     meter_mode_ncv,
+    meter_mode_max,
 } meter_mode_t;
 
 typedef enum _ao_meter_signal_t {

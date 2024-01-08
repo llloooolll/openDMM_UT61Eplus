@@ -37,9 +37,7 @@
  ******************************************************************************
  * @endcond
  */
-#include "qpn_conf.h" /* QP-nano configuration file (from the application) */
 #include "qfn_port.h" /* QF-nano port from the port directory */
-#include "qassert.h"  /* embedded systems-friendly assertions */
 
 Q_DEFINE_THIS_MODULE("qfn")
 
@@ -86,20 +84,17 @@ uint_fast8_t volatile QF_timerSetX_[QF_MAX_TICK_RATE];
 #endif
 
 #ifndef QF_LOG2
-uint8_t const Q_ROM QF_log2Lkup[16] = {
-    0U, 1U, 2U, 2U, 3U, 3U, 3U, 3U,
-    4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U};
+uint8_t const Q_ROM QF_log2Lkup[16] = {0U, 1U, 2U, 2U, 3U, 3U, 3U, 3U,
+                                       4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U};
 #endif /* QF_LOG2 */
 
 /****************************************************************************/
 /**
  * @protected @memberof QActive
  */
-void QActive_ctor(QActive *const me, QStateHandler initial)
-{
+void QActive_ctor(QActive *const me, QStateHandler initial) {
     static QActiveVtable const vtable = {/* QActive virtual table */
-                                         {&QHsm_init_,
-                                          &QHsm_dispatch_},
+                                         {&QHsm_init_, &QHsm_dispatch_},
                                          &QActive_postX_,
                                          &QActive_postXISR_};
 
@@ -139,11 +134,10 @@ void QActive_ctor(QActive *const me, QStateHandler initial)
  * @include qfn_postx.c
  */
 #if (Q_PARAM_SIZE != 0U)
-bool QActive_postX_(QActive *const me, uint_fast8_t margin,
-                    enum_t const sig, QParam const par)
+bool QActive_postX_(QActive *const me, uint_fast8_t margin, enum_t const sig,
+                    QParam const par)
 #else
-bool QActive_postX_(QActive *const me, uint_fast8_t margin,
-                    enum_t const sig)
+bool QActive_postX_(QActive *const me, uint_fast8_t margin, enum_t const sig)
 #endif
 {
     QActiveCB const Q_ROM *acb = &QF_active[me->prio];
@@ -152,14 +146,10 @@ bool QActive_postX_(QActive *const me, uint_fast8_t margin,
 
     QF_INT_DISABLE();
 
-    if (margin == QF_NO_MARGIN)
-    {
-        if (qlen > (uint_fast8_t)me->nUsed)
-        {
+    if (margin == QF_NO_MARGIN) {
+        if (qlen > (uint_fast8_t)me->nUsed) {
             can_post = true; /* can post */
-        }
-        else
-        {
+        } else {
             can_post = false; /* cannot post */
 #ifndef Q_NASSERT
             QF_INT_ENABLE();
@@ -167,40 +157,31 @@ bool QActive_postX_(QActive *const me, uint_fast8_t margin,
             Q_onAssert(Q_this_module_, 310);
 #endif
         }
-    }
-    else if ((qlen - (uint_fast8_t)me->nUsed) > margin)
-    {
+    } else if ((qlen - (uint_fast8_t)me->nUsed) > margin) {
         can_post = true; /* can post */
-    }
-    else
-    {
+    } else {
         can_post = false; /* cannot post */
     }
 
-    if (can_post)
-    { /* can post the event? */
+    if (can_post) { /* can post the event? */
         /* insert event into the ring buffer (FIFO) */
         QF_ROM_QUEUE_AT_(acb, me->head).sig = (QSignal)sig;
 #if (Q_PARAM_SIZE != 0U)
         QF_ROM_QUEUE_AT_(acb, me->head).par = par;
 #endif
-        if (me->head == 0U)
-        {
+        if (me->head == 0U) {
             me->head = (uint8_t)qlen; /* wrap the head */
         }
         --me->head;
         ++me->nUsed;
 
         /* is this the first event? */
-        if (me->nUsed == 1U)
-        {
-
+        if (me->nUsed == 1U) {
             /* set the corresponding bit in the ready set */
             QF_readySet_ |= (uint_fast8_t)1 << (me->prio - 1U);
 
 #ifdef qkn_h
-            if (QK_sched_() != 0U)
-            {
+            if (QK_sched_() != 0U) {
                 QK_activate_(); /* activate the next active object */
             }
 #endif
@@ -234,11 +215,10 @@ bool QActive_postX_(QActive *const me, uint_fast8_t margin,
  * @include qfn_postx.c
  */
 #if (Q_PARAM_SIZE != 0U)
-bool QActive_postXISR_(QActive *const me, uint_fast8_t margin,
-                       enum_t const sig, QParam const par)
+bool QActive_postXISR_(QActive *const me, uint_fast8_t margin, enum_t const sig,
+                       QParam const par)
 #else
-bool QActive_postXISR_(QActive *const me, uint_fast8_t margin,
-                       enum_t const sig)
+bool QActive_postXISR_(QActive *const me, uint_fast8_t margin, enum_t const sig)
 #endif
 {
 #ifdef QF_ISR_NEST
@@ -258,14 +238,10 @@ bool QActive_postXISR_(QActive *const me, uint_fast8_t margin,
 #endif
 #endif
 
-    if (margin == QF_NO_MARGIN)
-    {
-        if (qlen > (uint_fast8_t)me->nUsed)
-        {
+    if (margin == QF_NO_MARGIN) {
+        if (qlen > (uint_fast8_t)me->nUsed) {
             can_post = true; /* can post */
-        }
-        else
-        {
+        } else {
             can_post = false; /* cannot post */
 #ifndef Q_NASSERT
             QF_INT_ENABLE();
@@ -273,32 +249,25 @@ bool QActive_postXISR_(QActive *const me, uint_fast8_t margin,
             Q_onAssert(Q_this_module_, 410);
 #endif
         }
-    }
-    else if ((qlen - (uint_fast8_t)me->nUsed) > margin)
-    {
+    } else if ((qlen - (uint_fast8_t)me->nUsed) > margin) {
         can_post = true; /* can post */
-    }
-    else
-    {
+    } else {
         can_post = false; /* cannot post */
     }
 
-    if (can_post)
-    { /* can post the event? */
+    if (can_post) { /* can post the event? */
         /* insert event into the ring buffer (FIFO) */
         QF_ROM_QUEUE_AT_(acb, me->head).sig = (QSignal)sig;
 #if (Q_PARAM_SIZE != 0U)
         QF_ROM_QUEUE_AT_(acb, me->head).par = par;
 #endif
-        if (me->head == 0U)
-        {
+        if (me->head == 0U) {
             me->head = (uint8_t)qlen; /* wrap the head */
         }
         --me->head;
         ++me->nUsed;
         /* is this the first event? */
-        if (me->nUsed == 1U)
-        {
+        if (me->nUsed == 1U) {
             /* set the bit */
             QF_readySet_ |= (uint_fast8_t)1 << (me->prio - 1U);
         }
@@ -328,8 +297,7 @@ bool QActive_postXISR_(QActive *const me, uint_fast8_t margin,
  * The intended use of the function is to call as follows:
  * QF_init(Q_DIM(QF_active));
  */
-void QF_init(uint_fast8_t maxActive)
-{
+void QF_init(uint_fast8_t maxActive) {
     QActive *a;
     uint_fast8_t p;
     uint_fast8_t n;
@@ -339,8 +307,7 @@ void QF_init(uint_fast8_t maxActive)
     QF_maxActive_ = (uint_fast8_t)maxActive - 1U;
 
 #ifdef QF_TIMEEVT_USAGE
-    for (n = 0U; n < (uint_fast8_t)QF_MAX_TICK_RATE; ++n)
-    {
+    for (n = 0U; n < (uint_fast8_t)QF_MAX_TICK_RATE; ++n) {
         QF_timerSetX_[n] = 0U;
     }
 #endif /* QF_TIMEEVT_USAGE */
@@ -362,8 +329,7 @@ void QF_init(uint_fast8_t maxActive)
 #endif /* #ifdef qkn_h */
 
     /* clear all registered active objects... */
-    for (p = 1U; p <= QF_maxActive_; ++p)
-    {
+    for (p = 1U; p <= QF_maxActive_; ++p) {
         a = QF_ROM_ACTIVE_GET_(p);
 
         /* QF_active[p] must be initialized */
@@ -373,8 +339,7 @@ void QF_init(uint_fast8_t maxActive)
         a->tail = 0U;
         a->nUsed = 0U;
 #if (QF_TIMEEVT_CTR_SIZE != 0U)
-        for (n = 0U; n < (uint_fast8_t)QF_MAX_TICK_RATE; ++n)
-        {
+        for (n = 0U; n < (uint_fast8_t)QF_MAX_TICK_RATE; ++n) {
             a->tickCtr[n].nTicks = 0U;
 #ifdef QF_TIMEEVT_PERIODIC
             a->tickCtr[n].interval = 0U;
@@ -414,23 +379,17 @@ void QF_init(uint_fast8_t maxActive)
  * preempt each other. For example, higher clock tick rates might be serviced
  * from interrupts that can preempt lower-priority interrupts.
  */
-void QF_tickXISR(uint_fast8_t const tickRate)
-{
+void QF_tickXISR(uint_fast8_t const tickRate) {
     uint_fast8_t p = QF_maxActive_;
-    do
-    {
+    do {
         QActive *a = QF_ROM_ACTIVE_GET_(p);
         QTimer *t = &a->tickCtr[tickRate];
 
-        if (t->nTicks != 0U)
-        {
+        if (t->nTicks != 0U) {
             --t->nTicks;
-            if (t->nTicks == 0U)
-            {
-
+            if (t->nTicks == 0U) {
 #ifdef QF_TIMEEVT_PERIODIC
-                if (t->interval != 0U)
-                {
+                if (t->interval != 0U) {
                     t->nTicks = t->interval; /* re-arm the periodic timer */
                 }
 #endif /* QF_TIMEEVT_PERIODIC */
@@ -516,8 +475,7 @@ void QActive_armX(QActive *const me, uint_fast8_t const tickRate,
  * arrive after you disarm the time event. The timeout event could be
  * already in the event queue.
  */
-void QActive_disarmX(QActive *const me, uint_fast8_t const tickRate)
-{
+void QActive_disarmX(QActive *const me, uint_fast8_t const tickRate) {
     QF_INT_DISABLE();
     me->tickCtr[tickRate].nTicks = 0U;
 #ifdef QF_TIMEEVT_PERIODIC
@@ -531,3 +489,15 @@ void QActive_disarmX(QActive *const me, uint_fast8_t const tickRate)
     QF_INT_ENABLE();
 }
 #endif /* #if (QF_TIMEEVT_CTR_SIZE != 0U) */
+
+#ifdef QF_TIMEEVT_USAGE
+bool QActive_armedX(QActive *const me, uint_fast8_t const tickRate) {
+    QF_INT_DISABLE();
+    uint8_t running_flag =
+        QF_timerSetX_[tickRate] & (uint_fast8_t)(~(1U << (me->prio - 1U)));
+    QF_INT_ENABLE();
+
+    return running_flag > 0;
+}
+
+#endif

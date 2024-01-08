@@ -39,6 +39,11 @@
 #ifndef QASSERT_H
 #define QASSERT_H
 
+#include "qpn_conf.h" /* QP-nano configuration file (from the application) */
+
+/* GNU-ARM function attribute for "no-return" function */
+#define Q_NORETURN __attribute__((noreturn)) void
+
 /**
  * @note
  * This header file can be used in C, C++, and mixed C/C++ programs.
@@ -220,11 +225,6 @@ typedef int int_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#ifndef Q_NORETURN
-/*! no-return function specifier */
-#define Q_NORETURN void
-#endif /*  Q_NORETURN */
 
 /*! Callback function invoked in case of any assertion failure. */
 /**

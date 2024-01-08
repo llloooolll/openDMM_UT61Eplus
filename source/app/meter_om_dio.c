@@ -4,6 +4,7 @@
 
 #include "ao_es232.h"
 #include "ao_lcd.h"
+#include "meter_button.h"
 #include "meter_help_range.h"
 #include "ulog.h"
 
@@ -47,7 +48,8 @@ QState meter_om_dio_adc(ao_meter_t *const me) {
 QState meter_om_dio_key(ao_meter_t *const me) {
     QState status;
     switch (Q_PAR(me)) {
-        case 0:
+        case button_select_id << 4 | SINGLE_CLICK:
+            QACTIVE_POST(me, AO_METER_MODE_SIG, meter_mode_ohm_cap);
             break;
         default:
             break;

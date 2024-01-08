@@ -90,8 +90,10 @@ static QState ao_lcd_active(ao_lcd_t *const me) {
             break;
         case AO_LCD_BL_SIG:
             if (Q_PAR(me) > 0) {
-                QActive_armX((QActive *)me, 0U, Q_PAR(me), 0U);
-                lcd_enable_bl(1);
+                if (1) {
+                    QActive_armX((QActive *)me, 0U, Q_PAR(me), 0U);
+                    lcd_enable_bl(1);
+                }
             } else {
                 lcd_enable_bl(0);
             }

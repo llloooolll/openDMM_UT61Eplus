@@ -36,7 +36,6 @@
  ******************************************************************************
  * @endcond
  */
-#include "qpn_conf.h" /* QP-nano configuration file (from the application) */
 #include "qfn_port.h" /* QF-nano port from the port directory */
 
 #if (__ARM_ARCH != 6) /* NOT Cortex-M0/M0+/M1(v6-M, v6S-M)? */

@@ -15,7 +15,7 @@
             "targetId": "HC32L130",
             "serverArgs": [
                 "--frequency",
-                "1000000",
+                "10000000",
             ],
             "interface": "swd",
             "runToEntryPoint": "main",

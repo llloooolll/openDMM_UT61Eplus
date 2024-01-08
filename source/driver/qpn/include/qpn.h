@@ -49,9 +49,7 @@
 extern "C" {
 #endif
 
-#include "qpn_conf.h" /* QP-nano configuration file (from the application) */
 #include "qfn_port.h" /* QF-nano port from the port directory */
-#include "qassert.h"  /* embedded systems-friendly assertions */
 
 /****************************************************************************/
 /* QP API compatibility layer */

@@ -350,6 +350,14 @@ void QActive_armX(QActive *const me, uint_fast8_t const tickRate,
  */
 void QActive_disarmX(QActive *const me, uint_fast8_t const tickRate);
 
+#ifdef QF_TIMEEVT_USAGE
+/*! timer is running
+ * @public @memberof QActive
+ */
+bool QActive_armedX(QActive *const me, uint_fast8_t const tickRate);
+
+#endif /* QF_TIMEEVT_USAGE */
+
 #endif /* (QF_TIMEEVT_CTR_SIZE != 0U) */
 
 /****************************************************************************/

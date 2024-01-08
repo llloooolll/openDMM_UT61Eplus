@@ -37,9 +37,9 @@
  ******************************************************************************
  * @endcond
  */
-#include "qpn_conf.h" /* QP-nano configuration file (from the application) */
-#include "qfn_port.h" /* QF-nano port from the port directory */
 #include "qassert.h"  /* embedded systems-friendly assertions */
+#include "qfn_port.h" /* QF-nano port from the port directory */
+#include "qpn_conf.h" /* QP-nano configuration file (from the application) */
 
 Q_DEFINE_THIS_MODULE("qepn")
 
@@ -81,11 +81,9 @@ static int_fast8_t QHsm_tran_(QHsm *const me,
  * "constructor" of a derived state machine:
  * @include qepn_qhsm_ctor.c
  */
-void QHsm_ctor(QHsm *const me, QStateHandler initial)
-{
+void QHsm_ctor(QHsm *const me, QStateHandler initial) {
     static QHsmVtable const vtable = {/* QHsm virtual table */
-                                      &QHsm_init_,
-                                      &QHsm_dispatch_};
+                                      &QHsm_init_, &QHsm_dispatch_};
     me->vptr = &vtable;
     me->state = Q_STATE_CAST(&QHsm_top);
     me->temp = initial;
@@ -102,8 +100,7 @@ void QHsm_ctor(QHsm *const me, QStateHandler initial)
  * @note
  * Must be called only ONCE after the QHsm_ctor().
  */
-void QHsm_init_(QHsm *const me)
-{
+void QHsm_init_(QHsm *const me) {
     QStateHandler t = me->state;
     QState r;
 
@@ -111,7 +108,9 @@ void QHsm_init_(QHsm *const me)
      * transition must be initialized, and the initial transition must not
      * be taken yet.
      */
-    Q_REQUIRE_ID(200, (me->vptr != (QHsmVtable const *)0) && (me->temp != Q_STATE_CAST(0)) && (t == Q_STATE_CAST(&QHsm_top)));
+    Q_REQUIRE_ID(200, (me->vptr != (QHsmVtable const *)0) &&
+                          (me->temp != Q_STATE_CAST(0)) &&
+                          (t == Q_STATE_CAST(&QHsm_top)));
 
     r = (*me->temp)(me); /* execute the top-most initial transition */
 
@@ -119,16 +118,14 @@ void QHsm_init_(QHsm *const me)
     Q_ASSERT_ID(210, r == Q_RET_TRAN);
 
     /* drill down into the state hierarchy with initial transitions... */
-    do
-    {
+    do {
         QStateHandler path[QHSM_MAX_NEST_DEPTH_];
         int_fast8_t ip = 0; /* transition entry path index */
 
         path[0] = me->temp;
         Q_SIG(me) = QEP_EMPTY_SIG_;
         (void)(*me->temp)(me);
-        while (me->temp != t)
-        {
+        while (me->temp != t) {
             ++ip;
             Q_ASSERT_ID(220, ip < (int_fast8_t)Q_DIM(path));
             path[ip] = me->temp;
@@ -138,8 +135,7 @@ void QHsm_init_(QHsm *const me)
 
         /* retrace the entry path in reverse (desired) order... */
         Q_SIG(me) = Q_ENTRY_SIG;
-        do
-        {
+        do {
             (void)(*path[ip])(me); /* enter path[ip] */
             --ip;
         } while (ip >= 0);
@@ -171,8 +167,7 @@ void QHsm_init_(QHsm *const me)
  * The parameter @p me to this state handler is not used. It is provided for
  * conformance with the state-handler function signature ::QStateHandler.
  */
-QState QHsm_top(void const *const me)
-{
+QState QHsm_top(void const *const me) {
     (void)me;             /* suppress the "unused parameter" compiler warning */
     return Q_RET_IGNORED; /* the top state ignores all events */
 }
@@ -190,8 +185,7 @@ QState QHsm_top(void const *const me)
  * This function should be called only via the virtual table (see
  * QHSM_DISPATCH()) and should NOT be called directly in the applications.
  */
-void QHsm_dispatch_(QHsm *const me)
-{
+void QHsm_dispatch_(QHsm *const me) {
     QStateHandler t = me->state;
     QStateHandler s;
     QState r;
@@ -203,13 +197,11 @@ void QHsm_dispatch_(QHsm *const me)
     Q_REQUIRE_ID(400, (t != Q_STATE_CAST(0)) && (t == me->temp));
 
     /* process the event hierarchically... */
-    do
-    {
+    do {
         s = me->temp;
         r = (*s)(me); /* invoke state handler s */
 
-        if (r == Q_RET_UNHANDLED)
-        {                                /* unhandled due to a guard? */
+        if (r == Q_RET_UNHANDLED) {      /* unhandled due to a guard? */
             iq = (int_fast8_t)Q_SIG(me); /* save the original signal */
             Q_SIG(me) = QEP_EMPTY_SIG_;  /* find the superstate */
             r = (*s)(me);                /* invoke state handler s */
@@ -218,23 +210,20 @@ void QHsm_dispatch_(QHsm *const me)
     } while (r == Q_RET_SUPER);
 
     /* transition taken? */
-    if (r >= Q_RET_TRAN)
-    {
+    if (r >= Q_RET_TRAN) {
         QStateHandler path[QHSM_MAX_NEST_DEPTH_]; /* transition entry path */
-        int_fast8_t ip;                           /* transition entry path index */
+        int_fast8_t ip; /* transition entry path index */
 
         path[0] = me->temp; /* save the target of the transition */
         path[1] = t;
         path[2] = s;
 
         /* exit current state to transition source s... */
-        for (; t != s; t = me->temp)
-        {
+        for (; t != s; t = me->temp) {
             Q_SIG(me) = Q_EXIT_SIG; /* find superstate of t */
 
             /* take the exit action and check if it was handled? */
-            if ((*t)(me) == Q_RET_HANDLED)
-            {
+            if ((*t)(me) == Q_RET_HANDLED) {
                 Q_SIG(me) = QEP_EMPTY_SIG_;
                 (void)(*t)(me); /* find superstate of t */
             }
@@ -244,8 +233,7 @@ void QHsm_dispatch_(QHsm *const me)
 
         /* retrace the entry path in reverse (desired) order... */
         Q_SIG(me) = Q_ENTRY_SIG;
-        for (; ip >= 0; --ip)
-        {
+        for (; ip >= 0; --ip) {
             (void)(*path[ip])(me); /* enter path[ip] */
         }
         t = path[0];  /* stick the target into register */
@@ -253,15 +241,13 @@ void QHsm_dispatch_(QHsm *const me)
 
         /* drill into the target hierarchy... */
         Q_SIG(me) = Q_INIT_SIG;
-        while ((*t)(me) == Q_RET_TRAN)
-        {
+        while ((*t)(me) == Q_RET_TRAN) {
             ip = 0;
 
             path[0] = me->temp;
             Q_SIG(me) = QEP_EMPTY_SIG_;
             (void)(*me->temp)(me); /* find the superstate */
-            while (me->temp != t)
-            {
+            while (me->temp != t) {
                 ++ip;
                 path[ip] = me->temp;
                 (void)(*me->temp)(me); /* find the superstate */
@@ -273,8 +259,7 @@ void QHsm_dispatch_(QHsm *const me)
 
             /* retrace the entry path in reverse (correct) order... */
             Q_SIG(me) = Q_ENTRY_SIG;
-            do
-            {
+            do {
                 (void)(*path[ip])(me); /* enter path[ip] */
                 --ip;
             } while (ip >= 0);
@@ -302,8 +287,7 @@ void QHsm_dispatch_(QHsm *const me)
  * the depth of the entry path stored in the @p path parameter.
  */
 static int_fast8_t QHsm_tran_(QHsm *const me,
-                              QStateHandler path[QHSM_MAX_NEST_DEPTH_])
-{
+                              QStateHandler path[QHSM_MAX_NEST_DEPTH_]) {
     int_fast8_t ip = (int_fast8_t)(-1); /* transition entry path index */
     int_fast8_t iq;                     /* helper transition entry path index */
     QStateHandler t = path[0];
@@ -311,45 +295,33 @@ static int_fast8_t QHsm_tran_(QHsm *const me,
     QState r;
 
     /* (a) check source==target (transition to self) */
-    if (s == t)
-    {
+    if (s == t) {
         Q_SIG(me) = Q_EXIT_SIG;
         (void)(*s)(me); /* exit the source */
         ip = 0;         /* enter the target */
-    }
-    else
-    {
+    } else {
         Q_SIG(me) = QEP_EMPTY_SIG_;
         (void)(*t)(me); /* find superstate of target */
         t = me->temp;
 
         /* (b) check source==target->super */
-        if (s == t)
-        {
+        if (s == t) {
             ip = 0; /* enter the target */
-        }
-        else
-        {
+        } else {
             Q_SIG(me) = QEP_EMPTY_SIG_;
             (void)(*s)(me); /* find superstate of source */
 
             /* (c) check source->super==target->super */
-            if (me->temp == t)
-            {
+            if (me->temp == t) {
                 Q_SIG(me) = Q_EXIT_SIG;
                 (void)(*s)(me); /* exit the source */
                 ip = 0;         /* enter the target */
-            }
-            else
-            {
+            } else {
                 /* (d) check source->super==target */
-                if (me->temp == path[0])
-                {
+                if (me->temp == path[0]) {
                     Q_SIG(me) = Q_EXIT_SIG;
                     (void)(*s)(me); /* exit the source */
-                }
-                else
-                {
+                } else {
                     /* (e) check rest of source==target->super->super..
                      * and store the entry path along the way
                      */
@@ -361,13 +333,11 @@ static int_fast8_t QHsm_tran_(QHsm *const me,
                     /* find target->super->super... */
                     Q_SIG(me) = QEP_EMPTY_SIG_;
                     r = (*path[1])(me);
-                    while (r == Q_RET_SUPER)
-                    {
+                    while (r == Q_RET_SUPER) {
                         ++ip;
                         path[ip] = me->temp; /* store the entry path */
-                        if (me->temp == s)
-                        {           /* is it the source? */
-                            iq = 1; /* indicate that LCA found */
+                        if (me->temp == s) { /* is it the source? */
+                            iq = 1;          /* indicate that LCA found */
 
                             /* entry path must not overflow */
                             Q_ASSERT_ID(510, ip < QHSM_MAX_NEST_DEPTH_);
@@ -375,16 +345,13 @@ static int_fast8_t QHsm_tran_(QHsm *const me,
                             r = Q_RET_HANDLED; /* terminate loop */
                         }
                         /* it is not the source, keep going up */
-                        else
-                        {
+                        else {
                             r = (*me->temp)(me); /* superstate of t */
                         }
                     }
 
                     /* the LCA not found yet? */
-                    if (iq == 0)
-                    {
-
+                    if (iq == 0) {
                         /* entry path must not overflow */
                         Q_ASSERT_ID(520, ip < QHSM_MAX_NEST_DEPTH_);
 
@@ -396,52 +363,41 @@ static int_fast8_t QHsm_tran_(QHsm *const me,
                          */
                         iq = ip;
                         r = Q_RET_IGNORED; /* LCA NOT found */
-                        do
-                        {
-                            if (t == path[iq])
-                            {                      /* is this the LCA? */
+                        do {
+                            if (t == path[iq]) {   /* is this the LCA? */
                                 r = Q_RET_HANDLED; /* LCA found */
 
                                 /* do not enter LCA */
                                 ip = (int_fast8_t)(iq - 1);
                                 iq = -1; /* force loop termination */
-                            }
-                            else
-                            {
+                            } else {
                                 --iq; /* try lower superstate of target */
                             }
                         } while (iq >= 0);
 
                         /* LCA not found? */
-                        if (r != Q_RET_HANDLED)
-                        {
+                        if (r != Q_RET_HANDLED) {
                             /* (g) check each source->super->...
                              * for each target->super...
                              */
                             r = Q_RET_IGNORED; /* keep looping */
-                            do
-                            {
+                            do {
                                 /* exit t unhandled? */
                                 Q_SIG(me) = Q_EXIT_SIG;
-                                if ((*t)(me) == Q_RET_HANDLED)
-                                {
+                                if ((*t)(me) == Q_RET_HANDLED) {
                                     Q_SIG(me) = QEP_EMPTY_SIG_;
                                     (void)(*t)(me); /* find super of t */
                                 }
                                 t = me->temp; /* set to super of t */
                                 iq = ip;
-                                do
-                                {
+                                do {
                                     /* is this LCA? */
-                                    if (t == path[iq])
-                                    {
+                                    if (t == path[iq]) {
                                         /* do not enter LCA */
                                         ip = (int_fast8_t)(iq - 1);
-                                        iq = -1;           /* break out of inner loop */
+                                        iq = -1; /* break out of inner loop */
                                         r = Q_RET_HANDLED; /* break */
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         --iq;
                                     }
                                 } while (iq >= 0);
@@ -480,25 +436,19 @@ static int_fast8_t QHsm_tran_(QHsm *const me,
  * @sa
  * QHsm_childState()
  */
-QStateHandler QHsm_childState_(QHsm *const me,
-                               QStateHandler const parent)
-{
+QStateHandler QHsm_childState_(QHsm *const me, QStateHandler const parent) {
     QStateHandler child = me->state; /* start with the current state */
     bool isFound = false;            /* start with the child not found */
     QState r;
 
     /* establish stable state configuration */
     me->temp = me->state;
-    do
-    {
+    do {
         /* is this the parent of the current child? */
-        if (me->temp == parent)
-        {
+        if (me->temp == parent) {
             isFound = true;    /* child is found */
             r = Q_RET_IGNORED; /* break out of the loop */
-        }
-        else
-        {
+        } else {
             child = me->temp;
             Q_SIG(me) = QEP_EMPTY_SIG_;
             r = (*me->temp)(me); /* find the superstate */

@@ -30,7 +30,8 @@ bool meter_help_range_sel(ao_meter_t *const me, int32_t value) {
     // }
 
 #if (CAP_RANGE_FAST)
-    if ((me->es232_read_buffer.ALARM == 1) && (me->mode == meter_mode_om_cap)) {
+    if ((me->es232_read_buffer.ALARM == 1) &&
+        (me->mode == meter_mode_ohm_cap)) {
         bool range_change = 0;
         switch (me->es232_write_buffer.q_msb) {
             case B000:
