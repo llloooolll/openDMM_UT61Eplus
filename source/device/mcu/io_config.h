@@ -41,4 +41,26 @@
 #define ES232_STBEEP_PORT gpio_port_a // ES232低电阻信号输出
 #define ES232_STBEEP_PIN gpio_pin_15
 
+#define KNOB_CH1_PORT gpio_port_c // 旋钮档位检测
+#define KNOB_CH1_PIN gpio_pin_15
+#define KNOB_CH2_PORT gpio_port_a // 旋钮档位检测
+#define KNOB_CH2_PIN gpio_pin_00
+#define KNOB_CH3_PORT gpio_port_a // 旋钮档位检测
+#define KNOB_CH3_PIN gpio_pin_01
+#define KNOB_CH4_PORT gpio_port_d // 旋钮档位检测
+#define KNOB_CH4_PIN gpio_pin_00
+
+#define KEY_SELECT_PORT gpio_port_d // SELECT
+#define KEY_SELECT_PIN gpio_pin_06
+#define KEY_RANGE_PORT gpio_port_b // RANGE
+#define KEY_RANGE_PIN gpio_pin_15
+#define KEY_HZ_PORT gpio_port_a // HZ/USB
+#define KEY_HZ_PIN gpio_pin_12
+#define KEY_REL_PORT gpio_port_a // REL
+#define KEY_REL_PIN gpio_pin_11
+#define KEY_PEAK_PORT gpio_port_a // PEAK(MAX/MIN)
+#define KEY_PEAK_PIN gpio_pin_08
+#define KEY_HOLD_PORT gpio_port_d // HOLD
+#define KEY_HOLD_PIN gpio_pin_07
+
 #endif

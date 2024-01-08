@@ -14,6 +14,7 @@ static int32_t meter_help_om_cap_cal(ao_meter_t *const me, int32_t value);
  */
 void meter_om_cap_lcd_init(ao_meter_t *const me)
 {
+    lcd_set_ol_threshold(30000);
     me->es232_range_delay_cycle = 0; // 电容档FADC不工作，每个结果都是准的
 
     me->lcd_pixel_buffer.farad = 1;      // 法拉

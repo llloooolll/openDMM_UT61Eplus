@@ -14,6 +14,7 @@ static int32_t meter_help_om_om_cal(ao_meter_t *const me, int32_t value);
  */
 void meter_om_om_lcd_init(ao_meter_t *const me)
 {
+    lcd_set_ol_threshold(30000);
     me->lcd_pixel_buffer.ohm = 1;        // 欧姆
     me->lcd_pixel_buffer.range_auto = 1; // 自动档位
 

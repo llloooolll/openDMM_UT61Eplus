@@ -5,8 +5,9 @@
 #include "eeprom.h"
 #include "stdlib.h"
 
-#define LCD_POINT_ACTIVE 1          // 积极前移小数点
-#define LCD_SHOW_OL_THRESHOLD 30000 // 显示OL的判断阈值
+#define LCD_POINT_ACTIVE 1 // 积极前移小数点
+
+static int32_t lcd_show_ol_threshold = 30000;
 
 static const uint8_t digitron_mapping[128] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 0-7
@@ -162,6 +163,16 @@ void lcd_show_char(lcd_pixel_t *lcd_pixel, uint8_t index, char value)
 }
 
 /**
+ * @brief 设置显示OL的阈值
+ *
+ * @param value
+ */
+void lcd_set_ol_threshold(int32_t value)
+{
+    lcd_show_ol_threshold = value;
+}
+
+/**
  * @brief 在数字后显示小数点
  *
  * @param lcd_pixel
@@ -258,7 +269,7 @@ void lcd_show_value(lcd_pixel_t *lcd_pixel, int32_t i32_value, int8_t i8_power_r
     lcd_pixel->thousand = (bool)(i8_thousands_extern == 1); // 千 +3
     lcd_pixel->omen = (bool)(i8_thousands_extern == 2);     // 兆 +6
 
-    if ((i8_thousands_extern > 2) || (u32_value > LCD_SHOW_OL_THRESHOLD))
+    if ((i8_thousands_extern > 2) || (u32_value > lcd_show_ol_threshold))
     {
         for (uint8_t i = 0; i < 5; i++)
         {

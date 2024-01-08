@@ -28,6 +28,7 @@ target_link_libraries(${PROJECT_NAME}
     "qpn"
     "es232"
     "ulog"
+    "multi_button"
 )
 
 set_target_linker(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/scripts/ld/hc32l130.ld)

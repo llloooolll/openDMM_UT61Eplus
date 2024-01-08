@@ -14,6 +14,7 @@ static int32_t meter_help_om_dio_cal(ao_meter_t *const me, int32_t value);
  */
 void meter_om_dio_lcd_init(ao_meter_t *const me)
 {
+    lcd_set_ol_threshold(25000);
     me->lcd_pixel_buffer.volt = 1;  // 伏特
     me->lcd_pixel_buffer.diode = 1; // 二极管档
 }
@@ -30,7 +31,7 @@ QState meter_om_dio_adc(ao_meter_t *const me)
     // int32_t fadc_data = es232_get_D1(&me->es232_read_buffer); // FADC不工作
     sadc_data = meter_help_om_dio_cal(me, sadc_data);
 
-    lcd_show_value(&me->lcd_pixel_buffer, sadc_data, -2 + (int8_t)me->es232_write_buffer.q_msb);
+    lcd_show_value(&me->lcd_pixel_buffer, sadc_data, -4 + (int8_t)me->es232_write_buffer.q_msb);
     QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
 
     return Q_HANDLED();

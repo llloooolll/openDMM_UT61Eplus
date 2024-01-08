@@ -5,6 +5,8 @@
 #include "ao_lcd.h"
 #include "ao_es232.h"
 #include "ao_irda.h"
+#include "ao_key.h"
+#include "key_button.h"
 #include "meter_dcv.h"
 #include "meter_acv.h"
 #include "meter_om_om.h"
@@ -80,7 +82,9 @@ static QState ao_meter_idle(ao_meter_t *const me)
                 }
                 QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 1U);
                 QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 1U);
+                QACTIVE_POST(&ao_key, AO_KEY_ACTIVE_SIG, 1U);
                 QACTIVE_POST(me, AO_METER_MODE_SIG, meter_mode_om_dio);
+                key_init();
                 status = Q_TRAN(&ao_meter_active);
                 break;
             }
@@ -105,6 +109,12 @@ static QState ao_meter_active(ao_meter_t *const me)
     {
     case Q_ENTRY_SIG:
         // QACTIVE_POST(&ao_lcd, AO_LCD_BL_SIG, 10000U);
+        QActive_armX((QActive *)me, 1U, 10U, 0U);
+        status = Q_HANDLED();
+        break;
+    case Q_TIMEOUT1_SIG:
+        button_ticks();
+        QActive_armX((QActive *)me, 1U, 10U, 0U);
         status = Q_HANDLED();
         break;
     case AO_METER_MODE_SIG: // 模式
@@ -167,29 +177,37 @@ static QState ao_meter_active(ao_meter_t *const me)
         }
         break;
     case AO_METER_KEY_SIG: // 按键
-        switch (me->mode)
+        switch (Q_PAR(me))
         {
-        case meter_mode_acv:
-            status = meter_acv_key(me);
-            break;
-        case meter_mode_dcv:
-            status = meter_dcv_key(me);
-            break;
-        case meter_mode_om_om:
-            status = meter_om_om_key(me);
-            break;
-        case meter_mode_om_cap:
-            status = meter_om_cap_key(me);
-            break;
-        case meter_mode_om_buz:
-            status = meter_om_buz_key(me);
-            break;
-        case meter_mode_om_dio:
-            status = meter_om_dio_key(me);
-            break;
-        default:
+        case 0x13:
+            ULOG_DEBUG("key: range, event: click\n");
             status = Q_HANDLED();
             break;
+        default:
+            switch (me->mode)
+            {
+            case meter_mode_acv:
+                status = meter_acv_key(me);
+                break;
+            case meter_mode_dcv:
+                status = meter_dcv_key(me);
+                break;
+            case meter_mode_om_om:
+                status = meter_om_om_key(me);
+                break;
+            case meter_mode_om_cap:
+                status = meter_om_cap_key(me);
+                break;
+            case meter_mode_om_buz:
+                status = meter_om_buz_key(me);
+                break;
+            case meter_mode_om_dio:
+                status = meter_om_dio_key(me);
+                break;
+            default:
+                status = Q_HANDLED();
+                break;
+            }
         }
         break;
     default:
