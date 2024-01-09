@@ -9,7 +9,28 @@
 
 #define ES232_BUZ_ON 0x02  // 鸣响标志
 
-typedef enum _es232_mode_t {
+// static const uint8_t es232_init_config[][4] = {
+//     {0x09, 0x43, 0x80, 0x00},  // ACV
+//     {0x01, 0x40, 0x00, 0x00},  // DCV
+//     {0x50, 0x43, 0x80, 0x01},  // MV AC
+//     {0x48, 0x00, 0x00, 0x00},  // MV DC
+//     {0x20, 0x40, 0x00, 0x00},  // OHM 电阻
+//     {0xA8, 0x40, 0x00, 0x00},  // OHM 蜂鸣
+//     {0x30, 0x40, 0x00, 0x00},  // OHM 二极管
+//     {0x40, 0x40, 0x00, 0x00},  // OHM 电容
+//     {0x38, 0x40, 0x00, 0x00},  // HZ 频率
+//     {0x38, 0x41, 0x00, 0x00},  // HZ 占空比
+//     {0x48, 0x00, 0x00, 0x00},  // hfe
+//     {0x10, 0x40, 0x00, 0x00},  // UA DC
+//     {0x18, 0x43, 0x80, 0x00},  // UA AC
+//     {0x10, 0x40, 0x00, 0x00},  // MA DC
+//     {0x18, 0x43, 0x80, 0x00},  // MA AC
+//     {0x11, 0x40, 0x00, 0x00},  // A DC
+//     {0x19, 0x43, 0x80, 0x00},  // A AC
+//     {0x57, 0x43, 0x80, 0x01},  // NCV
+// };
+
+enum es232_mode {
     ES232_MODE_V = B0000,
     ES232_MODE_ACV_HZ = B0001,
     ES232_MODE_A = B0010,
@@ -21,9 +42,9 @@ typedef enum _es232_mode_t {
     ES232_MODE_CAP = B1000,
     ES232_MODE_ADP = B1001,
     ES232_MODE_ADP_HZ = B1010,
-} es232_mode_t;
+};
 
-typedef enum _es232_buzzer_freq_t {
+enum es232_buzzer_freq {
     F_1_00K = B000,
     F_1_33K = B100,
     F_2_00K = B010,
@@ -32,16 +53,31 @@ typedef enum _es232_buzzer_freq_t {
     F_3_08K = B101,
     F_3_33K = B011,
     F_4_00K = B111,
-} es232_buzzer_freq_t;
+};
+
+enum es232_range_freq {
+    FREQ_30 = B000,
+    FREQ_300 = B001,
+    FREQ_3K = B010,
+    FREQ_30K = B011,
+};
+
+enum es232_lpf {
+    LPF_0_DIS = B000,
+    LPF_1_1K = B001,    // 1K   @3dB
+    LPF_2_10K = B010,   // 10K  @3dB
+    LPF_3_100K = B011,  // 100K @3dB
+};
 
 typedef struct _es232_write_t {
-    uint8_t q_msb : 3;         // 量程选择
-    uint8_t function_msb : 4;  // 测量功能控制位
-    uint8_t shbp_dcsel : 1;    // 连续性和二极管模式/ AC+DC模式
+    uint8_t range_msb : 3;   // 量程选择
+    uint8_t mode_msb : 4;    // 测量功能控制位
+    uint8_t shbp_dcsel : 1;  // 连续性和二极管模式/ AC+DC模式
 
-    uint8_t fq2_msb : 3;          // 频率量程选择
+    uint8_t freq_range_msb : 3;   // 频率量程选择
     uint8_t rev1 : 2;             // NC
     uint8_t buzzer_freq_lsb : 3;  // 蜂鸣器频率选择
+
     uint8_t rp : 1;       // 交流+直流模式的频率模式电阻控制位
     uint8_t lpf_msb : 2;  // 低通滤波器选择的3dB BW：
     uint8_t fd : 1;       // 30kHz范围内的F+工作模式辅助控制位：FD

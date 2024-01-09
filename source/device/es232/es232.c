@@ -142,7 +142,9 @@ bool es232_is_data_ready(void) {
  *
  * @param flag
  */
-void es232_enable_buz(bool flag) { es232_buz_enable = (flag) ? 0x02 : 0x00; }
+void es232_enable_buz(bool flag) {
+    es232_buz_enable = (flag) ? ES232_BUZ_ON : 0x00;
+}
 
 /**
  * @brief 消除转换完成标志

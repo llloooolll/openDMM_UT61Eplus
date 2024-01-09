@@ -53,6 +53,6 @@ void eeprom_write_byte(uint8_t addr, uint8_t data) {
 
 void eeprom_read_all(uint8_t *data) {
     for (uint32_t i = 0; i < (255 - 1); i++) {
-        data[i] = eeprom_read_byte(i + 1);
+        data[255 - i] = eeprom_read_byte(i + 1);  // 反着读，倒端序
     }
 }

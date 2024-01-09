@@ -5,6 +5,11 @@
 #include "lcd.h"
 #include "qpn.h"
 
+typedef struct _cal_value_t {
+    uint16_t value[128];  // 校准值 65535 < 22000 足够
+    uint8_t cal;          // 校准标志 0 == 校准过
+} cal_value_t;
+
 typedef enum _meter_mode_t {
     meter_mode_acv = 0U,
     meter_mode_dcv,
@@ -39,9 +44,8 @@ typedef enum _ao_meter_signal_t {
 typedef struct _ao_meter_t {
     QActive super;
     uint8_t ready_count;
-    uint8_t eeprom[256];               // EEPROM校准值
+    cal_value_t cal_value;             // EEPROM校准值
     meter_mode_t mode;                 // ES232测量模式
-    uint8_t const* es232_config_list;  // 初始化列表
     es232_write_t es232_write_buffer;  // ES232写入缓存
     es232_read_t es232_read_buffer;    // ES232读出缓存
     lcd_pixel_t lcd_pixel_buffer;      // LCD缓存
@@ -51,9 +55,15 @@ typedef struct _ao_meter_t {
     uint8_t es232_range_max;          // 最大量程
     uint8_t es232_range_min;          // 最小量程
     bool es232_range_auto;            // 自动量程切换使能
+    bool es232_rel_flag;              // 相对测量标志
     uint8_t delay_cycle_count;        // 自动切换计数
     uint8_t es232_range_delay_cycle;  // 量程切换延迟周期
     bool es232_range_delay_dir;       // 量程切换方向
+    uint8_t es232_buz_frq;            // 蜂鸣器频率
+    int32_t es232_value_rel;          // 相对测量值
+    int8_t es232_power_rel;           // 相对测量值幂
+    int32_t es232_value_now;          // 测量值历史
+    int8_t es232_power_now;           // 测量值历史幂
 
 } ao_meter_t;
 

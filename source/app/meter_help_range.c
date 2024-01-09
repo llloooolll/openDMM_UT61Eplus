@@ -33,20 +33,20 @@ bool meter_help_range_sel(ao_meter_t *const me, int32_t value) {
     if ((me->es232_read_buffer.ALARM == 1) &&
         (me->mode == meter_mode_ohm_cap)) {
         bool range_change = 0;
-        switch (me->es232_write_buffer.q_msb) {
+        switch (me->es232_write_buffer.range_msb) {
             case B000:
             case B001:
             case B010:
-                me->es232_write_buffer.q_msb = B011;
+                me->es232_write_buffer.range_msb = B011;
                 range_change = 1;
                 break;
             case B011:
-                me->es232_write_buffer.q_msb = B101;
+                me->es232_write_buffer.range_msb = B101;
                 range_change = 1;
                 break;
             // case B100:
             case B101:
-                me->es232_write_buffer.q_msb = B111;
+                me->es232_write_buffer.range_msb = B111;
                 range_change = 1;
                 break;
             // case B110:
@@ -60,7 +60,7 @@ bool meter_help_range_sel(ao_meter_t *const me, int32_t value) {
             QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG,
                          &me->es232_write_buffer);
             // ULOG_DEBUG("faster change range: %d\n",
-            // me->es232_write_buffer.q_msb);
+            // me->es232_write_buffer.range_msb);
             return 0;
         }
     }
@@ -76,15 +76,15 @@ bool meter_help_range_sel(ao_meter_t *const me, int32_t value) {
 
         if (me->delay_cycle_count > me->es232_range_delay_cycle) {
             me->delay_cycle_count = 0;
-            if (me->es232_write_buffer.q_msb < me->es232_range_max)  // 不超
+            if (me->es232_write_buffer.range_msb < me->es232_range_max)  // 不超
             {
                 // value_meaningful = 0;
-                me->es232_write_buffer.q_msb++;
+                me->es232_write_buffer.range_msb++;
                 QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG,
                              &me->es232_write_buffer);
                 // ULOG_DEBUG("%d > %d\n", u32_value,
                 // me->es232_range_value_max); ULOG_DEBUG("value too large
-                // change range: %d\n", me->es232_write_buffer.q_msb);
+                // change range: %d\n", me->es232_write_buffer.range_msb);
             }
         }
     } else if (u32_value < me->es232_range_value_min) {
@@ -96,17 +96,42 @@ bool meter_help_range_sel(ao_meter_t *const me, int32_t value) {
 
         if (me->delay_cycle_count > me->es232_range_delay_cycle) {
             me->delay_cycle_count = 0;
-            if (me->es232_write_buffer.q_msb > me->es232_range_min)  // 不超
+            if (me->es232_write_buffer.range_msb > me->es232_range_min)  // 不超
             {
                 // value_meaningful = 0;
-                me->es232_write_buffer.q_msb--;
+                me->es232_write_buffer.range_msb--;
                 QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG,
                              &me->es232_write_buffer);
                 // ULOG_DEBUG("%d < %d\n", u32_value,
                 // me->es232_range_value_min); ULOG_DEBUG("value too small
-                // change range: %d\n", me->es232_write_buffer.q_msb);
+                // change range: %d\n", me->es232_write_buffer.range_msb);
             }
         }
     }
     return value_meaningful;
+}
+
+void calculate_rel_result(ao_meter_t *const me, int32_t *result_value,
+                          int8_t *result_power) {
+    int8_t power_diff = me->es232_power_now - me->es232_power_rel;
+    uint8_t power_diff_abs = abs(power_diff);
+
+    if (power_diff > 0) {  // 当前值幂高，以当前为准
+        int32_t temp_value_div = me->es232_value_rel;
+        for (uint8_t i = 0; i < power_diff_abs; i++) {
+            temp_value_div /= 10;  // 除到同幂
+        }
+        *result_value = me->es232_value_now - temp_value_div;
+        *result_power = me->es232_power_now;
+    } else if (power_diff < 0) {  // 相对值幂高，以相对为准
+        int32_t temp_value_div = me->es232_value_now;
+        for (uint8_t i = 0; i < power_diff_abs; i++) {
+            temp_value_div /= 10;  // 除到同幂
+        }
+        *result_value = temp_value_div - me->es232_value_rel;
+        *result_power = me->es232_power_rel;
+    } else {  // 一样
+        *result_value = me->es232_value_now - me->es232_value_rel;
+        *result_power = me->es232_power_now;
+    }
 }
