@@ -6,6 +6,6 @@
 QState meter_om_dio_adc(ao_meter_t *const me);
 QState meter_om_dio_key(ao_meter_t *const me);
 
-void meter_om_dio_lcd_init(ao_meter_t *const me);
+void meter_om_dio_init(ao_meter_t *const me);
 
 #endif

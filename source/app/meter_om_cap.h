@@ -6,6 +6,6 @@
 QState meter_om_cap_adc(ao_meter_t *const me);
 QState meter_om_cap_key(ao_meter_t *const me);
 
-void meter_om_cap_lcd_init(ao_meter_t *const me);
+void meter_om_cap_init(ao_meter_t *const me);
 
 #endif

@@ -41,6 +41,7 @@ typedef struct _ao_meter_t {
     uint8_t ready_count;
     uint8_t eeprom[256];               // EEPROM校准值
     meter_mode_t mode;                 // ES232测量模式
+    uint8_t const* es232_config_list;  // 初始化列表
     es232_write_t es232_write_buffer;  // ES232写入缓存
     es232_read_t es232_read_buffer;    // ES232读出缓存
     lcd_pixel_t lcd_pixel_buffer;      // LCD缓存

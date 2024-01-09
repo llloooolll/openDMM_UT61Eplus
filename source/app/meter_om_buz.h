@@ -6,6 +6,6 @@
 QState meter_om_buz_adc(ao_meter_t *const me);
 QState meter_om_buz_key(ao_meter_t *const me);
 
-void meter_om_buz_lcd_init(ao_meter_t *const me);
+void meter_om_buz_init(ao_meter_t *const me);
 
 #endif

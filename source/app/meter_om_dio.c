@@ -1,6 +1,7 @@
 #include "meter_om_dio.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "ao_es232.h"
 #include "ao_lcd.h"
@@ -15,10 +16,16 @@ static int32_t meter_help_om_dio_cal(ao_meter_t *const me, int32_t value);
  *
  * @param me
  */
-void meter_om_dio_lcd_init(ao_meter_t *const me) {
-    lcd_set_ol_threshold(25000);
+void meter_om_dio_init(ao_meter_t *const me) {
+    memcpy(&me->es232_write_buffer, &me->es232_config_list[me->mode * 4],
+           sizeof(es232_write_t));
+    QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
+
+    // 清除显示
+    memset(&me->lcd_pixel_buffer, 0x00, sizeof(lcd_pixel_t));
     me->lcd_pixel_buffer.volt = 1;   // 单位伏特
     me->lcd_pixel_buffer.diode = 1;  // 二极管档
+    lcd_set_ol_threshold(25000);
 }
 
 /**

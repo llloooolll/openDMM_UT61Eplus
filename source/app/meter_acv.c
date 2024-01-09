@@ -1,5 +1,8 @@
 #include "meter_acv.h"
 
+#include <string.h>
+
+#include "ao_es232.h"
 #include "ao_lcd.h"
 #include "meter_help_range.h"
 #include "ulog.h"
@@ -12,11 +15,17 @@ static int32_t meter_help_acv_cal(ao_meter_t *const me, int32_t value,
  *
  * @param me
  */
-void meter_acv_lcd_init(ao_meter_t *const me) {
-    lcd_set_ol_threshold(30000);
+void meter_acv_init(ao_meter_t *const me) {
+    memcpy(&me->es232_write_buffer, &me->es232_config_list[me->mode * 4],
+           sizeof(es232_write_t));
+    QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
+
+    // 清除显示
+    memset(&me->lcd_pixel_buffer, 0x00, sizeof(lcd_pixel_t));
     me->lcd_pixel_buffer.ac = 1;          // 交流档
     me->lcd_pixel_buffer.volt = 1;        // 单位伏特
     me->lcd_pixel_buffer.range_auto = 1;  // 自动档
+    lcd_set_ol_threshold(30000);
 
     me->es232_range_value_max = 30000;  // 最大
     me->es232_range_value_min = 2900;   // 最小

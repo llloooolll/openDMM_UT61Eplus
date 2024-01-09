@@ -56,6 +56,7 @@ static QState ao_meter_init(ao_meter_t *const me) {
     me->es232_range_delay_cycle = 2;
     me->mode = meter_mode_acv;
     me->es232_range_auto = 1;  // 自动换挡
+    me->es232_config_list = &es232_init_config[0][0];
     return Q_TRAN(&ao_meter_idle);
 }
 
@@ -111,30 +112,24 @@ static QState ao_meter_active(ao_meter_t *const me) {
                 // 档位有效
                 me->mode = Q_PAR(me);
                 ULOG_DEBUG("ES232 mode: %d\n", me->mode);
-                memcpy(&me->es232_write_buffer, &es232_init_config[me->mode][0],
-                       sizeof(es232_write_t));
-                // 清除显示
-                memset(&me->lcd_pixel_buffer, 0x00, sizeof(lcd_pixel_t));
-                QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG,
-                             &me->es232_write_buffer);
                 switch (me->mode) {
                     case meter_mode_acv:
-                        meter_acv_lcd_init(me);
+                        meter_acv_init(me);
                         break;
                     case meter_mode_dcv:
-                        meter_dcv_lcd_init(me);
+                        meter_dcv_init(me);
                         break;
                     case meter_mode_ohm_ohm:
-                        meter_ohm_ohm_lcd_init(me);
+                        meter_ohm_ohm_init(me);
                         break;
                     case meter_mode_ohm_cap:
-                        meter_om_cap_lcd_init(me);
+                        meter_om_cap_init(me);
                         break;
                     case meter_mode_ohm_buz:
-                        meter_om_buz_lcd_init(me);
+                        meter_om_buz_init(me);
                         break;
                     case meter_mode_ohm_dio:
-                        meter_om_dio_lcd_init(me);
+                        meter_om_dio_init(me);
                         break;
                     default:
                         break;

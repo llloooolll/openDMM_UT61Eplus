@@ -6,6 +6,6 @@
 QState meter_dcv_adc(ao_meter_t *const me);
 QState meter_dcv_key(ao_meter_t *const me);
 
-void meter_dcv_lcd_init(ao_meter_t *const me);
+void meter_dcv_init(ao_meter_t *const me);
 
 #endif
