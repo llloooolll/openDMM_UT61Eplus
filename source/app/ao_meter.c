@@ -7,15 +7,15 @@
 #include "ao_knob.h"
 #include "ao_lcd.h"
 #include "eeprom.h"
-#include "meter_acv.h"
 #include "meter_button.h"
-#include "meter_dcv.h"
-#include "meter_mv_ac.h"
-#include "meter_mv_dc.h"
-#include "meter_ohm_buz.h"
-#include "meter_ohm_cap.h"
-#include "meter_ohm_dio.h"
-#include "meter_ohm_ohm.h"
+#include "meter_mode_acv.h"
+#include "meter_mode_dcv.h"
+#include "meter_mode_mv_ac.h"
+#include "meter_mode_mv_dc.h"
+#include "meter_mode_ohm_buz.h"
+#include "meter_mode_ohm_cap.h"
+#include "meter_mode_ohm_dio.h"
+#include "meter_mode_ohm_ohm.h"
 #include "ulog.h"
 
 // 对象
@@ -94,10 +94,11 @@ static QState ao_meter_active(ao_meter_t *const me) {
         case AO_METER_MODE_SIG:
             // 档位
             if (Q_PAR(me) < meter_mode_max) {
-                // 有效
+                // 变量
                 me->es232_value_rel = 0;
                 me->es232_power_rel = 0;
                 me->es232_rel_flag = 0;
+                me->es232_hold_flag = 0;
                 // 写入
                 me->mode = Q_PAR(me);
                 ULOG_DEBUG("ES232 mode: %d\n", me->mode);

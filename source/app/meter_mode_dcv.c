@@ -1,4 +1,4 @@
-#include "meter_dcv.h"
+#include "meter_mode_dcv.h"
 
 #include <string.h>
 
@@ -44,10 +44,12 @@ QState meter_dcv_adc(ao_meter_t *const me) {
     // 读结果
     int32_t sadc_data = es232_get_D0(&me->es232_read_buffer);
     int32_t fadc_data = es232_get_D1(&me->es232_read_buffer);
-    // 校准
-    me->es232_value_now = meter_help_dcv_cal(me, sadc_data);
-    me->es232_power_now =
-        meter_help_dcv_get_power(me, me->es232_write_buffer.range_msb);
+
+    if (!me->es232_hold_flag) {
+        me->es232_value_now = meter_help_dcv_cal(me, sadc_data);
+        me->es232_power_now =
+            meter_help_dcv_get_power(me, me->es232_write_buffer.range_msb);
+    }
     // 计算相对值
     calculate_rel_result(me);
     // 检查量程
@@ -75,6 +77,10 @@ QState meter_dcv_key(ao_meter_t *const me) {
             me->es232_value_rel = me->es232_value_now;
             me->es232_power_rel = me->es232_power_now;
             me->lcd_pixel_buffer.delta = 1;
+            break;
+        case button_hold_id << 4 | SINGLE_CLICK:
+            me->es232_hold_flag = !me->es232_hold_flag;
+            me->lcd_pixel_buffer.hold = me->es232_hold_flag;
             break;
         default:
             break;

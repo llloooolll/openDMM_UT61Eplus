@@ -50,23 +50,25 @@ typedef struct _ao_meter_t {
     es232_read_t es232_read_buffer;    // ES232读出缓存
     lcd_pixel_t lcd_pixel_buffer;      // LCD缓存
 
-    uint32_t es232_range_value_max;   // 换挡上限测量值
-    uint32_t es232_range_value_min;   // 换挡下限测量值
-    uint8_t es232_range_max;          // 最大量程
-    uint8_t es232_range_min;          // 最小量程
-    bool es232_range_auto;            // 自动量程切换使能
-    bool es232_rel_flag;              // 相对测量标志
-    uint8_t delay_cycle_count;        // 自动切换计数
-    uint8_t es232_range_delay_cycle;  // 量程切换延迟周期
-    bool es232_range_delay_dir;       // 量程切换方向
+    uint32_t es232_range_value_max;  // 换挡上限测量值
+    uint32_t es232_range_value_min;  // 换挡下限测量值
+    uint8_t es232_range_max;         // 最大量程
+    uint8_t es232_range_min;         // 最小量程
+    bool es232_range_auto;           // 自动量程切换使能
+    uint8_t delay_cycle_count;       // 自动切换计数
+    bool es232_range_delay_dir;      // 量程切换方向
+
     uint8_t es232_buz_frq;            // 蜂鸣器频率
+    bool es232_rel_flag;              // 相对测量标志
+    bool es232_hold_flag;             // 暂停测量标志
+    uint8_t es232_range_delay_cycle;  // 量程切换延迟周期
 
     int32_t es232_value_rel;   // 相对测量值
-    int8_t es232_power_rel;    // 相对测量值幂
-    int32_t es232_value_now;   // 测量值历史
-    int8_t es232_power_now;    // 测量值历史幂
-    int32_t es232_show_value;  // 显示值
-    int8_t es232_show_power;   // 显示值的幂
+    int8_t es232_power_rel;    // 相对测量值的幂
+    int32_t es232_value_now;   // 测量值
+    int8_t es232_power_now;    // 测量值的幂
+    int32_t es232_show_value;  // 实际显示值
+    int8_t es232_show_power;   // 实际显示值的幂
 
 } ao_meter_t;
 

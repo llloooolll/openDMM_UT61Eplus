@@ -1,5 +1,5 @@
-#ifndef __METER_OHM_CAP_H__
-#define __METER_OHM_CAP_H__
+#ifndef __METER_MODE_OHM_CAP_H__
+#define __METER_MODE_OHM_CAP_H__
 
 #include "ao_meter.h"
 

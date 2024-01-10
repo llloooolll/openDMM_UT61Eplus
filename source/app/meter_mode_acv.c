@@ -1,4 +1,4 @@
-#include "meter_acv.h"
+#include "meter_mode_acv.h"
 
 #include <string.h>
 
@@ -45,10 +45,12 @@ void meter_acv_init(ao_meter_t *const me) {
 QState meter_acv_adc(ao_meter_t *const me) {
     int32_t sadc_data = es232_get_D0(&me->es232_read_buffer);  //
     int32_t fadc_data = es232_get_D1(&me->es232_read_buffer);  //
-
-    me->es232_value_now = meter_help_acv_cal(me, sadc_data, 0);  // 校准
-    me->es232_power_now =
-        meter_help_acv_get_power(me, me->es232_write_buffer.range_msb);
+    
+    if (!me->es232_hold_flag) {
+        me->es232_value_now = meter_help_acv_cal(me, sadc_data, 0);  // 校准
+        me->es232_power_now =
+            meter_help_acv_get_power(me, me->es232_write_buffer.range_msb);
+    }
 
     calculate_rel_result(me);
 
@@ -77,6 +79,10 @@ QState meter_acv_key(ao_meter_t *const me) {
             me->es232_value_rel = me->es232_value_now;
             me->es232_power_rel = me->es232_power_now;
             me->lcd_pixel_buffer.delta = 1;
+            break;
+        case button_hold_id << 4 | SINGLE_CLICK:
+            me->es232_hold_flag = !me->es232_hold_flag;
+            me->lcd_pixel_buffer.hold = me->es232_hold_flag;
             break;
         default:
             break;

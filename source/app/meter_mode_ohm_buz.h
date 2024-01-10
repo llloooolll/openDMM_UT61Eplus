@@ -1,5 +1,5 @@
-#ifndef __METER_OHM_BUZ_H__
-#define __METER_OHM_BUZ_H__
+#ifndef __METER_MODE_OHM_BUZ_H__
+#define __METER_MODE_OHM_BUZ_H__
 
 #include "ao_meter.h"
 
