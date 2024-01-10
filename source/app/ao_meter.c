@@ -10,10 +10,12 @@
 #include "meter_acv.h"
 #include "meter_button.h"
 #include "meter_dcv.h"
-#include "meter_ohm_ohm.h"
+#include "meter_mv_ac.h"
+#include "meter_mv_dc.h"
 #include "meter_ohm_buz.h"
 #include "meter_ohm_cap.h"
 #include "meter_ohm_dio.h"
+#include "meter_ohm_ohm.h"
 #include "ulog.h"
 
 // 对象
@@ -32,7 +34,6 @@ void ao_meter_ctor(void) {
 
 static QState ao_meter_init(ao_meter_t *const me) {
     me->ready_count = 0;
-    me->es232_range_delay_cycle = 2;
     me->mode = meter_mode_acv;
     me->es232_range_auto = 1;  // 自动换挡
     me->es232_buz_frq = F_1_00K;
@@ -51,21 +52,16 @@ static QState ao_meter_idle(ao_meter_t *const me) {
                 if (me->ready_count >= 3) {
                     ULOG_DEBUG("ALL hardware done\n");
                     ULOG_DEBUG("build: %s %s\n", __DATE__, __TIME__);
+                    // 校准位
                     me->cal_value.cal = eeprom_read_byte(0x00);
                     if (me->cal_value.cal == 0x00) {
-                        ULOG_DEBUG("eeprom value exit %d\n",
-                                   sizeof(cal_value_t));
+                        ULOG_DEBUG("eeprom value exit\n");
                         eeprom_read_all((uint8_t *)&me->cal_value.value[0]);
-
-                        ULOG_DEBUG("cal_value_0: %d\n",
-                                   me->cal_value.value[127 - 0]);
-                        ULOG_DEBUG("cal_value_1: %d\n",
-                                   me->cal_value.value[127 - 1]);
                     }
+                    // 启动
                     QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 1U);
                     QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 1U);
                     QACTIVE_POST(&ao_knob, AO_KNOB_ACTIVE_SIG, 1U);
-                    meter_button_init();
                     status = Q_TRAN(&ao_meter_active);
                     break;
                 }
@@ -85,26 +81,32 @@ static QState ao_meter_active(ao_meter_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
         case Q_ENTRY_SIG:
-            QActive_armX((QActive *)me, 1U, 10U, 0U);  // 按键循环
+            meter_button_init();
+            QActive_armX((QActive *)me, 1U, 10U, 0U);
             status = Q_HANDLED();
             break;
         case Q_TIMEOUT1_SIG:
+            // 按键循环
             button_ticks();
             QActive_armX((QActive *)me, 1U, 10U, 0U);
             status = Q_HANDLED();
             break;
         case AO_METER_MODE_SIG:
-            // 档位有效
+            // 档位
             if (Q_PAR(me) < meter_mode_max) {
+                // 有效
                 me->es232_value_rel = 0;
                 me->es232_power_rel = 0;
                 me->es232_rel_flag = 0;
-
+                // 写入
                 me->mode = Q_PAR(me);
                 ULOG_DEBUG("ES232 mode: %d\n", me->mode);
+                // 清理配置
                 memset(&me->lcd_pixel_buffer, 0x00, sizeof(lcd_pixel_t));
                 memset(&me->es232_write_buffer, 0x00, sizeof(es232_write_t));
+                // 写入全局配置
                 me->es232_write_buffer.buzzer_freq_lsb = me->es232_buz_frq;
+                me->es232_range_delay_cycle = 2;
                 switch (me->mode) {
                     case meter_mode_acv:
                         meter_acv_init(me);
@@ -124,14 +126,22 @@ static QState ao_meter_active(ao_meter_t *const me) {
                     case meter_mode_ohm_dio:
                         meter_ohm_dio_init(me);
                         break;
+                    case meter_mode_mv_ac:
+                        meter_mv_ac_init(me);
+                        break;
+                    case meter_mode_mv_dc:
+                        meter_mv_dc_init(me);
+                        break;
                     default:
                         break;
                 }
             }
-            QACTIVE_POST(&ao_knob, AO_KNOB_ACTIVE_SIG, 1U);  // 再探再报
+            // 再探再报
+            QACTIVE_POST(&ao_knob, AO_KNOB_ACTIVE_SIG, 1U);
             status = Q_HANDLED();
             break;
-        case AO_METER_ADC_DONE_SIG:  // 数据
+        case AO_METER_ADC_DONE_SIG:
+            // 数据
             memcpy(&me->es232_read_buffer, (es232_read_t *)Q_PAR(me),
                    sizeof(es232_read_t));
             switch (me->mode) {
@@ -152,6 +162,12 @@ static QState ao_meter_active(ao_meter_t *const me) {
                     break;
                 case meter_mode_ohm_dio:
                     status = meter_ohm_dio_adc(me);
+                    break;
+                case meter_mode_mv_ac:
+                    status = meter_mv_ac_adc(me);
+                    break;
+                case meter_mode_mv_dc:
+                    status = meter_mv_dc_adc(me);
                     break;
                 default:
                     status = Q_HANDLED();
@@ -189,6 +205,12 @@ static QState ao_meter_active(ao_meter_t *const me) {
                                 break;
                             case meter_mode_ohm_dio:
                                 status = meter_ohm_dio_key(me);
+                                break;
+                            case meter_mode_mv_ac:
+                                status = meter_mv_ac_key(me);
+                                break;
+                            case meter_mode_mv_dc:
+                                status = meter_mv_dc_key(me);
                                 break;
                             default:
                                 status = Q_HANDLED();

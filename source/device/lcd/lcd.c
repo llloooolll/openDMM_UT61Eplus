@@ -182,7 +182,7 @@ void lcd_show_point(lcd_pixel_t *lcd_pixel, uint8_t index, bool flag) {
 }
 
 /**
- * @brief 显示数字值
+ * @brief 显示数字值，值大于上限显示OL
  *
  * @param lcd_pixel
  * @param i32_value 显示值

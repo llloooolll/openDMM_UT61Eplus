@@ -82,7 +82,8 @@ static QState ao_lcd_active(ao_lcd_t *const me) {
             lcd_enable(1);
             status = Q_HANDLED();
             break;
-        case AO_LCD_REFRESH_SIG:  // 刷新
+        case AO_LCD_REFRESH_SIG:
+            // 刷新
             // ULOG_DEBUG("LCD refrush\n");
             memcpy(&me->lcd_pixel_buffer, (uint32_t *)Q_PAR(me),
                    sizeof(lcd_pixel_t));
@@ -90,6 +91,7 @@ static QState ao_lcd_active(ao_lcd_t *const me) {
             status = Q_HANDLED();
             break;
         case AO_LCD_BL_SIG:
+            // 背光
             if (Q_PAR(me) > 0) {
                 if (1) {
                     QActive_armX((QActive *)me, 0U, Q_PAR(me), 0U);
@@ -101,6 +103,7 @@ static QState ao_lcd_active(ao_lcd_t *const me) {
             status = Q_HANDLED();
             break;
         case Q_TIMEOUT_SIG:
+            // 背光到期
             QACTIVE_POST(me, AO_LCD_BL_SIG, 0);
             status = Q_HANDLED();
             break;

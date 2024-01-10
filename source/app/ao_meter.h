@@ -60,10 +60,13 @@ typedef struct _ao_meter_t {
     uint8_t es232_range_delay_cycle;  // 量程切换延迟周期
     bool es232_range_delay_dir;       // 量程切换方向
     uint8_t es232_buz_frq;            // 蜂鸣器频率
-    int32_t es232_value_rel;          // 相对测量值
-    int8_t es232_power_rel;           // 相对测量值幂
-    int32_t es232_value_now;          // 测量值历史
-    int8_t es232_power_now;           // 测量值历史幂
+
+    int32_t es232_value_rel;   // 相对测量值
+    int8_t es232_power_rel;    // 相对测量值幂
+    int32_t es232_value_now;   // 测量值历史
+    int8_t es232_power_now;    // 测量值历史幂
+    int32_t es232_show_value;  // 显示值
+    int8_t es232_show_power;   // 显示值的幂
 
 } ao_meter_t;
 

@@ -4,6 +4,7 @@
 #include "irda.h"
 #include "qpn.h"
 #include "sysctrl.h"
+#include "ulog.h"
 
 // 中断优先级，数字越大优先级越低
 enum KernelAwareISRs {
@@ -51,8 +52,9 @@ void QV_onIdle(void) { QF_INT_ENABLE(); }
  * @return Q_NORETURN
  */
 Q_NORETURN Q_onAssert(char const Q_ROM *const module, int loc) {
-    (void)module;
-    (void)loc;
+    ULOG_ERROR("QP assert %s, %d\n", module, loc);
+    while (1) {
+    }
 
-    NVIC_SystemReset();
+    // NVIC_SystemReset();
 }

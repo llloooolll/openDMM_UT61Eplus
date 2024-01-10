@@ -5,7 +5,7 @@
 #include "ao_es232.h"
 #include "ao_lcd.h"
 #include "meter_button.h"
-#include "meter_help_range.h"
+#include "meter_range.h"
 #include "ulog.h"
 
 static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value);
@@ -41,20 +41,19 @@ void meter_dcv_init(ao_meter_t *const me) {
  * @return QState
  */
 QState meter_dcv_adc(ao_meter_t *const me) {
-    int32_t sadc_data = es232_get_D0(&me->es232_read_buffer);  //
-    int32_t fadc_data = es232_get_D1(&me->es232_read_buffer);  //
-
+    // 读结果
+    int32_t sadc_data = es232_get_D0(&me->es232_read_buffer);
+    int32_t fadc_data = es232_get_D1(&me->es232_read_buffer);
+    // 校准
     me->es232_value_now = meter_help_dcv_cal(me, sadc_data);
     me->es232_power_now =
         meter_help_dcv_get_power(me, me->es232_write_buffer.range_msb);
-
-    int32_t show_value = 0;
-    int8_t show_power = 0;
-    calculate_rel_result(me, &show_value, &show_power);
-
-    // ULOG_DEBUG("sadc = %d\n", abs(fadc_data));
-    if (meter_help_range_sel(me, fadc_data * 100)) {
-        lcd_show_value(&me->lcd_pixel_buffer, show_value, show_power);
+    // 计算相对值
+    calculate_rel_result(me);
+    // 检查量程
+    if (meter_range_sel(me, fadc_data * 100)) {
+        lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value,
+                       me->es232_show_power);
         QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG,
                      (uint32_t)&me->lcd_pixel_buffer);
     }
@@ -95,6 +94,13 @@ static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value) {
     return value;
 }
 
+/**
+ * @brief 计算结果的幂
+ *
+ * @param me
+ * @param range
+ * @return int8_t
+ */
 static int8_t meter_help_dcv_get_power(ao_meter_t *const me, uint8_t range) {
     return -5 + (int8_t)range;
 }

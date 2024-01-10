@@ -6,7 +6,7 @@
 #include "ao_es232.h"
 #include "ao_lcd.h"
 #include "meter_button.h"
-#include "meter_help_range.h"
+#include "meter_range.h"
 #include "ulog.h"
 
 static int32_t meter_help_ohm_buz_cal(ao_meter_t *const me, int32_t value);
@@ -17,13 +17,14 @@ static int32_t meter_help_ohm_buz_cal(ao_meter_t *const me, int32_t value);
  * @param me
  */
 void meter_ohm_buz_init(ao_meter_t *const me) {
-    me->es232_write_buffer.mode_msb = ES232_MODE_CON;
-    me->es232_write_buffer.shbp_dcsel = 1;  // 内部比较器
-    QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
-
     me->lcd_pixel_buffer.ohm = 1;     // 单位欧姆
     me->lcd_pixel_buffer.buzzer = 1;  // 蜂鸣
     lcd_set_ol_threshold(300);
+
+    me->es232_write_buffer.mode_msb = ES232_MODE_CON;
+    me->es232_write_buffer.shbp_dcsel = 1;  // 内部比较器
+    me->es232_write_buffer.range_msb = B000;
+    QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
 }
 
 /**
@@ -59,9 +60,6 @@ QState meter_ohm_buz_key(ao_meter_t *const me) {
         case button_select_id << 4 | SINGLE_CLICK:
             QACTIVE_POST(me, AO_METER_MODE_SIG, meter_mode_ohm_dio);
             break;
-        case button_rel_id << 4 | SINGLE_CLICK:
-            me->es232_value_rel = me->es232_value_now;
-            me->es232_power_rel = me->es232_power_now;
         default:
             break;
     }
