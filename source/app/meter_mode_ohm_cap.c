@@ -18,9 +18,9 @@ static int8_t meter_help_ohm_cap_get_power(ao_meter_t *const me, uint8_t range);
  * @param me
  */
 void meter_ohm_cap_init(ao_meter_t *const me) {
+    // LCD显示
     me->lcd_pixel_buffer.farad = 1;       // 单位法拉
     me->lcd_pixel_buffer.range_auto = 1;  // 自动档
-    lcd_set_ol_threshold(30000);
 
     me->es232_range_delay_cycle = 0;  // 电容档FADC不工作，每个结果都是准的
     me->es232_range_value_max = 30000;  // 最大
@@ -30,6 +30,7 @@ void meter_ohm_cap_init(ao_meter_t *const me) {
     me->es232_value_rel = 0;
     me->es232_power_rel = meter_help_ohm_cap_get_power(me, me->es232_range_min);
 
+    // ES232设置
     me->es232_write_buffer.mode_msb = ES232_MODE_CAP;
     me->es232_write_buffer.range_msb = me->es232_range_min;
     QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
@@ -51,19 +52,19 @@ QState meter_ohm_cap_adc(ao_meter_t *const me) {
             meter_help_ohm_cap_get_power(me, me->es232_write_buffer.range_msb);
     }
 
-    calculate_rel_result(me);
-
-    // ULOG_DEBUG("sadc = %d\n", abs(fadc_data));
-    if (meter_range_sel(me, me->es232_value_now)) {
-        if (me->es232_read_buffer.STA0 == 1) {
-            lcd_show_value(&me->lcd_pixel_buffer, 0, 0);
-        } else {
-            lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value,
-                           me->es232_show_power);
+    calculate_rel_result(me);  // 计算相对值
+    if (abs(me->es232_value_now > 30000) &&
+        (me->es232_write_buffer.range_msb == me->es232_range_max)) {
+        lcd_show_ol(&me->lcd_pixel_buffer);
+    } else {
+        if (meter_range_sel(me, me->es232_value_now)) {
+            if (me->es232_read_buffer.STA0 == 0) {
+                lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value,
+                               me->es232_show_power);
+            }
         }
-        QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG,
-                     (uint32_t)&me->lcd_pixel_buffer);
     }
+    QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
 
     return Q_HANDLED();
 }

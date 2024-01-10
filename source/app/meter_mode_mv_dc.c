@@ -18,17 +18,18 @@ static int8_t meter_help_mv_dc_get_power(ao_meter_t *const me, uint8_t range);
  * @param me
  */
 void meter_mv_dc_init(ao_meter_t *const me) {
+    // LCD显示
     me->lcd_pixel_buffer.volt = 1;  // 单位伏特
     me->lcd_pixel_buffer.dc = 1;
-    lcd_set_ol_threshold(60000);  // 不换挡，相对值需要2倍量程
 
+    me->es232_range_max = B000;
     me->es232_range_min = B000;
     me->es232_value_rel = 0;
     me->es232_power_rel = meter_help_mv_dc_get_power(me, me->es232_range_min);
 
+    // ES232设置
     me->es232_write_buffer.mode_msb = ES232_MODE_ADP;
     me->es232_write_buffer.range_msb = me->es232_range_min;
-    me->es232_write_buffer.ext_adp = 0;
     QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
 }
 
@@ -39,7 +40,6 @@ void meter_mv_dc_init(ao_meter_t *const me) {
  * @return QState
  */
 QState meter_mv_dc_adc(ao_meter_t *const me) {
-    // 读结果
     int32_t sadc_data = es232_get_D0(&me->es232_read_buffer);
     // int32_t fadc_data = es232_get_D1(&me->es232_read_buffer);
 
@@ -48,15 +48,14 @@ QState meter_mv_dc_adc(ao_meter_t *const me) {
         me->es232_power_now =
             meter_help_mv_dc_get_power(me, me->es232_write_buffer.range_msb);
     }
-    // 手动显示OL
-    if (abs(me->es232_value_now) > 30000) {
-        me->es232_value_now = 60001;
-    }
-    // 计算相对值
-    calculate_rel_result(me);
 
-    lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value,
-                   me->es232_show_power);
+    calculate_rel_result(me);  // 计算相对值
+    if (abs(me->es232_value_now) > 30000) {
+        lcd_show_ol(&me->lcd_pixel_buffer);
+    } else {
+        lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value,
+                       me->es232_show_power);
+    }
     QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
 
     return Q_HANDLED();

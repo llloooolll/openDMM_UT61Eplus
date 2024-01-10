@@ -18,19 +18,19 @@ static int8_t meter_help_ohm_ohm_get_power(ao_meter_t *const me, uint8_t range);
  * @param me
  */
 void meter_ohm_ohm_init(ao_meter_t *const me) {
+    // LCD显示
     me->lcd_pixel_buffer.ohm = 1;         // 单位欧姆
     me->lcd_pixel_buffer.range_auto = 1;  // 自动档
-    lcd_set_ol_threshold(30000);
 
-    me->es232_range_delay_cycle = 0;
+    me->es232_range_delay_cycle = 0;    // 快速换挡
     me->es232_range_value_max = 30000;  // 最大
     me->es232_range_value_min = 2900;   // 最小
-    me->es232_range_max = B110;         //
-    me->es232_range_min = B000;         //
-
+    me->es232_range_max = B110;
+    me->es232_range_min = B000;
     me->es232_value_rel = 0;
     me->es232_power_rel = meter_help_ohm_ohm_get_power(me, me->es232_range_min);
 
+    // ES232设置
     me->es232_write_buffer.mode_msb = ES232_MODE_RES;
     me->es232_write_buffer.range_msb = me->es232_range_min;
     QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
@@ -53,14 +53,16 @@ QState meter_ohm_ohm_adc(ao_meter_t *const me) {
     }
 
     calculate_rel_result(me);
-
-    // ULOG_DEBUG("sadc = %d\n", abs(fadc_data));
-    if (meter_range_sel(me, fadc_data * 100)) {
-        lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value,
-                       me->es232_show_power);
-        QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG,
-                     (uint32_t)&me->lcd_pixel_buffer);
+    if (abs(me->es232_value_now > 30000) &&
+        (me->es232_write_buffer.range_msb == me->es232_range_max)) {
+        lcd_show_ol(&me->lcd_pixel_buffer);  // 显示OL
+    } else {
+        if (meter_range_sel(me, fadc_data * 100)) {
+            lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value,
+                           me->es232_show_power);
+        }
     }
+    QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
 
     return Q_HANDLED();
 }

@@ -10,6 +10,8 @@
 #include "meter_button.h"
 #include "meter_mode_acv.h"
 #include "meter_mode_dcv.h"
+#include "meter_mode_hz_freq.h"
+#include "meter_mode_hz_duty.h"
 #include "meter_mode_mv_ac.h"
 #include "meter_mode_mv_dc.h"
 #include "meter_mode_ohm_buz.h"
@@ -133,6 +135,12 @@ static QState ao_meter_active(ao_meter_t *const me) {
                     case meter_mode_mv_dc:
                         meter_mv_dc_init(me);
                         break;
+                    case meter_mode_hz_freq:
+                        meter_hz_freq_init(me);
+                        break;
+                    case meter_mode_hz_duty:
+                        meter_hz_duty_init(me);
+                        break;
                     default:
                         break;
                 }
@@ -169,6 +177,12 @@ static QState ao_meter_active(ao_meter_t *const me) {
                     break;
                 case meter_mode_mv_dc:
                     status = meter_mv_dc_adc(me);
+                    break;
+                case meter_mode_hz_freq:
+                    status = meter_hz_freq_adc(me);
+                    break;
+                case meter_mode_hz_duty:
+                    status = meter_hz_duty_adc(me);
                     break;
                 default:
                     status = Q_HANDLED();
@@ -212,6 +226,12 @@ static QState ao_meter_active(ao_meter_t *const me) {
                                 break;
                             case meter_mode_mv_dc:
                                 status = meter_mv_dc_key(me);
+                                break;
+                            case meter_mode_hz_freq:
+                                status = meter_hz_freq_key(me);
+                                break;
+                            case meter_mode_hz_duty:
+                                status = meter_hz_duty_key(me);
                                 break;
                             default:
                                 status = Q_HANDLED();
