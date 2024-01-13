@@ -6,6 +6,9 @@
 #include "io_config.h"
 #include "ulog.h"
 
+char *button_list[] = {"select", "range", "hz", "rel", "peak", "hold"};
+char *event_list[] = {" ", " ", " ", "single", " ", "long", " ", " ", " "};
+
 static struct Button button_select;
 static struct Button button_range;
 static struct Button button_hz;
@@ -57,6 +60,9 @@ static uint8_t meter_read_button(uint8_t button_id) {
 }
 
 void meter_button_call_back(void *btn) {
+    ULOG_DEBUG("button: %s, event: %s\n",
+               button_list[(uint32_t)((Button *)btn)->button_id],
+               event_list[((Button *)btn)->event]);
     QACTIVE_POST((QActive *)&ao_meter, AO_METER_KEY_SIG,
                  (((uint32_t)((Button *)btn)->button_id) << 4) |
                      (((Button *)btn)->event));

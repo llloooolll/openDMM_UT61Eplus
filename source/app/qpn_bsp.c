@@ -1,4 +1,4 @@
-#include "bsp.h"
+#include "qpn_bsp.h"
 
 #include "hc32l13x.h"
 #include "irda.h"
@@ -10,6 +10,7 @@
 enum KernelAwareISRs {
     SYSTICK_PRIO = QF_AWARE_ISR_CMSIS_PRI,  // tick优先级最高
     UART0_PRIO = QF_AWARE_ISR_CMSIS_PRI + 1U,
+    RTC_PRIO = QF_AWARE_ISR_CMSIS_PRI + 1U,
     // ...
     MAX_KERNEL_AWARE_CMSIS_PRI
 };
@@ -36,6 +37,7 @@ void QF_onStartup(void) {
     SysTick_Config(SystemCoreClock / BSP_TICKS_PER_SEC);
     NVIC_SetPriorityGrouping(0U);
     NVIC_SetPriority(SysTick_IRQn, SYSTICK_PRIO);
+    NVIC_SetPriority(RTC_IRQn, RTC_PRIO);
 }
 
 /**

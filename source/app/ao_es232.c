@@ -46,7 +46,7 @@ static QState ao_es232_ready(ao_es232_t *const me) {
             if (!es232_init_result) {
                 es232_write(&me->es232_write_buffer);
             }
-            ULOG_DEBUG("ES232 init done\n");
+            ULOG_DEBUG("ES232 done\n");
             QACTIVE_POST(&ao_meter, AO_METER_READY_SIG,
                          (uint32_t)es232_init_result);
             status = Q_TRAN(&ao_es232_idle);
@@ -121,6 +121,12 @@ static QState ao_es232_active(ao_es232_t *const me) {
             break;
         case Q_TIMEOUT1_SIG:
             QACTIVE_POST(me, AO_ES232_ENABLE_BUZ_SIG, 0);
+            status = Q_HANDLED();
+            break;
+        case AO_ES232_ACTIVE_SIG:
+            if (Q_PAR(me) == 0U) {
+                ULOG_DEBUG("es232 sleep\n");
+            }
             status = Q_HANDLED();
             break;
         default:

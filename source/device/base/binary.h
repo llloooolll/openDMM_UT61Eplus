@@ -769,4 +769,8 @@
 #define XXXXXXX_ 0xfe
 #define XXXXXXXX 0xff
 
+#define BCD2DEC(x) ((((x) >> 4) & 0x0F) * 10 + ((x) & 0x0F))
+
+#define DEC2BCD(x) ((((x) / 10) << 4) | ((x) % 10))
+
 #endif

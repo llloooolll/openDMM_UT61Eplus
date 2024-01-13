@@ -4,7 +4,7 @@
 #include "ao_lcd.h"
 #include "ao_meter.h"
 #include "binary.h"
-#include "bsp.h"
+#include "qpn_bsp.h"
 #include "es232.h"
 #include "lcd_pixel.h"
 #include "qpn.h"

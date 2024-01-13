@@ -37,6 +37,7 @@ typedef enum _ao_meter_signal_t {
     AO_METER_ADC_DONE_SIG,            // ADC转换完成
     AO_METER_KEY_SIG,                 // 按键
     AO_METER_MODE_SIG,                // 测量模式
+    AO_METER_SLEEP_SIG,               // 睡觉
 
     AO_METER_MAX_SIG
 } ao_meter_signal_t;
@@ -70,6 +71,7 @@ typedef struct _ao_meter_t {
     int32_t es232_show_value;  // 实际显示值
     int8_t es232_show_power;   // 实际显示值的幂
 
+    uint32_t meter_sleep_time;  // 休眠时间，分钟
 } ao_meter_t;
 
 extern ao_meter_t ao_meter;
