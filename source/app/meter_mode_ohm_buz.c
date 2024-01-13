@@ -41,8 +41,7 @@ void meter_ohm_buz_init(ao_meter_t *const me) {
  * @return QState
  */
 QState meter_ohm_buz_adc(ao_meter_t *const me) {
-    int32_t sadc_data = es232_get_D0(&me->es232_read_buffer);  //
-    // int32_t fadc_data = es232_get_D1(&me->es232_read_buffer); //
+    int32_t sadc_data = abs(es232_get_D0(&me->es232_read_buffer));  //
 
     if (!me->es232_hold_flag) {
         me->es232_value_now = meter_help_ohm_buz_cal(me, sadc_data);
