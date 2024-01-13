@@ -82,9 +82,9 @@ bool meter_range_sel(ao_meter_t *const me, int32_t value) {
                 me->es232_write_buffer.range_msb++;
                 QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG,
                              &me->es232_write_buffer);
-                // ULOG_DEBUG("%d > %d\n", u32_value,
-                // me->es232_range_value_max); ULOG_DEBUG("value too large
-                // change range: %d\n", me->es232_write_buffer.range_msb);
+                // ULOG_DEBUG("%d > %d\n", u32_value, me->es232_range_value_max);
+                // ULOG_DEBUG("value too large change range: %d\n",
+                //            me->es232_write_buffer.range_msb);
             }
         }
     } else if (u32_value < me->es232_range_value_min) {
@@ -102,9 +102,9 @@ bool meter_range_sel(ao_meter_t *const me, int32_t value) {
                 me->es232_write_buffer.range_msb--;
                 QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG,
                              &me->es232_write_buffer);
-                // ULOG_DEBUG("%d < %d\n", u32_value,
-                // me->es232_range_value_min); ULOG_DEBUG("value too small
-                // change range: %d\n", me->es232_write_buffer.range_msb);
+                // ULOG_DEBUG("%d < %d\n", u32_value, me->es232_range_value_min);
+                // ULOG_DEBUG("value too small change range: %d\n",
+                //            me->es232_write_buffer.range_msb);
             }
         }
     }

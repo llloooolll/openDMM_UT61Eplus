@@ -53,9 +53,9 @@ QState meter_dcv_adc(ao_meter_t *const me) {
     }
 
     calculate_rel_result(me);  // 计算相对值
-    if (abs(me->es232_value_now > 1000) &&
+    if (abs(me->es232_value_now > 10000) &&
         (me->es232_write_buffer.range_msb == me->es232_range_max)) {
-        lcd_show_ol(&me->lcd_pixel_buffer);  // 1000V 显示OL
+        lcd_show_ol(&me->lcd_pixel_buffer);  // 1000.0V 显示OL
     } else {
         if (meter_range_sel(me, fadc_data * 100)) {
             lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value,
