@@ -12,12 +12,14 @@
 #include "meter_mode_a_dc.h"
 #include "meter_mode_acv.h"
 #include "meter_mode_dcv.h"
+#include "meter_mode_hfe.h"
 #include "meter_mode_hz_duty.h"
 #include "meter_mode_hz_freq.h"
 #include "meter_mode_ma_ac.h"
 #include "meter_mode_ma_dc.h"
 #include "meter_mode_mv_ac.h"
 #include "meter_mode_mv_dc.h"
+#include "meter_mode_ncv.h"
 #include "meter_mode_ohm_buz.h"
 #include "meter_mode_ohm_cap.h"
 #include "meter_mode_ohm_dio.h"
@@ -165,6 +167,12 @@ static QState ao_meter_active(ao_meter_t *const me) {
                     case meter_mode_a_ac:
                         meter_a_ac_init(me);
                         break;
+                    case meter_mode_ncv:
+                        meter_ncv_init(me);
+                        break;
+                    case meter_mode_hfe:
+                        meter_hfe_init(me);
+                        break;
                     default:
                         break;
                 }
@@ -225,6 +233,12 @@ static QState ao_meter_active(ao_meter_t *const me) {
                     break;
                 case meter_mode_a_ac:
                     status = meter_a_ac_adc(me);
+                    break;
+                case meter_mode_ncv:
+                    status = meter_ncv_adc(me);
+                    break;
+                case meter_mode_hfe:
+                    status = meter_hfe_adc(me);
                     break;
                 default:
                     status = Q_HANDLED();
@@ -292,6 +306,12 @@ static QState ao_meter_active(ao_meter_t *const me) {
                                 break;
                             case meter_mode_a_ac:
                                 status = meter_a_ac_key(me);
+                                break;
+                            case meter_mode_ncv:
+                                status = meter_ncv_key(me);
+                                break;
+                            case meter_mode_hfe:
+                                status = meter_hfe_key(me);
                                 break;
                             default:
                                 status = Q_HANDLED();
