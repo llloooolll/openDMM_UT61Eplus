@@ -8,16 +8,22 @@
 #include "ao_lcd.h"
 #include "eeprom.h"
 #include "meter_button.h"
+#include "meter_mode_a_ac.h"
+#include "meter_mode_a_dc.h"
 #include "meter_mode_acv.h"
 #include "meter_mode_dcv.h"
-#include "meter_mode_hz_freq.h"
 #include "meter_mode_hz_duty.h"
+#include "meter_mode_hz_freq.h"
+#include "meter_mode_ma_ac.h"
+#include "meter_mode_ma_dc.h"
 #include "meter_mode_mv_ac.h"
 #include "meter_mode_mv_dc.h"
 #include "meter_mode_ohm_buz.h"
 #include "meter_mode_ohm_cap.h"
 #include "meter_mode_ohm_dio.h"
 #include "meter_mode_ohm_ohm.h"
+#include "meter_mode_ua_ac.h"
+#include "meter_mode_ua_dc.h"
 #include "ulog.h"
 
 // 对象
@@ -141,6 +147,24 @@ static QState ao_meter_active(ao_meter_t *const me) {
                     case meter_mode_hz_duty:
                         meter_hz_duty_init(me);
                         break;
+                    case meter_mode_ma_dc:
+                        meter_ma_dc_init(me);
+                        break;
+                    case meter_mode_ma_ac:
+                        meter_ma_ac_init(me);
+                        break;
+                    case meter_mode_ua_dc:
+                        meter_ua_dc_init(me);
+                        break;
+                    case meter_mode_ua_ac:
+                        meter_ua_ac_init(me);
+                        break;
+                    case meter_mode_a_dc:
+                        meter_a_dc_init(me);
+                        break;
+                    case meter_mode_a_ac:
+                        meter_a_ac_init(me);
+                        break;
                     default:
                         break;
                 }
@@ -183,6 +207,24 @@ static QState ao_meter_active(ao_meter_t *const me) {
                     break;
                 case meter_mode_hz_duty:
                     status = meter_hz_duty_adc(me);
+                    break;
+                case meter_mode_ma_dc:
+                    status = meter_ma_dc_adc(me);
+                    break;
+                case meter_mode_ma_ac:
+                    status = meter_ma_ac_adc(me);
+                    break;
+                case meter_mode_ua_dc:
+                    status = meter_ua_dc_adc(me);
+                    break;
+                case meter_mode_ua_ac:
+                    status = meter_ua_ac_adc(me);
+                    break;
+                case meter_mode_a_dc:
+                    status = meter_a_dc_adc(me);
+                    break;
+                case meter_mode_a_ac:
+                    status = meter_a_ac_adc(me);
                     break;
                 default:
                     status = Q_HANDLED();
@@ -232,6 +274,24 @@ static QState ao_meter_active(ao_meter_t *const me) {
                                 break;
                             case meter_mode_hz_duty:
                                 status = meter_hz_duty_key(me);
+                                break;
+                            case meter_mode_ma_dc:
+                                status = meter_ma_dc_key(me);
+                                break;
+                            case meter_mode_ma_ac:
+                                status = meter_ma_ac_key(me);
+                                break;
+                            case meter_mode_ua_dc:
+                                status = meter_ua_dc_key(me);
+                                break;
+                            case meter_mode_ua_ac:
+                                status = meter_ua_ac_key(me);
+                                break;
+                            case meter_mode_a_dc:
+                                status = meter_a_dc_key(me);
+                                break;
+                            case meter_mode_a_ac:
+                                status = meter_a_ac_key(me);
                                 break;
                             default:
                                 status = Q_HANDLED();
