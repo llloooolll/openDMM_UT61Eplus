@@ -11,28 +11,28 @@ int main(void) {
     irda_init(9600);
 
     ulog_set_level(ulog_level_debug);
-    ULOG_USER("level = debug\n");
-    ULOG_ERROR("level = debug\n");
-    ULOG_WARN("level = debug\n");
-    ULOG_DEBUG("level = debug\n");
+    ULOG_ERROR("level = debug\r\n");
+    ULOG_WARN("level = debug\r\n");
+    ULOG_INFO("level = debug\r\n");
+    ULOG_DEBUG("level = debug\r\n");
+
+    ulog_set_level(ulog_level_info);
+    ULOG_ERROR("level = info\r\n");
+    ULOG_WARN("level = info\r\n");
+    ULOG_INFO("level = info\r\n");
+    ULOG_DEBUG("level = info\r\n");
 
     ulog_set_level(ulog_level_warn);
-    ULOG_USER("level = warn\n");
-    ULOG_ERROR("level = warn\n");
-    ULOG_WARN("level = warn\n");
-    ULOG_DEBUG("level = warn\n");
+    ULOG_ERROR("level = warn\r\n");
+    ULOG_WARN("level = warn\r\n");
+    ULOG_INFO("level = warn\r\n");
+    ULOG_DEBUG("level = warn\r\n");
 
     ulog_set_level(ulog_level_error);
-    ULOG_USER("level = error\n");
-    ULOG_ERROR("level = error\n");
-    ULOG_WARN("level = error\n");
-    ULOG_DEBUG("level = error\n");
-
-    ulog_set_level(ulog_level_user);
-    ULOG_USER("level = user\n");
-    ULOG_ERROR("level = user\n");
-    ULOG_WARN("level = user\n");
-    ULOG_DEBUG("level = user\n");
+    ULOG_ERROR("level = error\r\n");
+    ULOG_WARN("level = error\r\n");
+    ULOG_INFO("level = error\r\n");
+    ULOG_DEBUG("level = error\r\n");
 
     while (1) {
     }

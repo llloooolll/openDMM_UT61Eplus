@@ -37,14 +37,15 @@ typedef enum _ao_meter_signal_t {
     AO_METER_ADC_DONE_SIG,            // ADC转换完成
     AO_METER_KEY_SIG,                 // 按键
     AO_METER_MODE_SIG,                // 测量模式
-    AO_METER_SLEEP_SIG,               // 睡觉
+    AO_METER_RTC_ALARM_SIG,           // RTC闹钟
+    AO_METER_SLEEP_SIG,               //
 
     AO_METER_MAX_SIG
 } ao_meter_signal_t;
 
 typedef struct _ao_meter_t {
     QActive super;
-    uint8_t ready_count;
+    // 变量
     cal_value_t cal_value;             // EEPROM校准值
     meter_mode_t mode;                 // ES232测量模式
     es232_write_t es232_write_buffer;  // ES232写入缓存
@@ -59,10 +60,8 @@ typedef struct _ao_meter_t {
     uint8_t delay_cycle_count;       // 自动切换计数
     bool es232_range_delay_dir;      // 量程切换方向
 
-    uint8_t es232_buz_frq;            // 蜂鸣器频率
-    bool es232_rel_flag;              // 相对测量标志
-    bool es232_hold_flag;             // 暂停测量标志
-    uint8_t es232_range_delay_cycle;  // 量程切换延迟周期
+    bool es232_rel_flag;   // 相对测量标志
+    bool es232_hold_flag;  // 暂停测量标志
 
     int32_t es232_value_rel;   // 相对测量值
     int8_t es232_power_rel;    // 相对测量值的幂
@@ -71,7 +70,9 @@ typedef struct _ao_meter_t {
     int32_t es232_show_value;  // 实际显示值
     int8_t es232_show_power;   // 实际显示值的幂
 
-    uint32_t meter_sleep_time;  // 休眠时间，分钟
+    uint8_t es232_buz_frq;            // 蜂鸣器频率
+    uint8_t es232_range_delay_cycle;  // 量程切换延迟周期
+    uint32_t meter_sleep_time;        // 休眠时间，分钟
 } ao_meter_t;
 
 extern ao_meter_t ao_meter;

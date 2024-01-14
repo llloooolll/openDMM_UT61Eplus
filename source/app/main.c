@@ -4,10 +4,12 @@
 #include "ao_lcd.h"
 #include "ao_meter.h"
 #include "binary.h"
-#include "qpn_bsp.h"
 #include "es232.h"
+#include "irda.h"
 #include "lcd_pixel.h"
 #include "qpn.h"
+#include "qpn_bsp.h"
+#include "ulog.h"
 
 static QEvt l_meter_queue[16];
 static QEvt l_lcd_queue[16];
@@ -33,6 +35,11 @@ int main(void) {
 
     QF_init(Q_DIM(QF_active));
     bsp_init();
+    irda_init(9600);
+    if (irda_is_exist()) {
+        ulog_set_level(ulog_level_debug);
+        ulog_clean();  // 滚动屏幕，清除可视区域
+    }
 
     return QF_run();  // 开始调度
 }

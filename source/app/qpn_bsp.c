@@ -54,7 +54,7 @@ void QV_onIdle(void) { QF_INT_ENABLE(); }
  * @return Q_NORETURN
  */
 Q_NORETURN Q_onAssert(char const Q_ROM *const module, int loc) {
-    ULOG_ERROR("QP assert %s, %d\n", module, loc);
+    ULOG_ERROR("QP assert %s, %d\r\n", module, loc);
     while (1) {
     }
 

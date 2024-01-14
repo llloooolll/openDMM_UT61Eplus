@@ -50,40 +50,60 @@ void ao_meter_ctor(void) {
 static QState ao_meter_init(ao_meter_t *const me) {
     me->es232_range_auto = 1;  // 自动换挡
     me->es232_buz_frq = F_1_00K;
-    me->meter_sleep_time = 1;
+    me->meter_sleep_time = 20;
     return Q_TRAN(&ao_meter_idle);
 }
 
 static QState ao_meter_idle(ao_meter_t *const me) {
     QState status;
+    static uint8_t init_status;
     switch (Q_SIG(me)) {
         case Q_ENTRY_SIG:
+            init_status = 0;
+            QACTIVE_POST(&ao_es232, AO_ES232_READY_SIG, 0U);  //
             status = Q_HANDLED();
             break;
         case AO_METER_READY_SIG:
             if (Q_PAR(me) == 0) {
-                me->ready_count++;
-                if (me->ready_count >= 3) {
-                    ULOG_DEBUG("ALL hardware done\n");
-                    ULOG_DEBUG("build: %s %s\n", __DATE__, __TIME__);
-                    // 校准位
-                    me->cal_value.cal = eeprom_read_byte(0x00);
-                    if (me->cal_value.cal == 0x00) {
-                        ULOG_DEBUG("eeprom value exit\n");
-                        eeprom_read_all((uint8_t *)&me->cal_value.value[0]);
-                    }
-                    // 启动
-                    meter_sleep_init(me);
-                    QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 1U);
-                    QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 1U);
-                    QACTIVE_POST(&ao_knob, AO_KNOB_ACTIVE_SIG, 1U);
-                    status = Q_TRAN(&ao_meter_active);
-                    break;
+                switch (init_status) {
+                    case 0:
+                        QACTIVE_POST(&ao_lcd, AO_LCD_READY_SIG, 0U);  //
+                        status = Q_HANDLED();
+                        break;
+                    case 1:
+                        QACTIVE_POST(&ao_knob, AO_KNOB_READY_SIG, 0U);  //
+                        status = Q_HANDLED();
+                        break;
+                    case 2:
+                        QACTIVE_POST(&ao_irda, AO_IRDA_READY_SIG, 0U);  //
+                        status = Q_HANDLED();
+                        break;
+                    case 3:
+                        ULOG_INFO("ALL hardware done\r\n");
+                        ULOG_INFO("build: %s %s\r\n", __DATE__, __TIME__);
+                        me->cal_value.cal = eeprom_read_byte(0x00);
+                        if (me->cal_value.cal == 0x00) {
+                            ULOG_WARN("eeprom value exit\r\n");
+                            eeprom_read_all((uint8_t *)&me->cal_value.value[0]);
+                        } else {
+                            ULOG_ERROR("eeprom value non-exist\r\n");
+                        }
+                        meter_sleep_init(me);
+                        QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 1U);
+                        QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 1U);
+                        QACTIVE_POST(&ao_knob, AO_KNOB_ACTIVE_SIG, 1U);
+                        QACTIVE_POST(&ao_irda, AO_IRDA_ACTIVE_SIG, 1U);
+                        status = Q_TRAN(&ao_meter_active);
+                        break;
+                    default:
+                        status = Q_HANDLED();
+                        break;
                 }
+                init_status++;
             } else {
-                ULOG_ERROR("hardware error\n");
+                ULOG_ERROR("hardware error\r\n");
+                status = Q_HANDLED();
             }
-            status = Q_HANDLED();
             break;
         default:
             status = Q_SUPER(&QHsm_top);
@@ -101,26 +121,23 @@ static QState ao_meter_active(ao_meter_t *const me) {
             status = Q_HANDLED();
             break;
         case Q_TIMEOUT1_SIG:
-            // 按键循环
-            button_ticks();
+            button_ticks();  // 按键循环
             QActive_armX((QActive *)me, 1U, 10U, 0U);
             status = Q_HANDLED();
             break;
-        case AO_METER_SLEEP_SIG:
+        case AO_METER_RTC_ALARM_SIG:
             status = Q_TRAN(&ao_meter_sleep);
             break;
         case AO_METER_MODE_SIG:
-            // 档位
             if (Q_PAR(me) < meter_mode_max) {
                 // 变量
                 me->es232_value_rel = 0;
                 me->es232_power_rel = 0;
                 me->es232_rel_flag = 0;
                 me->es232_hold_flag = 0;
-                me->ready_count = 0;
                 // 写入
                 me->mode = Q_PAR(me);
-                ULOG_DEBUG("ES232 mode: %d\n", me->mode);
+                ULOG_INFO("ES232 mode: %d\r\n", me->mode);
                 // 清理配置
                 memset(&me->lcd_pixel_buffer, 0x00, sizeof(lcd_pixel_t));
                 memset(&me->es232_write_buffer, 0x00, sizeof(es232_write_t));
@@ -338,12 +355,40 @@ static QState ao_meter_active(ao_meter_t *const me) {
 
 static QState ao_meter_sleep(ao_meter_t *const me) {
     QState status;
+    static uint8_t sleep_step;
     switch (Q_SIG(me)) {
         case Q_ENTRY_SIG:
+            sleep_step = 0;
             QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 0U);
-            QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 0U);
-            QACTIVE_POST(&ao_knob, AO_KNOB_ACTIVE_SIG, 0U);
+            ULOG_DEBUG("meter sleep\r\n");
             status = Q_HANDLED();
+            break;
+        case AO_METER_SLEEP_SIG:
+            switch (sleep_step) {
+                case 0:
+                    QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 0U);
+                    status = Q_HANDLED();
+                    break;
+                case 1:
+                    QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 0U);
+                    status = Q_HANDLED();
+                    break;
+                case 2:
+                    QACTIVE_POST(&ao_knob, AO_KNOB_ACTIVE_SIG, 0U);
+                    status = Q_HANDLED();
+                    break;
+                case 3:
+                    QACTIVE_POST(&ao_irda, AO_IRDA_ACTIVE_SIG, 0U);
+                    status = Q_HANDLED();
+                    break;
+                case 4:
+                    status = Q_HANDLED();
+                    break;
+                default:
+                    status = Q_HANDLED();
+                    break;
+            }
+            sleep_step++;
             break;
         default:
             status = Q_SUPER(&QHsm_top);

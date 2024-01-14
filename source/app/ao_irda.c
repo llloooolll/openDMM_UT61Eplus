@@ -27,16 +27,11 @@ static QState ao_irda_ready(ao_irda_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
         case Q_ENTRY_SIG:
-            QACTIVE_POST(me, AO_IRDA_READY_SIG, 0U);
+            // QACTIVE_POST(me, AO_IRDA_READY_SIG, 0U);
             status = Q_HANDLED();
             break;
         case AO_IRDA_READY_SIG:
-            irda_init(9600);
-            if (irda_is_exist()) {
-                // ULOG_DEBUG("irda USB device exist\n");
-                ulog_set_level(ulog_level_debug);
-            }
-            ULOG_DEBUG("IRDA done\n");
+            ULOG_INFO("IRDA done\r\n");
             QACTIVE_POST(&ao_meter, AO_METER_READY_SIG, 0U);
             status = Q_TRAN(&ao_irda_idle);
             break;
@@ -69,9 +64,14 @@ static QState ao_irda_active(ao_irda_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
         case Q_ENTRY_SIG:
-            ULOG_DEBUG("IRDA active\n");
+            ULOG_INFO("IRDA active\r\n");
             status = Q_HANDLED();
             break;
+        case AO_IRDA_ACTIVE_SIG:
+            if (Q_PAR(me) == 0U) {
+                ULOG_INFO("IRDA sleep\r\n");
+                QACTIVE_POST(&ao_meter, AO_METER_SLEEP_SIG, 0U);
+            }
         default:
             status = Q_SUPER(&QHsm_top);
             break;

@@ -11,7 +11,7 @@ void RTC_IRQHandler(void) {
     rtc_clean_alarm_status();
     rtc_enable_alarm(0);
     rtc_enable_count(0);
-    QACTIVE_POST_ISR(&ao_meter, AO_METER_SLEEP_SIG, 0U);
+    QACTIVE_POST_ISR(&ao_meter, AO_METER_RTC_ALARM_SIG, 0U);
 }
 
 void meter_sleep_init(ao_meter_t *const me) {
@@ -42,7 +42,7 @@ void meter_sleep_init(ao_meter_t *const me) {
     rtc_set_alarm(&alarm_time);
 
     if (me->meter_sleep_time > 0) {
-        ULOG_DEBUG("alarm init %d minutes\n", me->meter_sleep_time);
+        ULOG_WARN("rtc alarm init %d minutes\r\n", me->meter_sleep_time);
         rtc_enable_alarm_irq(1);
         rtc_enable_alarm(1);
         rtc_enable_count(1);

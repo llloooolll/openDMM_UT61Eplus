@@ -29,7 +29,7 @@ static QState ao_lcd_ready(ao_lcd_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
         case Q_ENTRY_SIG:
-            QACTIVE_POST(me, AO_LCD_READY_SIG, 0U);
+            // QACTIVE_POST(me, AO_LCD_READY_SIG, 0U);
             status = Q_HANDLED();
             break;
         case AO_LCD_READY_SIG:
@@ -41,7 +41,7 @@ static QState ao_lcd_ready(ao_lcd_t *const me) {
             if (!lcd_init_result) {
                 lcd_test(1);  // 正常，满像素测试
             }
-            ULOG_DEBUG("LCD done\n");
+            ULOG_INFO("LCD done\r\n");
             QACTIVE_POST(&ao_meter, AO_METER_READY_SIG,
                          (uint32_t)lcd_init_result);
             status = Q_TRAN(&ao_lcd_idle);
@@ -59,7 +59,7 @@ static QState ao_lcd_idle(ao_lcd_t *const me) {
         case AO_LCD_ACTIVE_SIG:
             if (Q_PAR(me) > 0U) {
                 lcd_test(0);
-                ULOG_DEBUG("LCD active\n");
+                ULOG_INFO("LCD active\r\n");
                 status = Q_TRAN(&ao_lcd_active);
             } else {
                 status = Q_HANDLED();
@@ -108,7 +108,11 @@ static QState ao_lcd_active(ao_lcd_t *const me) {
             break;
         case AO_LCD_ACTIVE_SIG:
             if (Q_PAR(me) == 0U) {
-                ULOG_DEBUG("LCD sleep\n");
+                lcd_enable_bl(0);
+                lcd_enable(0);
+                lcd_refresh(&me->lcd_pixel_buffer);
+                QACTIVE_POST(&ao_meter, AO_METER_SLEEP_SIG, 0U);
+                ULOG_INFO("LCD sleep\r\n");
             }
             status = Q_HANDLED();
             break;

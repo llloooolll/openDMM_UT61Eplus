@@ -31,7 +31,7 @@ static QState ao_es232_ready(ao_es232_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
         case Q_ENTRY_SIG:  // 进入
-            QACTIVE_POST(me, AO_ES232_READY_SIG, 0U);
+            // QACTIVE_POST(me, AO_ES232_READY_SIG, 0U);
             status = Q_HANDLED();
             break;
         case AO_ES232_READY_SIG:
@@ -46,7 +46,7 @@ static QState ao_es232_ready(ao_es232_t *const me) {
             if (!es232_init_result) {
                 es232_write(&me->es232_write_buffer);
             }
-            ULOG_DEBUG("ES232 done\n");
+            ULOG_INFO("ES232 done\r\n");
             QACTIVE_POST(&ao_meter, AO_METER_READY_SIG,
                          (uint32_t)es232_init_result);
             status = Q_TRAN(&ao_es232_idle);
@@ -69,7 +69,7 @@ static QState ao_es232_idle(ao_es232_t *const me) {
             break;
         case AO_ES232_ACTIVE_SIG:
             if (Q_PAR(me) > 0U) {
-                ULOG_DEBUG("ES232 active\n");
+                ULOG_INFO("ES232 active\r\n");
                 status = Q_TRAN(&ao_es232_active);
             } else {
                 status = Q_HANDLED();
@@ -94,7 +94,7 @@ static QState ao_es232_active(ao_es232_t *const me) {
         case Q_TIMEOUT_SIG:
             if (es232_is_data_ready()) {
                 es232_read(&me->es232_read_buffer);
-                // ULOG_DEBUG("ADC done\n");
+                // ULOG_INFO("ADC done\r\n");
                 QACTIVE_POST_X(&ao_meter, 4U, AO_METER_ADC_DONE_SIG,
                                (uint32_t)&me->es232_read_buffer);
             }
@@ -125,7 +125,10 @@ static QState ao_es232_active(ao_es232_t *const me) {
             break;
         case AO_ES232_ACTIVE_SIG:
             if (Q_PAR(me) == 0U) {
-                ULOG_DEBUG("es232 sleep\n");
+                QActive_disarmX((QActive *)me, 0U);
+                es232_enable_power(0);
+                QACTIVE_POST(&ao_meter, AO_METER_SLEEP_SIG, 0U);
+                ULOG_INFO("ES232 sleep\r\n");
             }
             status = Q_HANDLED();
             break;
