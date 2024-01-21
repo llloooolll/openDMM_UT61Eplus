@@ -51,3 +51,13 @@ bool irda_is_exist(void) {
     }
     return 0;
 }
+
+void irda_enable(bool flag) {
+    if (flag) {
+        gpio_set_pin(IRDA_HALL_PWR_PORT, IRDA_HALL_PWR_PIN);  // 霍尔电源
+        gpio_set_pin(IRDA_POWER_EN_PORT, IRDA_HALL_PWR_PIN);  // 红外电源
+    } else {
+        gpio_clear_pin(IRDA_HALL_PWR_PORT, IRDA_HALL_PWR_PIN);  // 霍尔电源
+        gpio_clear_pin(IRDA_POWER_EN_PORT, IRDA_HALL_PWR_PIN);  // 红外电源
+    }
+}

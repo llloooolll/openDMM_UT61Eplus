@@ -283,6 +283,10 @@ static QState ao_meter_active(ao_meter_t *const me) {
                         QACTIVE_POST(&ao_lcd, AO_LCD_BL_SIG, 1000 * 60);
                         status = Q_HANDLED();
                         break;
+                    case button_hz_id << 4 | LONG_PRESS_START:
+                        QACTIVE_POST(me, AO_METER_RTC_ALARM_SIG, 0U);
+                        status = Q_HANDLED();
+                        break;
                     default:  // 现在不处理的进各个档位
                         switch (me->mode) {
                             case meter_mode_acv:
@@ -366,22 +370,19 @@ static QState ao_meter_sleep(ao_meter_t *const me) {
         case AO_METER_SLEEP_SIG:
             switch (sleep_step) {
                 case 0:
-                    QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 0U);
-                    status = Q_HANDLED();
-                    break;
-                case 1:
                     QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 0U);
                     status = Q_HANDLED();
                     break;
-                case 2:
+                case 1:
                     QACTIVE_POST(&ao_knob, AO_KNOB_ACTIVE_SIG, 0U);
                     status = Q_HANDLED();
                     break;
-                case 3:
+                case 2:
                     QACTIVE_POST(&ao_irda, AO_IRDA_ACTIVE_SIG, 0U);
                     status = Q_HANDLED();
                     break;
-                case 4:
+                case 3:
+                    __WFI();
                     status = Q_HANDLED();
                     break;
                 default:

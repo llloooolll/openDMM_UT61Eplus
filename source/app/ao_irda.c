@@ -70,6 +70,7 @@ static QState ao_irda_active(ao_irda_t *const me) {
         case AO_IRDA_ACTIVE_SIG:
             if (Q_PAR(me) == 0U) {
                 ULOG_INFO("IRDA sleep\r\n");
+                irda_enable(0);
                 QACTIVE_POST(&ao_meter, AO_METER_SLEEP_SIG, 0U);
             }
         default:
