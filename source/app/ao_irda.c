@@ -47,6 +47,7 @@ static QState ao_irda_idle(ao_irda_t *const me) {
     switch (Q_SIG(me)) {
         case AO_IRDA_ACTIVE_SIG:
             if (Q_PAR(me) > 0U) {
+                ULOG_INFO("IRDA active\r\n");
                 status = Q_TRAN(&ao_irda_active);
             } else {
                 status = Q_HANDLED();
@@ -64,7 +65,10 @@ static QState ao_irda_active(ao_irda_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
         case Q_ENTRY_SIG:
-            ULOG_INFO("IRDA active\r\n");
+            status = Q_HANDLED();
+            break;
+        case AO_IRDA_CHAR_SIG:
+
             status = Q_HANDLED();
             break;
         case AO_IRDA_ACTIVE_SIG:

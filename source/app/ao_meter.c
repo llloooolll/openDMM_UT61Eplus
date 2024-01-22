@@ -8,7 +8,7 @@
 #include "ao_lcd.h"
 #include "app_config.h"
 #include "eeprom.h"
-#include "meter_button.h"
+#include "app_button.h"
 #include "meter_mode_a_ac.h"
 #include "meter_mode_a_dc.h"
 #include "meter_mode_acv.h"
@@ -306,7 +306,7 @@ static QState ao_meter_active(ao_meter_t *const me) {
                     case button_hold_id << 4 | LONG_PRESS_START:
                         QACTIVE_POST(
                             &ao_lcd, AO_LCD_BL_SIG,
-                            PAR_VALUE_GLOB(lcd_backlight_once_time_s) * 1000);
+                            PAR_VALUE_GLOB(lcd_backlight_once_time_sec) * 1000);
                         status = Q_HANDLED();
                         break;
                     case button_hz_id << 4 | LONG_PRESS_START:

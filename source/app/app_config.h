@@ -12,11 +12,11 @@
 #define PAR_VALUE(cfg, name) cfg.par_##name.value
 
 typedef struct _app_config_t {
-    ADD_PAR(glob_sleep_time_minute, uint32_t);  // 自动休眠时间
-    ADD_PAR(irda_baudrate, uint32_t);           // 红外串口波特率
+    ADD_PAR(glob_sleep_time_minute, uint8_t);  // 自动休眠时间
+    ADD_PAR(irda_baudrate, uint32_t);          // 红外串口波特率
     ADD_PAR(es232_buzzer_frequency, uint8_t);  // ES232控制的的蜂鸣器频率
-    ADD_PAR(es232_polling_time_ms, uint8_t);      // ES232数据轮询间隔
-    ADD_PAR(lcd_backlight_once_time_s, uint8_t);  // LCD背光点亮时间
+    ADD_PAR(es232_polling_time_ms, uint8_t);         // ES232数据轮询间隔
+    ADD_PAR(lcd_backlight_once_time_sec, uint32_t);  // LCD背光点亮时间
 } app_config_t;
 
 #define PAR_VALUE_GLOB(name) glob_config.par_##name.value

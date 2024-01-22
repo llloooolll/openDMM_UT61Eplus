@@ -1,5 +1,5 @@
-#ifndef __METER_BUTTON_H__
-#define __METER_BUTTON_H__
+#ifndef __APP_BUTTON_H__
+#define __APP_BUTTON_H__
 
 #include "hc32l13x.h"
 #include "multi_button.h"

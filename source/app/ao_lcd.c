@@ -92,10 +92,9 @@ static QState ao_lcd_active(ao_lcd_t *const me) {
         case AO_LCD_BL_SIG:
             // 背光
             if (Q_PAR(me) > 0) {
-                if (1) {
-                    QActive_armX((QActive *)me, 0U, Q_PAR(me), 0U);
-                    lcd_enable_bl(1);
-                }
+                ULOG_INFO("LCD backlight on, %d s\r\n", Q_PAR(me) / 1000);
+                QActive_armX((QActive *)me, 0U, Q_PAR(me), 0U);
+                lcd_enable_bl(1);
             } else {
                 lcd_enable_bl(0);
             }
