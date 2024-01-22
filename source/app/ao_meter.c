@@ -6,6 +6,7 @@
 #include "ao_irda.h"
 #include "ao_knob.h"
 #include "ao_lcd.h"
+#include "app_config.h"
 #include "eeprom.h"
 #include "meter_button.h"
 #include "meter_mode_a_ac.h"
@@ -29,6 +30,28 @@
 #include "meter_sleep.h"
 #include "ulog.h"
 
+static const char *meter_mode_string[] = {
+    "acv",      //
+    "dcv",      //
+    "mv_ac",    //
+    "mv_dc",    //
+    "ohm_ohm",  //
+    "ohm_buz",  //
+    "ohm_dio",  //
+    "ohm_cap",  //
+    "hz_freq",  //
+    "hz_duty",  //
+    "hfe",      //
+    "ua_dc",    //
+    "ua_ac",    //
+    "ma_dc",    //
+    "ma_ac",    //
+    "a_dc",     //
+    "a_ac",     //
+    "ncv",      //
+    "error",    //
+};
+
 // 对象
 ao_meter_t ao_meter;
 
@@ -49,8 +72,6 @@ void ao_meter_ctor(void) {
 
 static QState ao_meter_init(ao_meter_t *const me) {
     me->es232_range_auto = 1;  // 自动换挡
-    me->es232_buz_frq = F_1_00K;
-    me->meter_sleep_time = 20;
     return Q_TRAN(&ao_meter_idle);
 }
 
@@ -60,22 +81,22 @@ static QState ao_meter_idle(ao_meter_t *const me) {
     switch (Q_SIG(me)) {
         case Q_ENTRY_SIG:
             init_status = 0;
-            QACTIVE_POST(&ao_es232, AO_ES232_READY_SIG, 0U);  //
+            QACTIVE_POST(&ao_irda, AO_IRDA_READY_SIG, 0U);  //
             status = Q_HANDLED();
             break;
         case AO_METER_READY_SIG:
             if (Q_PAR(me) == 0) {
                 switch (init_status) {
                     case 0:
-                        QACTIVE_POST(&ao_lcd, AO_LCD_READY_SIG, 0U);  //
+                        QACTIVE_POST(&ao_es232, AO_ES232_READY_SIG, 0U);  //
                         status = Q_HANDLED();
                         break;
                     case 1:
-                        QACTIVE_POST(&ao_knob, AO_KNOB_READY_SIG, 0U);  //
+                        QACTIVE_POST(&ao_lcd, AO_LCD_READY_SIG, 0U);  //
                         status = Q_HANDLED();
                         break;
                     case 2:
-                        QACTIVE_POST(&ao_irda, AO_IRDA_READY_SIG, 0U);  //
+                        QACTIVE_POST(&ao_knob, AO_KNOB_READY_SIG, 0U);  //
                         status = Q_HANDLED();
                         break;
                     case 3:
@@ -89,6 +110,8 @@ static QState ao_meter_idle(ao_meter_t *const me) {
                             ULOG_ERROR("eeprom value non-exist\r\n");
                         }
                         meter_sleep_init(me);
+                        meter_sleep_alarm_set_delay(
+                            PAR_VALUE_GLOB(glob_sleep_time_minute));
                         QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 1U);
                         QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 1U);
                         QACTIVE_POST(&ao_knob, AO_KNOB_ACTIVE_SIG, 1U);
@@ -137,7 +160,8 @@ static QState ao_meter_active(ao_meter_t *const me) {
                 me->es232_hold_flag = 0;
                 // 写入
                 me->mode = Q_PAR(me);
-                ULOG_INFO("ES232 mode: %d\r\n", me->mode);
+                ULOG_INFO("ES232 mode: %s, id =%d\r\n",
+                          meter_mode_string[me->mode], me->mode);
                 // 清理配置
                 memset(&me->lcd_pixel_buffer, 0x00, sizeof(lcd_pixel_t));
                 memset(&me->es232_write_buffer, 0x00, sizeof(es232_write_t));
@@ -280,7 +304,9 @@ static QState ao_meter_active(ao_meter_t *const me) {
                         status = Q_HANDLED();
                         break;
                     case button_hold_id << 4 | LONG_PRESS_START:
-                        QACTIVE_POST(&ao_lcd, AO_LCD_BL_SIG, 1000 * 60);
+                        QACTIVE_POST(
+                            &ao_lcd, AO_LCD_BL_SIG,
+                            PAR_VALUE_GLOB(lcd_backlight_once_time_s) * 1000);
                         status = Q_HANDLED();
                         break;
                     case button_hz_id << 4 | LONG_PRESS_START:
@@ -404,7 +430,8 @@ static QState ao_meter_sleep(ao_meter_t *const me) {
  * @param me
  */
 static void meter_help_write_es232_global(ao_meter_t *const me) {
-    me->es232_write_buffer.buzzer_freq_lsb = me->es232_buz_frq;
+    me->es232_write_buffer.buzzer_freq_lsb =
+        PAR_VALUE_GLOB(es232_buzzer_frequency);
 }
 
 /**

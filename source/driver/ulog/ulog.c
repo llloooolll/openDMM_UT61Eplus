@@ -22,8 +22,22 @@ static uint8_t log_level_color[] = {
     shell_color_cyan,    // DEBUG
 };
 
-void ulog_set_level(ulog_level_t level) { _log_level = level; }
+/**
+ * @brief 设置日志等级
+ *
+ * @param level
+ */
+void ulog_set_level(ulog_level_t level) {
+    _log_level = level;  //
+}
 
+/**
+ * @brief 打印log
+ *
+ * @param level
+ * @param format
+ * @param ...
+ */
 void ulog_printf(ulog_level_t level, char const *const format, ...) {
     if ((level < 0) || (level >= ulog_level_max))  //
         return;
@@ -43,6 +57,21 @@ void ulog_printf(ulog_level_t level, char const *const format, ...) {
     }
 }
 
-void ulog_clean(void) { printf("\033[2J"); }
+/**
+ * @brief 清除命令行屏幕
+ *
+ */
+void ulog_clean(void) {
+#if SHELL_COLOR_ENABLE
+    printf("\033[2J");
+#endif
+}
 
-void _putchar(char character) { irda_send_byte(character); }
+/**
+ * @brief 打印字符重定向
+ *
+ * @param character
+ */
+void _putchar(char character) {
+    irda_send_byte(character);  //
+}

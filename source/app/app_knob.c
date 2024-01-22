@@ -1,4 +1,4 @@
-#include "knob_knob.h"
+#include "app_knob.h"
 
 #include "ao_knob.h"
 #include "gpio.h"

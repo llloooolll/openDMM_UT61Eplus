@@ -15,7 +15,6 @@ typedef enum _ao_es232_signal_t {
 
 typedef struct _ao_es232_t {
     QActive super;
-    uint32_t es232_read_interval_time;  // es232读取数据间隔
     es232_write_t es232_write_buffer;   //
     es232_read_t es232_read_buffer;     //
 } ao_es232_t;

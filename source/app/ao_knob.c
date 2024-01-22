@@ -1,7 +1,7 @@
 #include "ao_knob.h"
 
 #include "ao_meter.h"
-#include "knob_knob.h"
+#include "app_knob.h"
 #include "ulog.h"
 
 // 档位映射
@@ -22,6 +22,26 @@ static const uint8_t knob_mode_map[16] = {
     meter_mode_dcv,      // 0x0D
     meter_mode_acv,      // 0x0E
     0xFF,                // NC
+};
+
+// 档位名映射
+static const char *knob_mode_string[16] = {
+    " ",    //
+    " ",    //
+    " ",    //
+    "hfe",  //
+    " ",    //
+    "ncv",  //
+    "a",    //
+    "ohm",  //
+    " ",    //
+    "ma",   //
+    "ua",   //
+    "mv",   //
+    "hz",   //
+    "dcv",  //
+    "acv",  //
+    " ",    //
 };
 
 // 对象
@@ -95,6 +115,10 @@ static QState ao_knob_active(ao_knob_t *const me) {
                 uint8_t knob_status_now = knob_knob_ticks();
                 if (knob_status_now != me->knob_status) {
                     me->knob_status = knob_status_now;
+
+                    ULOG_INFO("knob change: %s, id =%d\r\n",
+                              knob_mode_string[me->knob_status],
+                              me->knob_status);
                     // 状态映射
                     QACTIVE_POST(&ao_meter, AO_METER_MODE_SIG,
                                  knob_mode_map[me->knob_status]);

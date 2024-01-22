@@ -70,9 +70,7 @@ typedef struct _ao_meter_t {
     int32_t es232_show_value;  // 实际显示值
     int8_t es232_show_power;   // 实际显示值的幂
 
-    uint8_t es232_buz_frq;            // 蜂鸣器频率
     uint8_t es232_range_delay_cycle;  // 量程切换延迟周期
-    uint32_t meter_sleep_time;        // 休眠时间，分钟
 } ao_meter_t;
 
 extern ao_meter_t ao_meter;

@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "ao_meter.h"
+#include "app_config.h"
 #include "ulog.h"
 
 // 对象
@@ -21,7 +22,6 @@ void ao_es232_ctor(void) {
 }
 
 static QState ao_es232_init(ao_es232_t *const me) {
-    me->es232_read_interval_time = 10;
     memset(&me->es232_write_buffer, 0, sizeof(es232_write_t));
     return Q_TRAN(&ao_es232_ready);
 }
@@ -97,8 +97,11 @@ static QState ao_es232_active(ao_es232_t *const me) {
                 // ULOG_INFO("ADC done\r\n");
                 QACTIVE_POST_X(&ao_meter, 4U, AO_METER_ADC_DONE_SIG,
                                (uint32_t)&me->es232_read_buffer);
+            } else {
+                es232_clear_flag();
             }
-            QActive_armX((QActive *)me, 0U, me->es232_read_interval_time, 0U);
+            QActive_armX((QActive *)me, 0U,
+                         PAR_VALUE_GLOB(es232_polling_time_ms), 0U);
             status = Q_HANDLED();
             break;
         case AO_ES232_WRITE_CONFIG_SIG:  // 重新写入配置
@@ -107,7 +110,8 @@ static QState ao_es232_active(ao_es232_t *const me) {
                    sizeof(es232_write_t));
             es232_write(&me->es232_write_buffer);
             es232_read(&me->es232_read_buffer);  // 消除就绪标志
-            QActive_armX((QActive *)me, 0U, me->es232_read_interval_time, 0U);
+            QActive_armX((QActive *)me, 0U,
+                         PAR_VALUE_GLOB(es232_polling_time_ms), 0U);
             status = Q_HANDLED();
             break;
         case AO_ES232_ENABLE_BUZ_SIG:

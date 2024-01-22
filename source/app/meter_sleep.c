@@ -1,6 +1,7 @@
 #include "meter_sleep.h"
 
 #include "ao_meter.h"
+#include "app_config.h"
 #include "gpio.h"
 #include "io_config.h"
 #include "rtc.h"
@@ -30,22 +31,36 @@ void meter_sleep_init(ao_meter_t *const me) {
         .month = DEC2BCD(1),
         .year = DEC2BCD(24),
     };
+    rtc_set_time(&time);
+}
+
+void meter_sleep_alarm_set_delay(uint8_t time_minute) {
+    rtc_enable_alarm_irq(0);
+    rtc_enable_alarm(0);
+
+    if (time_minute == 0) {
+        return;
+    }
+
+    rtc_time_t time_now;
+    rtc_read_time(&time_now);
 
     rtc_alarm_t alarm_time = {
-        .minute = DEC2BCD(me->meter_sleep_time % 60),
-        .hour = DEC2BCD(me->meter_sleep_time / 60),
-        .day = 0,
+        .minute = time_now.minute,
+        .hour = time_now.hour,
+    };
+
+    rtc_alarm_t alarm_time_delay = {
+        .minute = DEC2BCD(time_minute % 60),
+        .hour = DEC2BCD(time_minute / 60),
         .alarm_en = alarm_en_all,
     };
 
-    rtc_set_time(&time);
+    rtc_alarm_time_add(&alarm_time, &alarm_time_delay);
     rtc_set_alarm(&alarm_time);
 
-    if (me->meter_sleep_time > 0) {
-        ULOG_WARN("rtc alarm init %d minutes\r\n", me->meter_sleep_time);
-        rtc_enable_alarm_irq(1);
-        rtc_enable_alarm(1);
-        rtc_enable_count(1);
-        NVIC_EnableIRQ(RTC_IRQn);
-    }
+    ULOG_INFO("init sleep after %d minutes\r\n", time_minute);
+    rtc_enable_alarm_irq(1);
+    rtc_enable_alarm(1);
+    NVIC_EnableIRQ(RTC_IRQn);
 }

@@ -145,3 +145,13 @@ bool es232_is_data_ready(void) {
 void es232_enable_buz(bool flag) {
     es232_buz_enable = (flag) ? ES232_BUZ_ON : 0x00;
 }
+
+/**
+ * @brief 清除标志，顺便刷新蜂鸣状态
+ *
+ */
+void es232_clear_flag(void) {
+    si2c_init(&es232_si2c_pin);
+    si2c_trans_begin(ES232_I2C_ADDR | es232_buz_enable);
+    si2c_trans_end();  //
+}

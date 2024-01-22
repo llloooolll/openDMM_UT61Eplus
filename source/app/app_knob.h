@@ -1,5 +1,5 @@
-#ifndef __KNOB_KNOB_H__
-#define __KNOB_KNOB_H__
+#ifndef __APP_KNOB_H__
+#define __APP_KNOB_H__
 
 #include "hc32l13x.h"
 

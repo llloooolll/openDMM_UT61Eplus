@@ -37,7 +37,6 @@ typedef enum _rtc_alarm_en_t {
 typedef struct _rtc_alarm_t {
     uint8_t minute;
     uint8_t hour;
-    uint8_t day;
     rtc_alarm_en_t alarm_en;
 } rtc_alarm_t;
 
@@ -49,6 +48,8 @@ void rtc_enable_alarm_irq(bool flag);
 bool rtc_get_alarm_status(void);
 void rtc_clean_alarm_status(void);
 void rtc_set_time(rtc_time_t *time);
+void rtc_read_time(rtc_time_t *time);
 void rtc_set_alarm(rtc_alarm_t *time);
+void rtc_alarm_time_add(rtc_alarm_t *addend1, rtc_alarm_t *addend2);
 
 #endif

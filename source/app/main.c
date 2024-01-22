@@ -3,6 +3,7 @@
 #include "ao_knob.h"
 #include "ao_lcd.h"
 #include "ao_meter.h"
+#include "app_config.h"
 #include "binary.h"
 #include "es232.h"
 #include "irda.h"
@@ -35,7 +36,9 @@ int main(void) {
 
     QF_init(Q_DIM(QF_active));
     bsp_init();
-    irda_init(9600);
+    app_config_reset();
+    app_config_read();
+    irda_init(PAR_VALUE_GLOB(irda_baudrate));
     if (irda_is_exist()) {
         ulog_set_level(ulog_level_debug);
         ulog_clean();  // 滚动屏幕，清除可视区域
