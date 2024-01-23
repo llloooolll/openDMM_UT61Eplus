@@ -50,7 +50,6 @@ ao_knob_t ao_knob;
 // 状态机
 static QState ao_knob_init(ao_knob_t *const me);
 static QState ao_knob_ready(ao_knob_t *const me);
-static QState ao_knob_idle(ao_knob_t *const me);
 static QState ao_knob_active(ao_knob_t *const me);
 
 // 构造
@@ -68,31 +67,13 @@ static QState ao_knob_ready(ao_knob_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
         case Q_ENTRY_SIG:
-            knob_knob_init();
             // QACTIVE_POST(me, AO_KNOB_READY_SIG, 0U);
             status = Q_HANDLED();
             break;
         case AO_KNOB_READY_SIG:
             QACTIVE_POST(&ao_meter, AO_METER_READY_SIG, 0U);
             ULOG_INFO("KNOB done\r\n");
-            status = Q_TRAN(&ao_knob_idle);
-            break;
-        default:
-            status = Q_SUPER(&QHsm_top);
-            break;
-    }
-    return status;
-}
-
-static QState ao_knob_idle(ao_knob_t *const me) {
-    QState status;
-    switch (Q_SIG(me)) {
-        case AO_KNOB_ACTIVE_SIG:
-            if (Q_PAR(me) > 0U) {
-                status = Q_TRAN(&ao_knob_active);
-            } else {
-                status = Q_HANDLED();
-            }
+            status = Q_TRAN(&ao_knob_active);
             break;
         default:
             status = Q_SUPER(&QHsm_top);
@@ -105,35 +86,30 @@ static QState ao_knob_idle(ao_knob_t *const me) {
 static QState ao_knob_active(ao_knob_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
-        case Q_ENTRY_SIG:
-            ULOG_INFO("KNOB active\r\n");
-            QActive_armX((QActive *)me, 0U, 100U, 0U);
-            status = Q_HANDLED();
-            break;
         case Q_TIMEOUT_SIG:
-            do {
-                uint8_t knob_status_now = knob_knob_ticks();
-                if (knob_status_now != me->knob_status) {
-                    me->knob_status = knob_status_now;
+            uint8_t knob_status_now = app_knob_ticks();
+            if (knob_status_now != me->knob_status) {
+                me->knob_status = knob_status_now;
 
-                    ULOG_INFO("knob change: %s, id =%d\r\n",
-                              knob_mode_string[me->knob_status],
-                              me->knob_status);
-                    // 状态映射
-                    QACTIVE_POST(&ao_meter, AO_METER_MODE_SIG,
-                                 knob_mode_map[me->knob_status]);
-                    status = Q_TRAN(&ao_knob_idle);
-                } else {
-                    QActive_armX((QActive *)me, 0U, 100U, 0U);
-                    status = Q_HANDLED();
-                }
-            } while (0);
+                ULOG_INFO("knob change: %s, id =%d\r\n",
+                          knob_mode_string[me->knob_status], me->knob_status);
+                // 状态映射
+                QACTIVE_POST(&ao_meter, AO_METER_MODE_SIG,
+                             knob_mode_map[me->knob_status]);
+                QActive_disarmX((QActive *)me, 0U);
+            } else {
+                QActive_armX((QActive *)me, 0U, 100U, 0U);
+            }
+            status = Q_HANDLED();
             break;
         case AO_KNOB_ACTIVE_SIG:
             if (Q_PAR(me) == 0U) {
+                ULOG_INFO("KNOB sleep\r\n");
                 QActive_disarmX((QActive *)me, 0U);
                 QACTIVE_POST(&ao_meter, AO_METER_SLEEP_SIG, 0U);
-                ULOG_INFO("KNOB sleep\r\n");
+            } else {
+                ULOG_INFO("KNOB running\r\n");
+                QActive_armX((QActive *)me, 0U, 100U, 0U);
             }
             status = Q_HANDLED();
             break;

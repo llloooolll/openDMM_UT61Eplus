@@ -42,26 +42,9 @@ void meter_hz_freq_init(ao_meter_t *const me) {
  * @return QState
  */
 QState meter_hz_freq_adc(ao_meter_t *const me) {
-    int32_t sadc_data = abs(es232_get_D0(&me->es232_read_buffer));  //
-    int32_t fadc_data = abs(es232_get_D1(&me->es232_read_buffer));  //
+    // TODO 正确读取数据
 
-    if (!me->es232_hold_flag) {
-        me->es232_value_now = meter_help_hz_freq_cal(me, sadc_data);
-        me->es232_power_now =
-            meter_help_hz_freq_get_power(me, me->es232_write_buffer.range_msb);
-    }
-
-    calculate_rel_result(me);  // 计算相对值
-    if (abs(me->es232_value_now > 30000) &&
-        (me->es232_write_buffer.range_msb == me->es232_range_max)) {
-        lcd_show_ol(&me->lcd_pixel_buffer);  //  显示OL
-    } else {
-        if (meter_range_sel(me, fadc_data * 100)) {
-            lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value,
-                           me->es232_show_power);
-        }
-    }
-    QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
+    meter_help_hz_freq_cal(me, 0);
 
     return Q_HANDLED();
 }

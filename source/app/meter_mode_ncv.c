@@ -60,6 +60,8 @@ QState meter_ncv_adc(ao_meter_t *const me) {
     }
     QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
 
+    // TODO 根据数据作出试听提醒
+
     return Q_HANDLED();
 }
 

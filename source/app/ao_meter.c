@@ -8,6 +8,7 @@
 #include "ao_lcd.h"
 #include "app_button.h"
 #include "app_config.h"
+#include "app_sleep.h"
 #include "eeprom.h"
 #include "meter_mode_a_ac.h"
 #include "meter_mode_a_dc.h"
@@ -27,7 +28,6 @@
 #include "meter_mode_ohm_ohm.h"
 #include "meter_mode_ua_ac.h"
 #include "meter_mode_ua_dc.h"
-#include "meter_sleep.h"
 #include "ulog.h"
 
 static const char *meter_mode_string[] = {
@@ -101,6 +101,10 @@ static QState ao_meter_idle(ao_meter_t *const me) {
                         break;
                     case 3:
                         ULOG_INFO("ALL hardware done\r\n");
+                        QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 1U);
+                        QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 1U);
+                        QACTIVE_POST(&ao_knob, AO_KNOB_ACTIVE_SIG, 1U);
+                        QACTIVE_POST(&ao_irda, AO_IRDA_ACTIVE_SIG, 1U);
                         ULOG_INFO("build: %s %s\r\n", __DATE__, __TIME__);
                         me->cal_value.cal = eeprom_read_byte(0x00);
                         if (me->cal_value.cal == 0x00) {
@@ -109,13 +113,18 @@ static QState ao_meter_idle(ao_meter_t *const me) {
                         } else {
                             ULOG_ERROR("eeprom value non-exist\r\n");
                         }
-                        meter_sleep_init(me);
-                        meter_sleep_alarm_set_delay(
-                            glob_config.glob_sleep_time_minute);
-                        QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 1U);
-                        QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 1U);
-                        QACTIVE_POST(&ao_knob, AO_KNOB_ACTIVE_SIG, 1U);
-                        QACTIVE_POST(&ao_irda, AO_IRDA_ACTIVE_SIG, 1U);
+                        app_sleep_init();
+                        app_sleep_set_time(glob_config.glob_sleep_time_minute);
+                        if (glob_config.glob_auto_sleep_enable) {
+                            QACTIVE_POST(&ao_es232, AO_ES232_ENABLE_BUZ_SIG,
+                                         100);
+                            ULOG_INFO("auto sleep after %d minutes\r\n",
+                                      glob_config.glob_sleep_time_minute);
+                        } else {
+                            QACTIVE_POST(&ao_es232, AO_ES232_ENABLE_BUZ_SIG,
+                                         500);
+                            ULOG_INFO("auto sleep off\r\n");
+                        }
                         status = Q_TRAN(&ao_meter_active);
                         break;
                     default:
@@ -139,7 +148,6 @@ static QState ao_meter_active(ao_meter_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
         case Q_ENTRY_SIG:
-            meter_button_init();
             QActive_armX((QActive *)me, 1U, 10U, 0U);
             status = Q_HANDLED();
             break;
@@ -149,7 +157,15 @@ static QState ao_meter_active(ao_meter_t *const me) {
             status = Q_HANDLED();
             break;
         case AO_METER_RTC_ALARM_SIG:
-            status = Q_TRAN(&ao_meter_sleep);
+            if (glob_config.glob_auto_sleep_enable) {
+                QActive_disarmX((QActive *)me, 0U);
+                QActive_disarmX((QActive *)me, 1U);
+                status = Q_TRAN(&ao_meter_sleep);
+            } else {
+                // TODO 多段蜂鸣提醒
+                app_sleep_set_time(glob_config.glob_sleep_time_minute);
+                status = Q_HANDLED();
+            }
             break;
         case AO_METER_MODE_SIG:
             if (Q_PAR(me) < meter_mode_max) {
@@ -408,7 +424,8 @@ static QState ao_meter_sleep(ao_meter_t *const me) {
                     status = Q_HANDLED();
                     break;
                 case 3:
-                    __WFI();
+                    // SCB->SCR = 0x00000004U;
+                    // __WFI();
                     status = Q_HANDLED();
                     break;
                 default:
@@ -439,5 +456,7 @@ static void meter_help_write_es232_global(ao_meter_t *const me) {
  * @param me
  */
 static void meter_help_write_lcd_global(ao_meter_t *const me) {
-    me->lcd_pixel_buffer.time = 1;
+    if (glob_config.glob_auto_sleep_enable) {
+        me->lcd_pixel_buffer.time = 1;
+    }
 }

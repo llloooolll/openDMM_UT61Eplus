@@ -13,6 +13,6 @@ enum {
     button_hold_id,
 };
 
-void meter_button_init(void);
+void app_button_init(void);
 
 #endif

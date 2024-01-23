@@ -34,6 +34,16 @@ typedef enum _rtc_alarm_en_t {
     alarm_en_all = B1111111,
 } rtc_alarm_en_t;
 
+typedef enum _rtc_mult_prd_t {
+    rtc_mult_prd_none = B000,      // 不产生中断
+    rtc_mult_prd_sec_half = B001,  // 隔半秒
+    rtc_mult_prd_sec = B010,       // 隔秒
+    rtc_mult_prd_minute = B011,    // 隔分钟
+    rtc_mult_prd_hour = B100,      // 隔小时
+    rtc_mult_prd_day = B101,       // 隔天
+    rtc_mult_prd_month = B110,     // 隔月
+} rtc_mult_prd_t;
+
 typedef struct _rtc_alarm_t {
     uint8_t minute;
     uint8_t hour;
@@ -44,12 +54,16 @@ void rtc_set_rtc_clk(rtc_clk_t clk);
 void rtc_enable_alarm(bool flag);
 void rtc_enable_24count(bool flag);
 void rtc_enable_count(bool flag);
-void rtc_enable_alarm_irq(bool flag);
+void rtc_enable_irq(bool flag);
 bool rtc_get_alarm_status(void);
+bool rtc_get_prd_status(void);
 void rtc_clean_alarm_status(void);
 void rtc_set_time(rtc_time_t *time);
 void rtc_read_time(rtc_time_t *time);
 void rtc_set_alarm(rtc_alarm_t *time);
 void rtc_alarm_time_add(rtc_alarm_t *addend1, rtc_alarm_t *addend2);
+void rtc_set_prd_mult(rtc_mult_prd_t mult_prd);
+void rtc_set_prd_source(bool flag);
+void rtc_clean_prd_status(void);
 
 #endif

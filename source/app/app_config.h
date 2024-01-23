@@ -4,6 +4,7 @@
 #include "hc32l13x.h"
 
 typedef struct _app_config_t {
+    bool glob_auto_sleep_enable;           // 自动休眠开启
     uint8_t glob_sleep_time_minute;        // 自动休眠时间
     uint32_t irda_baudrate;                // 红外串口波特率
     uint8_t es232_buzzer_frequency;        // ES232控制的的蜂鸣器档位

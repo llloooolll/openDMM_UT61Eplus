@@ -3,9 +3,13 @@
 #include "ao_knob.h"
 #include "ao_lcd.h"
 #include "ao_meter.h"
+#include "app_button.h"
 #include "app_config.h"
+#include "app_knob.h"
 #include "binary.h"
 #include "es232.h"
+#include "gpio.h"
+#include "io_config.h"
 #include "irda.h"
 #include "lcd_pixel.h"
 #include "qpn.h"
@@ -36,8 +40,16 @@ int main(void) {
 
     QF_init(Q_DIM(QF_active));
     bsp_init();
+    app_button_init();
+    app_knob_init();
     app_config_reset();
     app_config_read();
+
+    if (!gpio_read_pin(KEY_SELECT_PORT, KEY_SELECT_PIN)) {
+        // 按住SELECT关闭自动休眠
+        glob_config.glob_auto_sleep_enable = 0;
+    }
+
     irda_init(glob_config.irda_baudrate);
     if (irda_is_exist()) {
         ulog_set_level(ulog_level_debug);

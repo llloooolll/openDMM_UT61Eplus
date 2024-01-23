@@ -9,7 +9,8 @@
 app_config_t glob_config;
 
 void app_config_reset(void) {
-    glob_config.glob_sleep_time_minute = 20;           //
+    glob_config.glob_auto_sleep_enable = 1;            //
+    glob_config.glob_sleep_time_minute = 15;           //
     glob_config.irda_baudrate = 9600;                  //
     glob_config.es232_buzzer_frequency = F_1_00K;      //
     glob_config.es232_polling_time_ms = 10;            //

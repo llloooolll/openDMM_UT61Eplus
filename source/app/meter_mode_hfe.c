@@ -40,23 +40,7 @@ void meter_hfe_init(ao_meter_t *const me) {
  * @return QState
  */
 QState meter_hfe_adc(ao_meter_t *const me) {
-    int32_t sadc_data = es232_get_D0(&me->es232_read_buffer);
-    // int32_t fadc_data = es232_get_D1(&me->es232_read_buffer);
-
-    if (!me->es232_hold_flag) {
-        me->es232_value_now = meter_help_hfe_cal(me, sadc_data);
-        me->es232_power_now =
-            meter_help_hfe_get_power(me, me->es232_write_buffer.range_msb);
-    }
-
-    calculate_rel_result(me);  // 计算相对值
-    if (abs(me->es232_value_now) > 30000) {
-        lcd_show_ol(&me->lcd_pixel_buffer);
-    } else {
-        lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value,
-                       me->es232_show_power);
-    }
-    QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
+    // TODO 正确读取数据
 
     return Q_HANDLED();
 }

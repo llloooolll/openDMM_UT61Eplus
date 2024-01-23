@@ -17,9 +17,9 @@ static void knob_gpio_init(void) {
     gpio_enable_pullup(KNOB_CH4_PORT, KNOB_CH4_PIN, 1);
 }
 
-void knob_knob_init(void) { knob_gpio_init(); }
+void app_knob_init(void) { knob_gpio_init(); }
 
-uint8_t knob_knob_ticks(void) {
+uint8_t app_knob_ticks(void) {
     uint8_t status = 0;
     status |= gpio_read_pin(KNOB_CH1_PORT, KNOB_CH1_PIN) ? 0x01 : 0x00;
     status |= gpio_read_pin(KNOB_CH2_PORT, KNOB_CH2_PIN) ? 0x02 : 0x00;

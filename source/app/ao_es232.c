@@ -12,7 +12,6 @@ ao_es232_t ao_es232;
 // 状态机
 static QState ao_es232_init(ao_es232_t *const me);
 static QState ao_es232_ready(ao_es232_t *const me);
-static QState ao_es232_idle(ao_es232_t *const me);
 static QState ao_es232_active(ao_es232_t *const me);
 
 // 构造
@@ -49,31 +48,7 @@ static QState ao_es232_ready(ao_es232_t *const me) {
             ULOG_INFO("ES232 done\r\n");
             QACTIVE_POST(&ao_meter, AO_METER_READY_SIG,
                          (uint32_t)es232_init_result);
-            status = Q_TRAN(&ao_es232_idle);
-            break;
-        default:
-            status = Q_SUPER(&QHsm_top);
-            break;
-    }
-    return status;
-}
-
-// idle
-static QState ao_es232_idle(ao_es232_t *const me) {
-    QState status;
-    switch (Q_SIG(me)) {
-        case Q_ENTRY_SIG:
-            es232_enable_buz(0);
-            es232_read(&me->es232_read_buffer);
-            status = Q_HANDLED();
-            break;
-        case AO_ES232_ACTIVE_SIG:
-            if (Q_PAR(me) > 0U) {
-                ULOG_INFO("ES232 active\r\n");
-                status = Q_TRAN(&ao_es232_active);
-            } else {
-                status = Q_HANDLED();
-            }
+            status = Q_TRAN(&ao_es232_active);
             break;
         default:
             status = Q_SUPER(&QHsm_top);
@@ -86,11 +61,6 @@ static QState ao_es232_idle(ao_es232_t *const me) {
 static QState ao_es232_active(ao_es232_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
-        case Q_ENTRY_SIG:
-            QACTIVE_POST(me, AO_ES232_WRITE_CONFIG_SIG,
-                         &me->es232_write_buffer);
-            status = Q_HANDLED();
-            break;
         case Q_TIMEOUT_SIG:
             if (es232_is_data_ready()) {
                 es232_read(&me->es232_read_buffer);
@@ -110,8 +80,8 @@ static QState ao_es232_active(ao_es232_t *const me) {
                    sizeof(es232_write_t));
             es232_write(&me->es232_write_buffer);
             es232_read(&me->es232_read_buffer);  // 消除就绪标志
-            QActive_armX((QActive *)me, 0U,
-                         glob_config.es232_polling_time_ms, 0U);
+            QActive_armX((QActive *)me, 0U, glob_config.es232_polling_time_ms,
+                         0U);
             status = Q_HANDLED();
             break;
         case AO_ES232_ENABLE_BUZ_SIG:
@@ -129,10 +99,14 @@ static QState ao_es232_active(ao_es232_t *const me) {
             break;
         case AO_ES232_ACTIVE_SIG:
             if (Q_PAR(me) == 0U) {
+                ULOG_INFO("ES232 sleep\r\n");
                 QActive_disarmX((QActive *)me, 0U);
                 es232_enable_power(0);
                 QACTIVE_POST(&ao_meter, AO_METER_SLEEP_SIG, 0U);
-                ULOG_INFO("ES232 sleep\r\n");
+            } else {
+                ULOG_INFO("ES232 running\r\n");
+                QACTIVE_POST(me, AO_ES232_WRITE_CONFIG_SIG,
+                             &me->es232_write_buffer);
             }
             status = Q_HANDLED();
             break;

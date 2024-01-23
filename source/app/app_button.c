@@ -16,7 +16,7 @@ static struct Button button_rel;
 static struct Button button_peak;
 static struct Button button_hold;
 
-static void meter_gpio_init(void) {
+static void button_gpio_init(void) {
     gpio_enable_output(KEY_SELECT_PORT, KEY_SELECT_PIN, 0);
     gpio_enable_output(KEY_RANGE_PORT, KEY_RANGE_PIN, 0);
     gpio_enable_output(KEY_HZ_PORT, KEY_HZ_PIN, 0);
@@ -32,7 +32,7 @@ static void meter_gpio_init(void) {
     gpio_enable_pullup(KEY_HOLD_PORT, KEY_HOLD_PIN, 1);
 }
 
-static uint8_t meter_read_button(uint8_t button_id) {
+static uint8_t button_read_gpio(uint8_t button_id) {
     switch (button_id) {
         case button_select_id:
             return gpio_read_pin(KEY_SELECT_PORT, KEY_SELECT_PIN);
@@ -59,7 +59,7 @@ static uint8_t meter_read_button(uint8_t button_id) {
     }
 }
 
-void meter_button_call_back(void *btn) {
+void app_button_call_back(void *btn) {
     ULOG_INFO("button: %s, event: %s\r\n",
               button_list[(uint32_t)((Button *)btn)->button_id],
               event_list[((Button *)btn)->event]);
@@ -69,29 +69,29 @@ void meter_button_call_back(void *btn) {
     QACTIVE_POST((QActive *)&ao_es232, AO_ES232_ENABLE_BUZ_SIG, 100);
 }
 
-void meter_button_init(void) {
-    meter_gpio_init();
+void app_button_init(void) {
+    button_gpio_init();
 
-    button_init(&button_select, meter_read_button, 0, button_select_id);
-    button_init(&button_range, meter_read_button, 0, button_range_id);
-    button_init(&button_hz, meter_read_button, 0, button_hz_id);
-    button_init(&button_rel, meter_read_button, 0, button_rel_id);
-    button_init(&button_peak, meter_read_button, 0, button_peak_id);
-    button_init(&button_hold, meter_read_button, 0, button_hold_id);
+    button_init(&button_select, button_read_gpio, 0, button_select_id);
+    button_init(&button_range, button_read_gpio, 0, button_range_id);
+    button_init(&button_hz, button_read_gpio, 0, button_hz_id);
+    button_init(&button_rel, button_read_gpio, 0, button_rel_id);
+    button_init(&button_peak, button_read_gpio, 0, button_peak_id);
+    button_init(&button_hold, button_read_gpio, 0, button_hold_id);
 
-    button_attach(&button_select, SINGLE_CLICK, meter_button_call_back);
-    button_attach(&button_range, SINGLE_CLICK, meter_button_call_back);
-    button_attach(&button_hz, SINGLE_CLICK, meter_button_call_back);
-    button_attach(&button_rel, SINGLE_CLICK, meter_button_call_back);
-    button_attach(&button_peak, SINGLE_CLICK, meter_button_call_back);
-    button_attach(&button_hold, SINGLE_CLICK, meter_button_call_back);
+    button_attach(&button_select, SINGLE_CLICK, app_button_call_back);
+    button_attach(&button_range, SINGLE_CLICK, app_button_call_back);
+    button_attach(&button_hz, SINGLE_CLICK, app_button_call_back);
+    button_attach(&button_rel, SINGLE_CLICK, app_button_call_back);
+    button_attach(&button_peak, SINGLE_CLICK, app_button_call_back);
+    button_attach(&button_hold, SINGLE_CLICK, app_button_call_back);
 
-    button_attach(&button_select, LONG_PRESS_START, meter_button_call_back);
-    button_attach(&button_range, LONG_PRESS_START, meter_button_call_back);
-    button_attach(&button_hz, LONG_PRESS_START, meter_button_call_back);
-    button_attach(&button_rel, LONG_PRESS_START, meter_button_call_back);
-    button_attach(&button_peak, LONG_PRESS_START, meter_button_call_back);
-    button_attach(&button_hold, LONG_PRESS_START, meter_button_call_back);
+    button_attach(&button_select, LONG_PRESS_START, app_button_call_back);
+    button_attach(&button_range, LONG_PRESS_START, app_button_call_back);
+    button_attach(&button_hz, LONG_PRESS_START, app_button_call_back);
+    button_attach(&button_rel, LONG_PRESS_START, app_button_call_back);
+    button_attach(&button_peak, LONG_PRESS_START, app_button_call_back);
+    button_attach(&button_hold, LONG_PRESS_START, app_button_call_back);
 
     button_start(&button_select);
     button_start(&button_range);

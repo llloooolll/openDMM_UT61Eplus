@@ -16,7 +16,7 @@ enum {
     knob_ncv_id,
 };
 
-void knob_knob_init(void);
-uint8_t knob_knob_ticks(void);
+void app_knob_init(void);
+uint8_t app_knob_ticks(void);
 
 #endif
