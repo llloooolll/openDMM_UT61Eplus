@@ -100,8 +100,8 @@ static QState ao_es232_active(ao_es232_t *const me) {
             } else {
                 es232_clear_flag();
             }
-            QActive_armX((QActive *)me, 0U,
-                         PAR_VALUE_GLOB(es232_polling_time_ms), 0U);
+            QActive_armX((QActive *)me, 0U, glob_config.es232_polling_time_ms,
+                         0U);
             status = Q_HANDLED();
             break;
         case AO_ES232_WRITE_CONFIG_SIG:  // 重新写入配置
@@ -111,7 +111,7 @@ static QState ao_es232_active(ao_es232_t *const me) {
             es232_write(&me->es232_write_buffer);
             es232_read(&me->es232_read_buffer);  // 消除就绪标志
             QActive_armX((QActive *)me, 0U,
-                         PAR_VALUE_GLOB(es232_polling_time_ms), 0U);
+                         glob_config.es232_polling_time_ms, 0U);
             status = Q_HANDLED();
             break;
         case AO_ES232_ENABLE_BUZ_SIG:

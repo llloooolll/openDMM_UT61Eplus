@@ -6,9 +6,9 @@
 #include "ao_irda.h"
 #include "ao_knob.h"
 #include "ao_lcd.h"
+#include "app_button.h"
 #include "app_config.h"
 #include "eeprom.h"
-#include "app_button.h"
 #include "meter_mode_a_ac.h"
 #include "meter_mode_a_dc.h"
 #include "meter_mode_acv.h"
@@ -111,7 +111,7 @@ static QState ao_meter_idle(ao_meter_t *const me) {
                         }
                         meter_sleep_init(me);
                         meter_sleep_alarm_set_delay(
-                            PAR_VALUE_GLOB(glob_sleep_time_minute));
+                            glob_config.glob_sleep_time_minute);
                         QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 1U);
                         QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 1U);
                         QACTIVE_POST(&ao_knob, AO_KNOB_ACTIVE_SIG, 1U);
@@ -306,7 +306,7 @@ static QState ao_meter_active(ao_meter_t *const me) {
                     case button_hold_id << 4 | LONG_PRESS_START:
                         QACTIVE_POST(
                             &ao_lcd, AO_LCD_BL_SIG,
-                            PAR_VALUE_GLOB(lcd_backlight_once_time_sec) * 1000);
+                            glob_config.lcd_backlight_once_time_sec * 1000);
                         status = Q_HANDLED();
                         break;
                     case button_hz_id << 4 | LONG_PRESS_START:
@@ -430,8 +430,7 @@ static QState ao_meter_sleep(ao_meter_t *const me) {
  * @param me
  */
 static void meter_help_write_es232_global(ao_meter_t *const me) {
-    me->es232_write_buffer.buzzer_freq_lsb =
-        PAR_VALUE_GLOB(es232_buzzer_frequency);
+    me->es232_write_buffer.buzzer_freq_lsb = glob_config.es232_buzzer_frequency;
 }
 
 /**

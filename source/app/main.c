@@ -38,7 +38,7 @@ int main(void) {
     bsp_init();
     app_config_reset();
     app_config_read();
-    irda_init(PAR_VALUE_GLOB(irda_baudrate));
+    irda_init(glob_config.irda_baudrate);
     if (irda_is_exist()) {
         ulog_set_level(ulog_level_debug);
         ulog_clean();  // 滚动屏幕，清除可视区域
