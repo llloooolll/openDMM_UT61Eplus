@@ -14,7 +14,9 @@ void app_config_reset(void) {
     glob_config.irda_baudrate = 9600;                  //
     glob_config.es232_buzzer_frequency = F_1_00K;      //
     glob_config.es232_polling_time_ms = 10;            //
-    glob_config.lcd_backlight_once_time_sec = 1 * 60;  //
+    glob_config.lcd_backlight_once_time_sec = 2 * 60;  //
+    glob_config.buzzer_short_ms = 150;                 //
+    glob_config.buzzer_long_ms = 400;                  //
 }
 
 void app_config_read(void) {

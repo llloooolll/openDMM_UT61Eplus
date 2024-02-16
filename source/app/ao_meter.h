@@ -6,8 +6,19 @@
 #include "qpn.h"
 
 typedef struct _cal_value_t {
-    uint16_t value[128];  // 校准值 65535 < 22000 足够
+    // 相比于EEPROM中储存的数据，读出的顺序是反的，为了方便凑2字节的uint16_t值
+    uint16_t value[128];  // 校准值 65535 > 22000 足够
     uint8_t cal;          // 校准标志 0 == 校准过
+
+    // 可能的校准值
+    /*
+    [127 - 0] 直流电压校准值1V
+    [127 - 1] 二极管档电压3V，精度0.001V
+    [127 - 2]
+    [127 - 3]
+    [127 - 4]
+    */
+
 } cal_value_t;
 
 typedef enum _meter_mode_t {

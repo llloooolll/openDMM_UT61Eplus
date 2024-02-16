@@ -37,7 +37,7 @@ static QState ao_es232_ready(ao_es232_t *const me) {
             es232_gpio_init();
             es232_enable_buz(0);                        // 关蜂鸣器
             es232_enable_power(1);                      // 开电源
-            QActive_armX((QActive *)me, 0U, 300U, 0U);  // 等待上电
+            QActive_armX((QActive *)me, 0U, 200U, 0U);  // 等待上电
             status = Q_HANDLED();
             break;
         case Q_TIMEOUT_SIG:

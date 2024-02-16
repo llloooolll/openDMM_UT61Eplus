@@ -101,6 +101,9 @@ QState meter_dcv_key(ao_meter_t *const me) {
  * @return int32_t
  */
 static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value) {
+    value *= 10000;
+    value += (me->cal_value.value[127 - 0] / 2);  // 四舍五入
+    value /= me->cal_value.value[127 - 0];
     return value;
 }
 

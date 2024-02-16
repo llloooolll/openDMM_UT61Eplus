@@ -42,11 +42,15 @@ int main(void) {
     bsp_init();
     app_button_init();
     app_knob_init();
-    app_config_reset();
+
     app_config_read();
+    if (!glob_config.glob_config_valid) {
+        // 配置无效，复位
+        app_config_reset();
+    }
 
     if (!gpio_read_pin(KEY_SELECT_PORT, KEY_SELECT_PIN)) {
-        // 按住SELECT关闭自动休眠
+        // 按住SELECT开机，关闭自动休眠
         glob_config.glob_auto_sleep_enable = 0;
     }
 

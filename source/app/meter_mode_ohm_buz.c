@@ -110,5 +110,5 @@ static int32_t meter_help_ohm_buz_cal(ao_meter_t *const me, int32_t value) {
  */
 static int8_t meter_help_ohm_buz_get_power(ao_meter_t *const me,
                                            uint8_t range) {
-    return -2;
+    return -2 + range;
 }

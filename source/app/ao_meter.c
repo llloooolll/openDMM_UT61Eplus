@@ -88,11 +88,11 @@ static QState ao_meter_idle(ao_meter_t *const me) {
             if (Q_PAR(me) == 0) {
                 switch (init_status) {
                     case 0:
-                        QACTIVE_POST(&ao_es232, AO_ES232_READY_SIG, 0U);  //
+                        QACTIVE_POST(&ao_lcd, AO_LCD_READY_SIG, 0U);  //
                         status = Q_HANDLED();
                         break;
                     case 1:
-                        QACTIVE_POST(&ao_lcd, AO_LCD_READY_SIG, 0U);  //
+                        QACTIVE_POST(&ao_es232, AO_ES232_READY_SIG, 0U);  //
                         status = Q_HANDLED();
                         break;
                     case 2:
@@ -117,12 +117,12 @@ static QState ao_meter_idle(ao_meter_t *const me) {
                         app_sleep_set_time(glob_config.glob_sleep_time_minute);
                         if (glob_config.glob_auto_sleep_enable) {
                             QACTIVE_POST(&ao_es232, AO_ES232_ENABLE_BUZ_SIG,
-                                         100);
+                                         glob_config.buzzer_short_ms);
                             ULOG_INFO("auto sleep after %d minutes\r\n",
                                       glob_config.glob_sleep_time_minute);
                         } else {
                             QACTIVE_POST(&ao_es232, AO_ES232_ENABLE_BUZ_SIG,
-                                         500);
+                                         glob_config.buzzer_long_ms);
                             ULOG_INFO("auto sleep off\r\n");
                         }
                         status = Q_TRAN(&ao_meter_active);
@@ -313,6 +313,8 @@ static QState ao_meter_active(ao_meter_t *const me) {
             }
             break;
         case AO_METER_KEY_SIG:  // 按键
+            QACTIVE_POST((QActive *)&ao_es232, AO_ES232_ENABLE_BUZ_SIG,
+                         glob_config.buzzer_short_ms);
             do {
                 // 处理
                 switch (Q_PAR(me)) {

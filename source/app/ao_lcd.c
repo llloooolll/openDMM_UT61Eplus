@@ -32,7 +32,7 @@ static QState ao_lcd_ready(ao_lcd_t *const me) {
             status = Q_HANDLED();
             break;
         case AO_LCD_READY_SIG:
-            QActive_armX((QActive *)me, 0U, 10U, 0U);
+            QActive_armX((QActive *)me, 0U, 5U, 0U);
             status = Q_HANDLED();
             break;
         case Q_TIMEOUT_SIG:
@@ -56,12 +56,6 @@ static QState ao_lcd_ready(ao_lcd_t *const me) {
 static QState ao_lcd_active(ao_lcd_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
-        case Q_ENTRY_SIG:
-            lcd_test(0);
-            memset(&me->lcd_pixel_buffer, 0xFF, sizeof(lcd_pixel_t));
-            QACTIVE_POST(me, AO_LCD_REFRESH_SIG, &me->lcd_pixel_buffer);
-            status = Q_HANDLED();
-            break;
         case AO_LCD_REFRESH_SIG:
             // 刷新
             memcpy(&me->lcd_pixel_buffer, (uint32_t *)Q_PAR(me),
@@ -94,6 +88,7 @@ static QState ao_lcd_active(ao_lcd_t *const me) {
                 QACTIVE_POST(&ao_meter, AO_METER_SLEEP_SIG, 0U);
             } else {
                 ULOG_INFO("LCD running\r\n");
+                lcd_test(0);
                 lcd_enable(1);
             }
             status = Q_HANDLED();

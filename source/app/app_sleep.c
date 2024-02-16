@@ -50,9 +50,25 @@ void app_sleep_init(void) {
     rtc_set_prd_source(0);
     rtc_set_prd_mult(rtc_mult_prd_minute);  // 分钟
     rtc_clean_prd_status();                 // 清除
-    rtc_enable_irq(1);                      // 和闹钟公用开关
+    rtc_enable_irq(1);                      // 和闹钟共用开关
 
-    rtc_enable_count(1);
+    rtc_enable_count(1);  // 运行
 
     NVIC_EnableIRQ(RTC_IRQn);
+}
+
+/**
+ * @brief 进入休眠
+ *
+ */
+void app_sleep_enty(void) {
+    //
+}
+
+/**
+ * @brief 退出休眠
+ *
+ */
+void app_sleep_exit(void) {
+    //
 }

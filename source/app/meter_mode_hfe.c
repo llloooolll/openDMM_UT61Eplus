@@ -41,6 +41,7 @@ void meter_hfe_init(ao_meter_t *const me) {
  */
 QState meter_hfe_adc(ao_meter_t *const me) {
     // TODO 正确读取数据
+    meter_help_hfe_cal(me, 0);
 
     return Q_HANDLED();
 }

@@ -6,5 +6,7 @@
 
 void app_sleep_init(void);
 void app_sleep_set_time(uint8_t time_minutes);
+void app_sleep_enty(void);
+void app_sleep_exit(void);
 
 #endif
