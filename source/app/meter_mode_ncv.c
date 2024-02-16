@@ -6,6 +6,7 @@
 #include "ao_es232.h"
 #include "ao_lcd.h"
 #include "app_button.h"
+#include "app_config.h"
 #include "meter_range.h"
 #include "ulog.h"
 
@@ -77,6 +78,8 @@ QState meter_ncv_key(ao_meter_t *const me) {
         case button_hold_id << 4 | SINGLE_CLICK:
             me->es232_hold_flag = !me->es232_hold_flag;
             me->lcd_pixel_buffer.hold = me->es232_hold_flag;
+            QACTIVE_POST((QActive *)&ao_es232, AO_ES232_ENABLE_BUZ_SIG,
+                         glob_config.buzzer_short_ms);
             break;
         default:
             break;

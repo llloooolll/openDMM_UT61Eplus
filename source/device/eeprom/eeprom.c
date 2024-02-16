@@ -6,6 +6,10 @@
 
 // AT24C02 256*8 byte
 
+#define EEPROM_VALUE_OFFSET 1U
+
+uint8_t ee_data[256];
+
 /**
  * @brief 初始化
  *
@@ -51,8 +55,17 @@ void eeprom_write_byte(uint8_t addr, uint8_t data) {
     si2c_trans_end();
 }
 
-void eeprom_read_all(uint8_t *data) {
-    for (uint32_t i = 0; i < (255 - 1); i++) {
-        data[255 - i] = eeprom_read_byte(i + 1);  // 反着读，倒端序
+void eeprom_read_all(uint16_t *data) {
+    uint16_t i;
+    uint8_t value_h;
+    uint8_t value_l;
+
+    i = 0;
+    while (i < 128) {
+        value_h = eeprom_read_byte((i * 2U) + EEPROM_VALUE_OFFSET);
+        value_l = eeprom_read_byte((i * 2U) + 1U + EEPROM_VALUE_OFFSET);
+
+        data[i] = (value_h << 8) + (value_l);  // 倒端序
+        i++;
     }
 }

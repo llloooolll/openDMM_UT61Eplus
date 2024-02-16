@@ -29,10 +29,6 @@ static QState ao_es232_init(ao_es232_t *const me) {
 static QState ao_es232_ready(ao_es232_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
-        case Q_ENTRY_SIG:  // 进入
-            // QACTIVE_POST(me, AO_ES232_READY_SIG, 0U);
-            status = Q_HANDLED();
-            break;
         case AO_ES232_READY_SIG:
             es232_gpio_init();
             es232_enable_buz(0);                        // 关蜂鸣器

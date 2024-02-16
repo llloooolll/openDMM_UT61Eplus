@@ -66,10 +66,6 @@ static QState ao_knob_init(ao_knob_t *const me) {
 static QState ao_knob_ready(ao_knob_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
-        case Q_ENTRY_SIG:
-            // QACTIVE_POST(me, AO_KNOB_READY_SIG, 0U);
-            status = Q_HANDLED();
-            break;
         case AO_KNOB_READY_SIG:
             QACTIVE_POST(&ao_meter, AO_METER_READY_SIG, 0U);
             ULOG_INFO("KNOB done\r\n");

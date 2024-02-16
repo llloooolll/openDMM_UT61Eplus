@@ -6,6 +6,7 @@
 #include "ao_es232.h"
 #include "ao_lcd.h"
 #include "app_button.h"
+#include "app_config.h"
 #include "meter_range.h"
 #include "ulog.h"
 
@@ -81,10 +82,14 @@ QState meter_dcv_key(ao_meter_t *const me) {
             me->es232_value_rel = me->es232_value_now;
             me->es232_power_rel = me->es232_power_now;
             me->lcd_pixel_buffer.delta = 1;
+            QACTIVE_POST((QActive *)&ao_es232, AO_ES232_ENABLE_BUZ_SIG,
+                         glob_config.buzzer_short_ms);
             break;
         case button_hold_id << 4 | SINGLE_CLICK:
             me->es232_hold_flag = !me->es232_hold_flag;
             me->lcd_pixel_buffer.hold = me->es232_hold_flag;
+            QACTIVE_POST((QActive *)&ao_es232, AO_ES232_ENABLE_BUZ_SIG,
+                         glob_config.buzzer_short_ms);
             break;
         default:
             break;
@@ -102,8 +107,8 @@ QState meter_dcv_key(ao_meter_t *const me) {
  */
 static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value) {
     value *= 10000;
-    value += (me->cal_value.value[127 - 0] / 2);  // 四舍五入
-    value /= me->cal_value.value[127 - 0];
+    value += (glob_config.es232_calibration_value[0] / 2);  // 四舍五入
+    value /= glob_config.es232_calibration_value[0];
     return value;
 }
 

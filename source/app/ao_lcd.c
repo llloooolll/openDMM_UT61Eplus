@@ -27,10 +27,6 @@ static QState ao_lcd_init(ao_lcd_t *const me) {
 static QState ao_lcd_ready(ao_lcd_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
-        case Q_ENTRY_SIG:
-            // QACTIVE_POST(me, AO_LCD_READY_SIG, 0U);
-            status = Q_HANDLED();
-            break;
         case AO_LCD_READY_SIG:
             QActive_armX((QActive *)me, 0U, 5U, 0U);
             status = Q_HANDLED();

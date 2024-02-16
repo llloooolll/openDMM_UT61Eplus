@@ -5,6 +5,7 @@
 
 #define SHELL_COLOR_ENABLE 1
 
+static bool _ulog_enable = 1;
 static ulog_level_t _log_level = ulog_level_error;
 static uint32_t _log_index = 0;
 
@@ -23,6 +24,15 @@ static uint8_t log_level_color[] = {
 };
 
 /**
+ * @brief 打开
+ *
+ * @param flag
+ */
+void ulog_enable(bool flag) {
+    _ulog_enable = flag;  //
+}
+
+/**
  * @brief 设置日志等级
  *
  * @param level
@@ -38,6 +48,7 @@ void ulog_set_level(ulog_level_t level) {
  * @param format
  * @param ...
  */
+
 void ulog_printf(ulog_level_t level, char const *const format, ...) {
     if ((level < 0) || (level >= ulog_level_max))  //
         return;

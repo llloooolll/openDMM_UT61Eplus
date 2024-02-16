@@ -24,6 +24,7 @@ enum {
     shell_color_white = 37,   //
 };
 
+void ulog_enable(bool flag);
 void ulog_set_level(ulog_level_t level);
 void ulog_printf(ulog_level_t level, char const *const format, ...);
 void ulog_clean(void);

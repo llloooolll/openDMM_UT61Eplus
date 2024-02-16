@@ -46,9 +46,9 @@ typedef enum _meter_mode_t {
 typedef enum _ao_meter_signal_t {
     AO_METER_READY_SIG = Q_USER_SIG,  //
     AO_METER_ADC_DONE_SIG,            // ADC转换完成
-    AO_METER_KEY_SIG,                 // 按键
+    AO_METER_KEY_SIG,                 // 按键处理
     AO_METER_MODE_SIG,                // 测量模式
-    AO_METER_RTC_ALARM_SIG,           // RTC闹钟
+    AO_METER_ALARM_SIG,               // RTC闹钟
     AO_METER_SLEEP_SIG,               //
 
     AO_METER_MAX_SIG
@@ -57,7 +57,6 @@ typedef enum _ao_meter_signal_t {
 typedef struct _ao_meter_t {
     QActive super;
     // 变量
-    cal_value_t cal_value;             // EEPROM校准值
     meter_mode_t mode;                 // ES232测量模式
     es232_write_t es232_write_buffer;  // ES232写入缓存
     es232_read_t es232_read_buffer;    // ES232读出缓存

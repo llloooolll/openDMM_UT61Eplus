@@ -16,7 +16,7 @@ void RTC_IRQHandler(void) {
         if (sleep_ticks > 0) {
             sleep_ticks--;
         } else {
-            QACTIVE_POST_ISR(&ao_meter, AO_METER_RTC_ALARM_SIG, 0U);
+            QACTIVE_POST_ISR(&ao_meter, AO_METER_ALARM_SIG, 0U);
         }
     }
 

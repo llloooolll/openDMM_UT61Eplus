@@ -6,7 +6,9 @@
 #include "app_button.h"
 #include "app_config.h"
 #include "app_knob.h"
+#include "app_sleep.h"
 #include "binary.h"
+#include "eeprom.h"
 #include "es232.h"
 #include "gpio.h"
 #include "io_config.h"
@@ -42,15 +44,17 @@ int main(void) {
     bsp_init();
     app_button_init();
     app_knob_init();
+    app_sleep_init();
 
+    // 读取全局配置
     app_config_read();
-    if (!glob_config.glob_config_valid) {
-        // 配置无效，复位
-        app_config_reset();
+    if (glob_config.glob_config_valid) {
+    } else {
+        app_config_reset();  // 配置无效，复位
     }
 
+    // 按住SELECT开机，关闭自动休眠
     if (!gpio_read_pin(KEY_SELECT_PORT, KEY_SELECT_PIN)) {
-        // 按住SELECT开机，关闭自动休眠
         glob_config.glob_auto_sleep_enable = 0;
     }
 
@@ -58,6 +62,8 @@ int main(void) {
     if (irda_is_exist()) {
         ulog_set_level(ulog_level_debug);
         ulog_clean();  // 滚动屏幕，清除可视区域
+    } else {
+        ulog_enable(0);
     }
 
     return QF_run();  // 开始调度

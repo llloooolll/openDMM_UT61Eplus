@@ -6,6 +6,7 @@
 #include "ao_es232.h"
 #include "ao_lcd.h"
 #include "app_button.h"
+#include "app_config.h"
 #include "meter_range.h"
 #include "ulog.h"
 
@@ -73,16 +74,22 @@ QState meter_ohm_dio_key(ao_meter_t *const me) {
     switch (Q_PAR(me)) {
         case button_select_id << 4 | SINGLE_CLICK:
             QACTIVE_POST(me, AO_METER_MODE_SIG, meter_mode_ohm_cap);
+            QACTIVE_POST((QActive *)&ao_es232, AO_ES232_ENABLE_BUZ_SIG,
+                         glob_config.buzzer_short_ms);
             break;
         case button_rel_id << 4 | SINGLE_CLICK:
             me->es232_rel_flag = 1;
             me->es232_value_rel = me->es232_value_now;
             me->es232_power_rel = me->es232_power_now;
             me->lcd_pixel_buffer.delta = 1;
+            QACTIVE_POST((QActive *)&ao_es232, AO_ES232_ENABLE_BUZ_SIG,
+                         glob_config.buzzer_short_ms);
             break;
         case button_hold_id << 4 | SINGLE_CLICK:
             me->es232_hold_flag = !me->es232_hold_flag;
             me->lcd_pixel_buffer.hold = me->es232_hold_flag;
+            QACTIVE_POST((QActive *)&ao_es232, AO_ES232_ENABLE_BUZ_SIG,
+                         glob_config.buzzer_short_ms);
             break;
         default:
             break;
@@ -100,8 +107,8 @@ QState meter_ohm_dio_key(ao_meter_t *const me) {
  */
 static int32_t meter_help_ohm_dio_cal(ao_meter_t *const me, int32_t value) {
     value *= 3000;
-    value += (me->cal_value.value[127 - 1] / 2);  // 四舍五入
-    value /= me->cal_value.value[127 - 1];
+    value += (glob_config.es232_calibration_value[1] / 2);  // 四舍五入
+    value /= glob_config.es232_calibration_value[1];
     return value;
 }
 

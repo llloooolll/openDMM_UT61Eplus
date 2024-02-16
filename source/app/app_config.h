@@ -13,6 +13,8 @@ typedef struct _app_config_t {
     uint32_t lcd_backlight_once_time_sec;  // LCD背光点亮时间
     uint32_t buzzer_short_ms;              // 短蜂鸣持续时长
     uint32_t buzzer_long_ms;               // 长蜂鸣持续时长
+    bool es232_calibration_valid;          // 校准值有效
+    uint16_t *es232_calibration_value;     // 校准值
 } app_config_t;
 
 extern app_config_t glob_config;
