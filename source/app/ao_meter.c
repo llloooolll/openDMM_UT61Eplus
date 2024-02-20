@@ -328,6 +328,10 @@ static QState ao_meter_active(ao_meter_t *const me) {
                         break;
                     case button_hz_id << 4 | LONG_PRESS_START:
                         // QACTIVE_POST(me, AO_METER_ALARM_SIG, 0U);
+
+                        // 休眠测试
+                        // QACTIVE_POST_ISR(&ao_meter, AO_METER_ALARM_SIG, 0U);
+
                         status = Q_HANDLED();
                         break;
                     default:  // 现在不处理的进各个档位
@@ -407,6 +411,8 @@ static QState ao_meter_sleep(ao_meter_t *const me) {
         case Q_ENTRY_SIG:
             sleep_step = 0;
             QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 0U);
+            QACTIVE_POST(&ao_es232, AO_ES232_ENABLE_BUZ_SIG,
+                         glob_config.buzzer_long_ms * 4);
             ULOG_DEBUG("meter sleep\r\n");
             status = Q_HANDLED();
             break;
@@ -425,8 +431,8 @@ static QState ao_meter_sleep(ao_meter_t *const me) {
                     status = Q_HANDLED();
                     break;
                 case 3:
-                    // SCB->SCR = 0x00000004U;
-                    // __WFI();
+                    app_sleep_enty();
+                    app_sleep_exit();
                     status = Q_HANDLED();
                     break;
                 default:

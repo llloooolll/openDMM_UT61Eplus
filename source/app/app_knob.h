@@ -17,6 +17,7 @@ enum {
 };
 
 void app_knob_init(void);
+void app_knob_deinit(void);
 uint8_t app_knob_ticks(void);
 
 #endif

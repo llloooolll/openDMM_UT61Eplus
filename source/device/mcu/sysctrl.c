@@ -24,8 +24,10 @@ void sysctrl_enable_clock(sysctrl_clk_t clk, bool flag) {
     switch (clk) {
         case sysctrl_clk_rch:
             M0P_SYSCTRL->SYSCTRL0_f.RCH_EN = flag;
-            while (flag && (M0P_SYSCTRL->RCH_CR_f.STABLE != 1U)) {
-                ;
+            if (flag) {
+                while (flag && (M0P_SYSCTRL->RCH_CR_f.STABLE != 1U)) {
+                    ;
+                }
             }
             break;
         case sysctrl_clk_xth:
@@ -33,8 +35,10 @@ void sysctrl_enable_clock(sysctrl_clk_t clk, bool flag) {
             break;
         case sysctrl_clk_rcl:
             M0P_SYSCTRL->SYSCTRL0_f.RCL_EN = flag;
-            while (flag && (M0P_SYSCTRL->RCL_CR_f.STABLE != 1U)) {
-                ;
+            if (flag) {
+                while (flag && (M0P_SYSCTRL->RCL_CR_f.STABLE != 1U)) {
+                    ;
+                }
             }
             break;
         case sysctrl_clk_xtl:

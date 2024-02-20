@@ -10,25 +10,34 @@ static uint32_t es232_data_invert(uint32_t src);
 
 void es232_gpio_init(void) {
     // 电源使能
-    gpio_enable_output(ES232_POWER_EN_PORT, ES232_POWER_EN_PIN, 1);
     gpio_clear_pin(ES232_POWER_EN_PORT, ES232_POWER_EN_PIN);
+    gpio_enable_output(ES232_POWER_EN_PORT, ES232_POWER_EN_PIN, 1);
 
-    gpio_enable_output(ES232_I2C_CS_PORT, ES232_I2C_CS_PIN, 1);
     gpio_set_pin(ES232_I2C_CS_PORT, ES232_I2C_CS_PIN);
+    gpio_enable_output(ES232_I2C_CS_PORT, ES232_I2C_CS_PIN, 1);
 
-    gpio_enable_output(ES232_I2C_SCL_PORT, ES232_I2C_SCL_PIN, 1);
-    gpio_enable_output(ES232_I2C_SDA_PORT, ES232_I2C_SDA_PIN, 1);
     gpio_set_pin(ES232_I2C_SCL_PORT, ES232_I2C_SCL_PIN);
     gpio_set_pin(ES232_I2C_SDA_PORT, ES232_I2C_SDA_PIN);
-    gpio_enable_pullup(ES232_I2C_SCL_PORT, ES232_I2C_SCL_PIN, 1);
-    gpio_enable_pullup(ES232_I2C_SDA_PORT, ES232_I2C_SDA_PIN, 1);
     gpio_enable_od(ES232_I2C_SCL_PORT, ES232_I2C_SCL_PIN, 1);
     gpio_enable_od(ES232_I2C_SDA_PORT, ES232_I2C_SDA_PIN, 1);
+    gpio_enable_output(ES232_I2C_SCL_PORT, ES232_I2C_SCL_PIN, 1);
+    gpio_enable_output(ES232_I2C_SDA_PORT, ES232_I2C_SDA_PIN, 1);
+    gpio_enable_pullup(ES232_I2C_SCL_PORT, ES232_I2C_SCL_PIN, 1);
+    gpio_enable_pullup(ES232_I2C_SDA_PORT, ES232_I2C_SDA_PIN, 1);
 
     gpio_enable_output(ES232_DATA_NEW_PORT, ES232_DATA_NEW_PIN, 0);
     gpio_enable_output(ES232_STBEEP_PORT, ES232_STBEEP_PIN, 0);
     gpio_enable_pullup(ES232_DATA_NEW_PORT, ES232_DATA_NEW_PIN, 1);
     gpio_enable_pullup(ES232_STBEEP_PORT, ES232_STBEEP_PIN, 1);
+}
+
+void es232_gpio_deinit(void) {
+    gpio_clear_pin(ES232_I2C_CS_PORT, ES232_I2C_CS_PIN);
+
+    gpio_enable_pullup(ES232_I2C_SCL_PORT, ES232_I2C_SCL_PIN, 0);
+    gpio_enable_pullup(ES232_I2C_SDA_PORT, ES232_I2C_SDA_PIN, 0);
+    gpio_enable_pullup(ES232_DATA_NEW_PORT, ES232_DATA_NEW_PIN, 0);
+    gpio_enable_pullup(ES232_STBEEP_PORT, ES232_STBEEP_PIN, 0);
 }
 
 /**

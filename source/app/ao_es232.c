@@ -97,7 +97,9 @@ static QState ao_es232_active(ao_es232_t *const me) {
             if (Q_PAR(me) == 0U) {
                 ULOG_INFO("ES232 sleep\r\n");
                 QActive_disarmX((QActive *)me, 0U);
+                QActive_disarmX((QActive *)me, 1U);
                 es232_enable_power(0);
+                es232_gpio_deinit();
                 QACTIVE_POST(&ao_meter, AO_METER_SLEEP_SIG, 0U);
             } else {
                 ULOG_INFO("ES232 running\r\n");

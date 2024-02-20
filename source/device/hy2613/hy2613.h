@@ -87,5 +87,6 @@ void hy2613_off(void);
 void hy2613_on(void);
 void hy2613_refresh(void *lcd_pixel);
 void hy2613_test(bool flag);
+void hy2613_lpm(void);
 
 #endif

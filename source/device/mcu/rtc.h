@@ -65,5 +65,6 @@ void rtc_alarm_time_add(rtc_alarm_t *addend1, rtc_alarm_t *addend2);
 void rtc_set_prd_mult(rtc_mult_prd_t mult_prd);
 void rtc_set_prd_source(bool flag);
 void rtc_clean_prd_status(void);
+void rtc_enable_lpm(bool flag);
 
 #endif

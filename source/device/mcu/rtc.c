@@ -10,7 +10,9 @@
  *
  * @param clk
  */
-void rtc_set_rtc_clk(rtc_clk_t clk) { M0P_RTC->CR1_f.CKSEL = clk; }
+void rtc_set_rtc_clk(rtc_clk_t clk) {
+    M0P_RTC->CR1_f.CKSEL = clk;  //
+}
 
 /**
  * @brief 使能闹钟
@@ -19,6 +21,22 @@ void rtc_set_rtc_clk(rtc_clk_t clk) { M0P_RTC->CR1_f.CKSEL = clk; }
  */
 void rtc_enable_alarm(bool flag) {
     M0P_RTC->CR1_f.ALMEN = flag;  //
+}
+
+/**
+ * @brief 使能RTC低功耗模式
+ *
+ * @param flag
+ */
+void rtc_enable_lpm(bool flag) {
+    // M0P_RTC->CR1_f.WAIT = 1;             // 暂停寄存器更新
+    // while (M0P_RTC->CR1_f.WAITF == 0) {  // 查询直到1
+    // }
+    // M0P_RTC->CR1_f.WAIT = 0;             // 暂停寄存器更新
+    // while (M0P_RTC->CR1_f.WAITF == 1) {  // 查询直到0
+    // }
+
+    M0P_SYSCTRL->SYSCTRL1_f.RTC_LPW = flag;
 }
 
 /**

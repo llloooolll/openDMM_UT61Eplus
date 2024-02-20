@@ -131,6 +131,7 @@ typedef struct _es232_read_t {
 } es232_read_t;
 
 void es232_gpio_init(void);
+void es232_gpio_deinit(void);
 bool es232_init(void);
 void es232_enable_power(bool flag);
 void es232_write(es232_write_t *es232_write);

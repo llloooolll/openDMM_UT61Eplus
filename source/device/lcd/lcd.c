@@ -64,7 +64,17 @@ bool lcd_init(void) {
  *
  * @param flag
  */
-void lcd_test(bool flag) { hy2613_test(flag); }
+void lcd_test(bool flag) {  //
+    hy2613_test(flag);
+}
+
+/**
+ * @brief 低功耗
+ *
+ */
+void lcd_lpm(void) {  //
+    hy2613_lpm();
+}
 
 /**
  * @brief 开启显示
@@ -84,7 +94,9 @@ void lcd_enable(bool flag) {
  *
  * @param lcd_pixel
  */
-void lcd_refresh(lcd_pixel_t *lcd_pixel) { hy2613_refresh(lcd_pixel); }
+void lcd_refresh(lcd_pixel_t *lcd_pixel) {  //
+    hy2613_refresh(lcd_pixel);
+}
 
 /**
  * @brief LCD数码管显示字符

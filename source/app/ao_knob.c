@@ -102,6 +102,8 @@ static QState ao_knob_active(ao_knob_t *const me) {
             if (Q_PAR(me) == 0U) {
                 ULOG_INFO("KNOB sleep\r\n");
                 QActive_disarmX((QActive *)me, 0U);
+                QActive_disarmX((QActive *)me, 1U);
+                app_knob_deinit();
                 QACTIVE_POST(&ao_meter, AO_METER_SLEEP_SIG, 0U);
             } else {
                 ULOG_INFO("KNOB running\r\n");

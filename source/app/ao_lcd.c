@@ -79,8 +79,10 @@ static QState ao_lcd_active(ao_lcd_t *const me) {
             if (Q_PAR(me) == 0U) {
                 ULOG_INFO("LCD sleep\r\n");
                 QActive_disarmX((QActive *)me, 0U);
+                QActive_disarmX((QActive *)me, 1U);
                 lcd_enable_bl(0);
                 lcd_enable(0);
+                lcd_lpm();
                 QACTIVE_POST(&ao_meter, AO_METER_SLEEP_SIG, 0U);
             } else {
                 ULOG_INFO("LCD running\r\n");

@@ -8,6 +8,7 @@
 #include "app_knob.h"
 #include "app_sleep.h"
 #include "binary.h"
+#include "bits.h"
 #include "eeprom.h"
 #include "es232.h"
 #include "gpio.h"

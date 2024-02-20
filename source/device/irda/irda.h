@@ -7,6 +7,6 @@ void irda_test(void);
 void irda_send_byte(uint8_t data);
 void irda_init(uint32_t baud);
 bool irda_is_exist(void);
-void irda_enable(bool flag);
+void irda_deinit(void);
 
 #endif

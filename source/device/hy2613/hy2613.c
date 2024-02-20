@@ -51,7 +51,6 @@ bool hy2613_init(void) {
 /**
  * @brief 关显示
  *
- * @param lcd_pixel
  */
 void hy2613_off(void) {
     si2c_init(&hy2613_si2c_pin);
@@ -64,13 +63,25 @@ void hy2613_off(void) {
 /**
  * @brief 开显示
  *
- * @param lcd_pixel
  */
 void hy2613_on(void) {
     si2c_init(&hy2613_si2c_pin);
     si2c_trans_begin(HY2613_I2C_ADDR);
     si2c_write_byte(HY2613_NEXT_CMD | HY2613_CMD_MODESET |
                     HY2613_CMD_MODESET_DIS_ON | HY2613_CMD_MODESET_BIAS_1D3);
+    si2c_trans_end();
+}
+
+/**
+ * @brief 开显示
+ *
+ */
+void hy2613_lpm(void) {
+    si2c_init(&hy2613_si2c_pin);
+    si2c_trans_begin(HY2613_I2C_ADDR);
+    si2c_write_byte(HY2613_NEXT_CMD | HY2613_CMD_DISCTL |
+                    HY2613_CMD_DISCTL_PWR_FR_MODE_3 |
+                    HY2613_CMD_DISCTL_PWR_SR_MODE_1);
     si2c_trans_end();
 }
 

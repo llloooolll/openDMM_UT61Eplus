@@ -2,6 +2,7 @@
 
 #include "ao_meter.h"
 #include "app_config.h"
+#include "bits.h"
 #include "gpio.h"
 #include "io_config.h"
 #include "rtc.h"
@@ -32,6 +33,7 @@ void app_sleep_set_time(uint8_t time_minutes) {
 void app_sleep_init(void) {
     sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_rtc, 1);
     sysctrl_enable_clock(sysctrl_clk_rcl, 1);
+    rtc_enable_lpm(0);
     rtc_enable_count(0);
     rtc_set_rtc_clk(rtc_clk_rcl);
     rtc_enable_24count(1);
@@ -62,6 +64,17 @@ void app_sleep_init(void) {
  *
  */
 void app_sleep_enty(void) {
+    rtc_enable_lpm(1);
+    rtc_enable_irq(0);
+
+    sysctrl_enable_clock(sysctrl_clk_rcl, 0);
+
+    // sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_gpio, 0);
+    // sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_flash, 0);
+    M0P_SYSCTRL->PERI_CLKEN = 0;  // 关闭所有外设
+
+    SET_BIT(SCB->SCR, 2);
+    __WFI();
     //
 }
 
@@ -70,5 +83,6 @@ void app_sleep_enty(void) {
  *
  */
 void app_sleep_exit(void) {
+    NVIC_SystemReset();
     //
 }
