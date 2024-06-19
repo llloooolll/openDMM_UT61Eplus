@@ -7,8 +7,9 @@
 
 #define EVENT_CB(ev) \
     if (handle->cb[ev]) handle->cb[ev]((void *)handle)
-#define PRESS_REPEAT_MAX_NUM 15 /*!< The maximum value of the repeat counter \
-                                 */
+
+/*!< The maximum value of the repeat counter */
+#define PRESS_REPEAT_MAX_NUM 15
 
 // button handle list head.
 static struct Button *head_handle = NULL;
@@ -23,8 +24,8 @@ static void button_handler(struct Button *handle);
  * @param  button_id: the button id.
  * @retval None
  */
-void button_init(struct Button *handle, uint8_t (*pin_level)(uint8_t),
-                 uint8_t active_level, uint8_t button_id) {
+void button_init(struct Button *handle, uint8_t (*pin_level)(uint8_t), uint8_t active_level,
+                 uint8_t button_id) {
     memset(handle, 0, sizeof(struct Button));
     handle->event = (uint8_t)NONE_PRESS;
     handle->hal_button_Level = pin_level;
@@ -49,9 +50,7 @@ void button_attach(struct Button *handle, PressEvent event, BtnCallback cb) {
  * @param  handle: the button handle struct.
  * @retval button event.
  */
-PressEvent get_button_event(struct Button *handle) {
-    return (PressEvent)(handle->event);
-}
+PressEvent get_button_event(struct Button *handle) { return (PressEvent)(handle->event); }
 
 /**
  * @brief  Button driver core function, driver state machine.
@@ -78,8 +77,7 @@ static void button_handler(struct Button *handle) {
     /*-----------------State machine-------------------*/
     switch (handle->state) {
         case 0:
-            if (handle->button_level ==
-                handle->active_level) {  // start press down
+            if (handle->button_level == handle->active_level) {  // start press down
                 handle->event = (uint8_t)PRESS_DOWN;
                 EVENT_CB(PRESS_DOWN);
                 handle->ticks = 0;
@@ -91,8 +89,7 @@ static void button_handler(struct Button *handle) {
             break;
 
         case 1:
-            if (handle->button_level !=
-                handle->active_level) {  // released press up
+            if (handle->button_level != handle->active_level) {  // released press up
                 handle->event = (uint8_t)PRESS_UP;
                 EVENT_CB(PRESS_UP);
                 handle->ticks = 0;
@@ -105,8 +102,7 @@ static void button_handler(struct Button *handle) {
             break;
 
         case 2:
-            if (handle->button_level ==
-                handle->active_level) {  // press down again
+            if (handle->button_level == handle->active_level) {  // press down again
                 handle->event = (uint8_t)PRESS_DOWN;
                 EVENT_CB(PRESS_DOWN);
                 if (handle->repeat != PRESS_REPEAT_MAX_NUM) {
@@ -128,8 +124,7 @@ static void button_handler(struct Button *handle) {
             break;
 
         case 3:
-            if (handle->button_level !=
-                handle->active_level) {  // released press up
+            if (handle->button_level != handle->active_level) {  // released press up
                 handle->event = (uint8_t)PRESS_UP;
                 EVENT_CB(PRESS_UP);
                 if (handle->ticks < SHORT_TICKS) {
@@ -138,9 +133,8 @@ static void button_handler(struct Button *handle) {
                 } else {
                     handle->state = 0;
                 }
-            } else if (handle->ticks >
-                       SHORT_TICKS) {  // SHORT_TICKS < press down hold time <
-                                       // LONG_TICKS
+            } else if (handle->ticks > SHORT_TICKS) {  // SHORT_TICKS < press down hold time <
+                                                       // LONG_TICKS
                 handle->state = 1;
             }
             break;

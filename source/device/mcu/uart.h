@@ -23,7 +23,7 @@ typedef enum _uart_irq_t {
 } uart_irq_t;
 
 typedef enum _uart_func_t {
-    uart_func_ren = 4u,  // 0-TX; ///<1-非mode0模式代表RX&TX ,mode0模式代表RX;
+    uart_func_ren = 4u,     // 0-TX; ///<1-非mode0模式代表RX&TX ,mode0模式代表RX;
     uart_func_dmarx = 16u,  // DMA接收功能
     uart_func_dmatx = 17u,  // DMA发送功能
     uart_func_rts = 18u,    // 硬件流RTS功能
@@ -44,8 +44,7 @@ void uart_send_data_poll(M0P_UART_TypeDef *UARTx, uint8_t data);
 void uart_send_data_it(M0P_UART_TypeDef *UARTx, uint8_t data);
 uint8_t uart_receive_data(M0P_UART_TypeDef *UARTx);
 void uart_enable_irq(M0P_UART_TypeDef *UARTx, uart_irq_t uart_irq, bool flag);
-void uart_enable_func(M0P_UART_TypeDef *UARTx, uart_func_t uart_func,
-                      bool flag);
+void uart_enable_func(M0P_UART_TypeDef *UARTx, uart_func_t uart_func, bool flag);
 void uart_set_mode(M0P_UART_TypeDef *UARTx, uart_mode_t mode);
 void uart_set_over(M0P_UART_TypeDef *UARTx, bool over);
 void uart_set_baud(M0P_UART_TypeDef *UARTx, uint32_t baud);

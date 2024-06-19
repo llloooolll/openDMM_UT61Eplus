@@ -183,7 +183,7 @@ typedef struct {
     QHsmVtable const *vptr; /*!< virtual pointer */
     QStateHandler state;    /*!< current active state (state-variable) */
     QStateHandler temp;     /*!< temporary: tran. chain, target state, etc. */
-    QEvt evt; /*!< currently processed event in the HSM (protected) */
+    QEvt evt;               /*!< currently processed event in the HSM (protected) */
 } QHsm;
 
 /*! Virtual table for the QHsm class */
@@ -246,8 +246,7 @@ void QHsm_ctor(QHsm *const me, QStateHandler initial);
  * @returns the current active child state-handler of a given parent
  * @note this macro is used in QM for auto-generating code for state history
  */
-#define QHsm_childState(me_, parent_) \
-    QHsm_childState_(Q_HSM_UPCAST(me_), Q_STATE_CAST(parent_))
+#define QHsm_childState(me_, parent_) QHsm_childState_(Q_HSM_UPCAST(me_), Q_STATE_CAST(parent_))
 
 /*! Helper function to obtain the current active child state of a parent */
 QStateHandler QHsm_childState_(QHsm *const me, QStateHandler const parent);
@@ -340,8 +339,7 @@ QState QHsm_top(void const *const me);
  * or and initial transition. Applicable to both HSMs and FSMs.
  * @include qepn_qtran.c
  */
-#define Q_TRAN(target_) \
-    ((Q_HSM_UPCAST(me))->temp = Q_STATE_CAST(target_), (QState)Q_RET_TRAN)
+#define Q_TRAN(target_) ((Q_HSM_UPCAST(me))->temp = Q_STATE_CAST(target_), (QState)Q_RET_TRAN)
 
 /*! Macro to call in a state-handler when it executes a transition
  * to history. Applicable only to HSMs.
@@ -349,8 +347,7 @@ QState QHsm_top(void const *const me);
  * @usage
  * @include qepn_qhist.c
  */
-#define Q_TRAN_HIST(hist_) \
-    ((Q_HSM_UPCAST(me))->temp = (hist_), (QState)Q_RET_TRAN_HIST)
+#define Q_TRAN_HIST(hist_) ((Q_HSM_UPCAST(me))->temp = (hist_), (QState)Q_RET_TRAN_HIST)
 
 /*! Macro to call in a state-handler when it designates the
  * superstate of a given state. Applicable only to HSMs.
@@ -358,8 +355,7 @@ QState QHsm_top(void const *const me);
  * @usage
  * @include qepn_qtran.c
  */
-#define Q_SUPER(super_) \
-    ((Q_HSM_UPCAST(me))->temp = Q_STATE_CAST(super_), Q_RET_SUPER)
+#define Q_SUPER(super_) ((Q_HSM_UPCAST(me))->temp = Q_STATE_CAST(super_), Q_RET_SUPER)
 
 /*! Macro to call in a state-handler when it handles an event.
  *  Applicable to both HSMs and FSMs.

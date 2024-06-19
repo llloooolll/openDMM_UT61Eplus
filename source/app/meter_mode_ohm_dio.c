@@ -46,8 +46,7 @@ QState meter_ohm_dio_adc(ao_meter_t *const me) {
 
     if (!me->es232_hold_flag) {
         me->es232_value_now = meter_help_ohm_dio_cal(me, sadc_data);
-        me->es232_power_now =
-            meter_help_ohm_dio_get_power(me, me->es232_write_buffer.range_msb);
+        me->es232_power_now = meter_help_ohm_dio_get_power(me, me->es232_write_buffer.range_msb);
     }
 
     calculate_rel_result(me);  // 计算相对值
@@ -55,8 +54,7 @@ QState meter_ohm_dio_adc(ao_meter_t *const me) {
         (me->es232_write_buffer.range_msb == me->es232_range_max)) {
         lcd_show_ol(&me->lcd_pixel_buffer);  // 显示OL
     } else {
-        lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value,
-                       me->es232_show_power);
+        lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value, me->es232_show_power);
     }
     QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
 
@@ -119,7 +117,6 @@ static int32_t meter_help_ohm_dio_cal(ao_meter_t *const me, int32_t value) {
  * @param range
  * @return int8_t
  */
-static int8_t meter_help_ohm_dio_get_power(ao_meter_t *const me,
-                                           uint8_t range) {
+static int8_t meter_help_ohm_dio_get_power(ao_meter_t *const me, uint8_t range) {
     return -4 + (int8_t)range;
 }

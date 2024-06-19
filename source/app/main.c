@@ -35,13 +35,13 @@ QActiveCB const Q_ROM QF_active[] = {
 };
 
 int main(void) {
+    // 状态机初始化
     ao_meter_ctor();
     ao_es232_ctor();
     ao_lcd_ctor();
     ao_irda_ctor();
     ao_knob_ctor();
 
-    QF_init(Q_DIM(QF_active));
     bsp_init();
     app_button_init();
     app_knob_init();
@@ -64,8 +64,10 @@ int main(void) {
         ulog_set_level(ulog_level_debug);
         ulog_clean();  // 滚动屏幕，清除可视区域
     } else {
-        ulog_enable(0);
+        ulog_enable(false);
     }
+
+    QF_init(Q_DIM(QF_active));
 
     return QF_run();  // 开始调度
 }

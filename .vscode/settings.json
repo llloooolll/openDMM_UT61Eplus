@@ -52,6 +52,8 @@
         "multi_button.h": "c",
         "meter_mode_ua_dc.h": "c",
         "meter_mode_ua_ac.h": "c",
-        "meter_mode_ohm_cap.h": "c"
+        "meter_mode_ohm_cap.h": "c",
+        "stddef.h": "c"
     },
+    "cmake.configureOnOpen": false,
 }

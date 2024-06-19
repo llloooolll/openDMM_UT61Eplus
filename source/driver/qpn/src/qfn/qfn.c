@@ -134,8 +134,7 @@ void QActive_ctor(QActive *const me, QStateHandler initial) {
  * @include qfn_postx.c
  */
 #if (Q_PARAM_SIZE != 0U)
-bool QActive_postX_(QActive *const me, uint_fast8_t margin, enum_t const sig,
-                    QParam const par)
+bool QActive_postX_(QActive *const me, uint_fast8_t margin, enum_t const sig, QParam const par)
 #else
 bool QActive_postX_(QActive *const me, uint_fast8_t margin, enum_t const sig)
 #endif
@@ -215,8 +214,7 @@ bool QActive_postX_(QActive *const me, uint_fast8_t margin, enum_t const sig)
  * @include qfn_postx.c
  */
 #if (Q_PARAM_SIZE != 0U)
-bool QActive_postXISR_(QActive *const me, uint_fast8_t margin, enum_t const sig,
-                       QParam const par)
+bool QActive_postXISR_(QActive *const me, uint_fast8_t margin, enum_t const sig, QParam const par)
 #else
 bool QActive_postXISR_(QActive *const me, uint_fast8_t margin, enum_t const sig)
 #endif
@@ -399,8 +397,7 @@ void QF_tickXISR(uint_fast8_t const tickRate) {
 #endif /* QF_TIMEEVT_USAGE */
 
 #if (Q_PARAM_SIZE != 0)
-                QACTIVE_POST_ISR(a, (enum_t)Q_TIMEOUT_SIG + (enum_t)tickRate,
-                                 0U);
+                QACTIVE_POST_ISR(a, (enum_t)Q_TIMEOUT_SIG + (enum_t)tickRate, 0U);
 #else
                 QACTIVE_POST_ISR(a, (enum_t)Q_TIMEOUT_SIG + (enum_t)tickRate);
 #endif /* (Q_PARAM_SIZE != 0U) */
@@ -442,11 +439,10 @@ void QF_tickXISR(uint_fast8_t const tickRate) {
  * @include qfn_armx.c
  */
 #ifdef QF_TIMEEVT_PERIODIC
-void QActive_armX(QActive *const me, uint_fast8_t const tickRate,
-                  QTimeEvtCtr const nTicks, QTimeEvtCtr const interval)
+void QActive_armX(QActive *const me, uint_fast8_t const tickRate, QTimeEvtCtr const nTicks,
+                  QTimeEvtCtr const interval)
 #else
-void QActive_armX(QActive *const me, uint_fast8_t const tickRate,
-                  QTimeEvtCtr const nTicks)
+void QActive_armX(QActive *const me, uint_fast8_t const tickRate, QTimeEvtCtr const nTicks)
 #endif
 {
     QF_INT_DISABLE();
@@ -493,8 +489,7 @@ void QActive_disarmX(QActive *const me, uint_fast8_t const tickRate) {
 #ifdef QF_TIMEEVT_USAGE
 bool QActive_armedX(QActive *const me, uint_fast8_t const tickRate) {
     QF_INT_DISABLE();
-    uint8_t running_flag =
-        QF_timerSetX_[tickRate] & (uint_fast8_t)(~(1U << (me->prio - 1U)));
+    uint8_t running_flag = QF_timerSetX_[tickRate] & (uint_fast8_t)(~(1U << (me->prio - 1U)));
     QF_INT_ENABLE();
 
     return running_flag > 0;

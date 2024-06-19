@@ -2,43 +2,47 @@
     "version": "2.0.0",
     "tasks": [
         {
+            // 编译所有项目
             "label": "build_all",
             "type": "shell",
-            "command": "call ./scripts/shell/build.bat",
+            "command": "./scripts/shell/build.bat",
             "args": [
                 "all"
             ],
             "problemMatcher": []
         },
         {
-            "label": "build",
+            // 编译当前文件夹的项目
+            "label": "build_local",
             "type": "shell",
-            "command": "call ./scripts/shell/build.bat",
+            "command": "./scripts/shell/build.bat",
             "args": [
-                // "${fileDirnameBasename}_binary"
-                "all"
+                "${fileDirnameBasename}"
             ],
             "problemMatcher": []
         },
         {
+            // 生成CMAKE
             "label": "gen_mingw",
             "type": "shell",
-            "command": "call ./scripts/shell/gen_mingw.bat",
+            "command": "./scripts/shell/gen_mingw.bat",
             "problemMatcher": []
         },
         {
+            // 烧录当前文件夹的项目
             "label": "load",
             "type": "shell",
-            "command": "call call ./scripts/shell/build.bat all & call ./scripts/shell/load.bat",
+            "command": "./scripts/shell/load.bat",
             "args": [
-                "./build/${relativeFileDirname}/${fileDirnameBasename}.hex"
+                "./out/${relativeFileDirname}/${fileDirnameBasename}.hex"
             ],
             "problemMatcher": []
         },
         {
+            // 擦除
             "label": "erase",
             "type": "shell",
-            "command": "call ./scripts/shell/erase.bat",
+            "command": "./scripts/shell/erase.bat",
             "problemMatcher": []
         },
     ],
@@ -49,6 +53,6 @@
         "reveal": "always", //执行任务时跳转到终端面板
         "echo": true, //要有输出
         "clear": true, //不清理
-        "panel": "shared", // 共用一个命令行
+        "panel":"shared", // 共用一个命令行
     },
 }

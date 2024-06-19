@@ -92,9 +92,7 @@ QState meter_hz_duty_key(ao_meter_t *const me) {
  * @param range
  * @return int32_t
  */
-static int32_t meter_help_hz_duty_cal(ao_meter_t *const me, int32_t value) {
-    return value;
-}
+static int32_t meter_help_hz_duty_cal(ao_meter_t *const me, int32_t value) { return value; }
 
 /**
  * @brief 计算值的幂
@@ -103,7 +101,6 @@ static int32_t meter_help_hz_duty_cal(ao_meter_t *const me, int32_t value) {
  * @param range
  * @return int8_t
  */
-static int8_t meter_help_hz_duty_get_power(ao_meter_t *const me,
-                                           uint8_t range) {
+static int8_t meter_help_hz_duty_get_power(ao_meter_t *const me, uint8_t range) {
     return -3 + (int8_t)range;
 }

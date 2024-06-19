@@ -78,12 +78,10 @@ void sysctrl_switch_sys_clk_source(sysctrl_clk_source_t source) {
  */
 uint32_t sysctrl_get_hclk_freq(void) {
     uint32_t hclk_freq = 0;
-    const uint32_t rch_freq_table[] = {24000000, 22120000, 16000000, 8000000,
-                                       4000000};
+    const uint32_t rch_freq_table[] = {24000000, 22120000, 16000000, 8000000, 4000000};
     const uint32_t rcl_freq_table[] = {32768, 38400};
 
-    sysctrl_clk_source_t corrent_clk_source =
-        (sysctrl_clk_source_t)(M0P_SYSCTRL->SYSCTRL0_f.CLKSW);
+    sysctrl_clk_source_t corrent_clk_source = (sysctrl_clk_source_t)(M0P_SYSCTRL->SYSCTRL0_f.CLKSW);
 
     switch (corrent_clk_source) {
         case sysctrl_clk_source_rch:
@@ -229,8 +227,7 @@ void sysctrl_set_pclk_div(sysctrl_pclk_div_t div) {
  *
  * @param peripheral
  */
-void sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_t peripheral,
-                                   bool flag) {
+void sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_t peripheral, bool flag) {
     if (flag) {
         SET_BIT(M0P_SYSCTRL->PERI_CLKEN, peripheral);
     } else {

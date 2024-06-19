@@ -1,1 +1,1 @@
-cmake --build build --target %1
+cmake --build ./out --target %1

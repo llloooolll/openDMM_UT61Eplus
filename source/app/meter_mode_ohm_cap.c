@@ -10,6 +10,29 @@
 #include "meter_range.h"
 #include "ulog.h"
 
+/*
+ * 电容测量模式
+ * F[3:0] = B1000
+ * 
+ * 电容容量档位
+ * Q[2:0] = 
+ * B000: 30.000nF 0.3s
+ * B001: 300.00nF 0.75s
+ * B010: 3.0000uF 0.75s
+ * B011: 30.000uF 2.4s(max)
+ * B100: 300.00uF 3.0s(max)
+ * B101: 3.0000mF 6.0s(max)
+ * B110: 30.000mF 6.0s(max)
+ * B111: 300.00mF 30s(max)
+ * 
+ * 电容测量结果
+ * D0[18:0] 3cnvs/s
+ * 
+ * 档位快速跳跃标志
+ * ALARM = 1
+ * 
+ */
+
 static int32_t meter_help_ohm_cap_cal(ao_meter_t *const me, int32_t value);
 static int8_t meter_help_ohm_cap_get_power(ao_meter_t *const me, uint8_t range);
 
@@ -23,7 +46,7 @@ void meter_ohm_cap_init(ao_meter_t *const me) {
     me->lcd_pixel_buffer.farad = 1;       // 单位法拉
     me->lcd_pixel_buffer.range_auto = 1;  // 自动档
 
-    me->es232_range_delay_cycle = 0;  // 电容档FADC不工作，每个结果都是准的
+    me->es232_range_delay_cycle = 0;    // 电容档FADC不工作，每个结果都是准的
     me->es232_range_value_max = 30000;  // 最大
     me->es232_range_value_min = 2900;   // 最小
     me->es232_range_max = B111;         // 300.00M
@@ -48,8 +71,7 @@ QState meter_ohm_cap_adc(ao_meter_t *const me) {
 
     if (!me->es232_hold_flag) {
         me->es232_value_now = meter_help_ohm_cap_cal(me, sadc_data);
-        me->es232_power_now =
-            meter_help_ohm_cap_get_power(me, me->es232_write_buffer.range_msb);
+        me->es232_power_now = meter_help_ohm_cap_get_power(me, me->es232_write_buffer.range_msb);
     }
 
     calculate_rel_result(me);  // 计算相对值
@@ -59,8 +81,7 @@ QState meter_ohm_cap_adc(ao_meter_t *const me) {
     } else {
         if (meter_range_sel(me, me->es232_value_now)) {
             if (me->es232_read_buffer.STA0 == 0) {
-                lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value,
-                               me->es232_show_power);
+                lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value, me->es232_show_power);
             }
         }
     }
@@ -111,18 +132,15 @@ QState meter_ohm_cap_key(ao_meter_t *const me) {
  * @param range
  * @return int32_t
  */
-static int32_t meter_help_ohm_cap_cal(ao_meter_t *const me, int32_t value) {
-    return value;
-}
+static int32_t meter_help_ohm_cap_cal(ao_meter_t *const me, int32_t value) { return value; }
 
 /**
- * @brief 计算结果的幂
+ * @brief 根据档位计算ADC结果的幂
  *
  * @param me
  * @param range
  * @return int8_t
  */
-static int8_t meter_help_ohm_cap_get_power(ao_meter_t *const me,
-                                           uint8_t range) {
+static int8_t meter_help_ohm_cap_get_power(ao_meter_t *const me, uint8_t range) {
     return -12 + (int8_t)range;
 }

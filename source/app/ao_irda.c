@@ -19,7 +19,7 @@ void ao_irda_ctor(void) {
 }
 
 static QState ao_irda_init(ao_irda_t *const me) {
-    return Q_TRAN(&ao_irda_ready);
+    return Q_TRAN(&ao_irda_ready);  //
 }
 
 static QState ao_irda_ready(ao_irda_t *const me) {

@@ -81,12 +81,10 @@ void SystemCoreClockUpdate(void) {
     } sysctrl_clk_source_t;
 
     uint32_t hclk_freq = 0;
-    const uint32_t rch_freq_table[] = {24000000, 22120000, 16000000, 8000000,
-                                       4000000};
+    const uint32_t rch_freq_table[] = {24000000, 22120000, 16000000, 8000000, 4000000};
     const uint32_t rcl_freq_table[] = {32768, 38400};
 
-    sysctrl_clk_source_t corrent_clk_source =
-        (sysctrl_clk_source_t)(M0P_SYSCTRL->SYSCTRL0_f.CLKSW);
+    sysctrl_clk_source_t corrent_clk_source = (sysctrl_clk_source_t)(M0P_SYSCTRL->SYSCTRL0_f.CLKSW);
 
     switch (corrent_clk_source) {
         case sysctrl_clk_source_rch:

@@ -163,8 +163,7 @@ void si2c_trans_begin(uint8_t address) {
     ll_si2c_start();
     if (_i2c_status == si2c_status_ok)  //
     {
-        bool addr_ack =
-            ll_si2c_write_byte(address);  // The r/w bit is zero for write
+        bool addr_ack = ll_si2c_write_byte(address);  // The r/w bit is zero for write
         if (addr_ack)  // a sda zero from Slave for the 9th bit is ack
         {
             _i2c_status = si2c_status_addr_nack;
@@ -198,8 +197,7 @@ uint8_t si2c_request_from(uint8_t address, uint8_t size) {
     ll_si2c_start();
 
     if (!_i2c_status) {
-        bool rc =
-            ll_si2c_write_byte(address | 0x01);  // The r/w bit is '1' to read
+        bool rc = ll_si2c_write_byte(address | 0x01);  // The r/w bit is '1' to read
 
         if (!rc)  // a sda zero from Slave for the 9th bit is ack
         {
@@ -207,8 +205,7 @@ uint8_t si2c_request_from(uint8_t address, uint8_t size) {
                 if (n < (size - 1)) {
                     _rx_buffer[n] = ll_si2c_read_byte(1);  // read with ack
                 } else {
-                    _rx_buffer[n] =
-                        ll_si2c_read_byte(0);  // last byte, read with nack
+                    _rx_buffer[n] = ll_si2c_read_byte(0);  // last byte, read with nack
                 }
             }
             _rx_buffer_put = n;

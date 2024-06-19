@@ -111,8 +111,7 @@ typedef int int_t;
  * @note This macro should __not__ be terminated by a semicolon.
  * @sa Q_DEFINE_THIS_MODULE()
  */
-#define Q_DEFINE_THIS_FILE \
-    static char_t const Q_ROM Q_this_module_[] = __FILE__;
+#define Q_DEFINE_THIS_FILE static char_t const Q_ROM Q_this_module_[] = __FILE__;
 
 /*! Define the user-specified module name for assertions in this file. */
 /**
@@ -127,8 +126,7 @@ typedef int int_t;
  *
  * @note This macro should __not__ be terminated by a semicolon.
  */
-#define Q_DEFINE_THIS_MODULE(name_) \
-    static char_t const Q_ROM Q_this_module_[] = name_;
+#define Q_DEFINE_THIS_MODULE(name_) static char_t const Q_ROM Q_this_module_[] = name_;
 
 /*! General purpose assertion. */
 /**
@@ -143,8 +141,7 @@ typedef int int_t;
  * @note the @p test_ is __not__ evaluated if assertions are disabled
  * with the #Q_NASSERT switch.
  */
-#define Q_ASSERT(test_) \
-    ((test_) ? (void)0 : Q_onAssert(&Q_this_module_[0], (int_t)__LINE__))
+#define Q_ASSERT(test_) ((test_) ? (void)0 : Q_onAssert(&Q_this_module_[0], (int_t)__LINE__))
 
 /*! General purpose assertion with user-specified assertion-id. */
 /**
@@ -162,8 +159,7 @@ typedef int int_t;
  * @note the @p test_ expression is __not__ evaluated if assertions are
  * disabled with the #Q_NASSERT switch.
  */
-#define Q_ASSERT_ID(id_, test_) \
-    ((test_) ? (void)0 : Q_onAssert(&Q_this_module_[0], (int_t)(id_)))
+#define Q_ASSERT_ID(id_, test_) ((test_) ? (void)0 : Q_onAssert(&Q_this_module_[0], (int_t)(id_)))
 
 /*! General purpose assertion that __always__ evaluates the @p test_
  * expression. */

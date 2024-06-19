@@ -37,8 +37,7 @@ static QState ao_lcd_ready(ao_lcd_t *const me) {
                 lcd_test(1);  // 正常，满像素测试
             }
             ULOG_INFO("LCD done\r\n");
-            QACTIVE_POST(&ao_meter, AO_METER_READY_SIG,
-                         (uint32_t)lcd_init_result);
+            QACTIVE_POST(&ao_meter, AO_METER_READY_SIG, (uint32_t)lcd_init_result);
             status = Q_TRAN(&ao_lcd_active);
             break;
         default:
@@ -54,8 +53,7 @@ static QState ao_lcd_active(ao_lcd_t *const me) {
     switch (Q_SIG(me)) {
         case AO_LCD_REFRESH_SIG:
             // 刷新
-            memcpy(&me->lcd_pixel_buffer, (uint32_t *)Q_PAR(me),
-                   sizeof(lcd_pixel_t));
+            memcpy(&me->lcd_pixel_buffer, (uint32_t *)Q_PAR(me), sizeof(lcd_pixel_t));
             lcd_refresh(&me->lcd_pixel_buffer);
             status = Q_HANDLED();
             break;

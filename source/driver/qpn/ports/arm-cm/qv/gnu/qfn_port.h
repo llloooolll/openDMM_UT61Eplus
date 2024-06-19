@@ -87,8 +87,7 @@
 #define QF_LOG2(n_) ((uint_fast8_t)(32U - __builtin_clz(n_)))
 
 /* macro for setting the BASEPRI register */
-#define QF_SET_BASEPRI(basepri_) \
-    __asm volatile("msr BASEPRI,%0" ::"r"(basepri_) :)
+#define QF_SET_BASEPRI(basepri_) __asm volatile("msr BASEPRI,%0" ::"r"(basepri_) :)
 
 /* initialization of the QV kernel for Cortex-M3/M4 */
 #define QV_INIT() QV_init()

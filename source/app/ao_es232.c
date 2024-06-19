@@ -42,8 +42,7 @@ static QState ao_es232_ready(ao_es232_t *const me) {
                 es232_write(&me->es232_write_buffer);
             }
             ULOG_INFO("ES232 done\r\n");
-            QACTIVE_POST(&ao_meter, AO_METER_READY_SIG,
-                         (uint32_t)es232_init_result);
+            QACTIVE_POST(&ao_meter, AO_METER_READY_SIG, (uint32_t)es232_init_result);
             status = Q_TRAN(&ao_es232_active);
             break;
         default:
@@ -66,18 +65,15 @@ static QState ao_es232_active(ao_es232_t *const me) {
             } else {
                 es232_clear_flag();
             }
-            QActive_armX((QActive *)me, 0U, glob_config.es232_polling_time_ms,
-                         0U);
+            QActive_armX((QActive *)me, 0U, glob_config.es232_polling_time_ms, 0U);
             status = Q_HANDLED();
             break;
         case AO_ES232_WRITE_CONFIG_SIG:  // 重新写入配置
             QActive_disarmX((QActive *)me, 0U);
-            memcpy(&me->es232_write_buffer, (es232_write_t *)Q_PAR(me),
-                   sizeof(es232_write_t));
+            memcpy(&me->es232_write_buffer, (es232_write_t *)Q_PAR(me), sizeof(es232_write_t));
             es232_write(&me->es232_write_buffer);
             es232_read(&me->es232_read_buffer);  // 消除就绪标志
-            QActive_armX((QActive *)me, 0U, glob_config.es232_polling_time_ms,
-                         0U);
+            QActive_armX((QActive *)me, 0U, glob_config.es232_polling_time_ms, 0U);
             status = Q_HANDLED();
             break;
         case AO_ES232_ENABLE_BUZ_SIG:
@@ -103,8 +99,7 @@ static QState ao_es232_active(ao_es232_t *const me) {
                 QACTIVE_POST(&ao_meter, AO_METER_SLEEP_SIG, 0U);
             } else {
                 ULOG_INFO("ES232 running\r\n");
-                QACTIVE_POST(me, AO_ES232_WRITE_CONFIG_SIG,
-                             &me->es232_write_buffer);
+                QACTIVE_POST(me, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
             }
             status = Q_HANDLED();
             break;

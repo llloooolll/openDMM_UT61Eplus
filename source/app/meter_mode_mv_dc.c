@@ -46,16 +46,14 @@ QState meter_mv_dc_adc(ao_meter_t *const me) {
 
     if (!me->es232_hold_flag) {
         me->es232_value_now = meter_help_mv_dc_cal(me, sadc_data);
-        me->es232_power_now =
-            meter_help_mv_dc_get_power(me, me->es232_write_buffer.range_msb);
+        me->es232_power_now = meter_help_mv_dc_get_power(me, me->es232_write_buffer.range_msb);
     }
 
     calculate_rel_result(me);  // 计算相对值
     if (abs(me->es232_value_now) > 30000) {
         lcd_show_ol(&me->lcd_pixel_buffer);
     } else {
-        lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value,
-                       me->es232_show_power);
+        lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value, me->es232_show_power);
     }
     QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
 
@@ -104,9 +102,7 @@ QState meter_mv_dc_key(ao_meter_t *const me) {
  * @param range
  * @return int32_t
  */
-static int32_t meter_help_mv_dc_cal(ao_meter_t *const me, int32_t value) {
-    return value;
-}
+static int32_t meter_help_mv_dc_cal(ao_meter_t *const me, int32_t value) { return value; }
 
 static int8_t meter_help_mv_dc_get_power(ao_meter_t *const me, uint8_t range) {
     return -5 + (int8_t)range;

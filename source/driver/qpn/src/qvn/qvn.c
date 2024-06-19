@@ -104,8 +104,7 @@ int_t QF_run(void) {
 #else
             /* hi nibble non-zero? */
             if ((QF_readySet_ & 0xF0U) != 0U) {
-                p = (uint_fast8_t)Q_ROM_BYTE(QF_log2Lkup[QF_readySet_ >> 4]) +
-                    4U;
+                p = (uint_fast8_t)Q_ROM_BYTE(QF_log2Lkup[QF_readySet_ >> 4]) + 4U;
             } else { /* hi nibble of QF_readySet_ is zero */
                 p = (uint_fast8_t)Q_ROM_BYTE(QF_log2Lkup[QF_readySet_]);
             }

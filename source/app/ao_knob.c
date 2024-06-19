@@ -87,11 +87,10 @@ static QState ao_knob_active(ao_knob_t *const me) {
             if (knob_status_now != me->knob_status) {
                 me->knob_status = knob_status_now;
 
-                ULOG_INFO("knob change: %s, id =%d\r\n",
-                          knob_mode_string[me->knob_status], me->knob_status);
+                ULOG_INFO("knob change: %s, id =%d\r\n", knob_mode_string[me->knob_status],
+                          me->knob_status);
                 // 状态映射
-                QACTIVE_POST(&ao_meter, AO_METER_MODE_SIG,
-                             knob_mode_map[me->knob_status]);
+                QACTIVE_POST(&ao_meter, AO_METER_MODE_SIG, knob_mode_map[me->knob_status]);
                 QActive_disarmX((QActive *)me, 0U);
             } else {
                 QActive_armX((QActive *)me, 0U, 100U, 0U);

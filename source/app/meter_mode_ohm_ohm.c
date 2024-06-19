@@ -49,8 +49,7 @@ QState meter_ohm_ohm_adc(ao_meter_t *const me) {
 
     if (!me->es232_hold_flag) {
         me->es232_value_now = meter_help_ohm_ohm_cal(me, sadc_data);
-        me->es232_power_now =
-            meter_help_ohm_ohm_get_power(me, me->es232_write_buffer.range_msb);
+        me->es232_power_now = meter_help_ohm_ohm_get_power(me, me->es232_write_buffer.range_msb);
     }
 
     calculate_rel_result(me);
@@ -59,8 +58,7 @@ QState meter_ohm_ohm_adc(ao_meter_t *const me) {
         lcd_show_ol(&me->lcd_pixel_buffer);  // 显示OL
     } else {
         if (meter_range_sel(me, fadc_data * 100)) {
-            lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value,
-                           me->es232_show_power);
+            lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value, me->es232_show_power);
         }
     }
     QACTIVE_POST(&ao_lcd, AO_LCD_REFRESH_SIG, (uint32_t)&me->lcd_pixel_buffer);
@@ -110,18 +108,15 @@ QState meter_ohm_ohm_key(ao_meter_t *const me) {
  * @param range
  * @return int32_t
  */
-static int32_t meter_help_ohm_ohm_cal(ao_meter_t *const me, int32_t value) {
-    return value;
-}
+static int32_t meter_help_ohm_ohm_cal(ao_meter_t *const me, int32_t value) { return value; }
 
 /**
- * @brief 计算结果的幂
+ * @brief 根据档位计算ADC结果的幂
  *
  * @param me
  * @param range
  * @return int8_t
  */
-static int8_t meter_help_ohm_ohm_get_power(ao_meter_t *const me,
-                                           uint8_t range) {
+static int8_t meter_help_ohm_ohm_get_power(ao_meter_t *const me, uint8_t range) {
     return -2 + (int8_t)range;
 }

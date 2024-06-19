@@ -78,10 +78,10 @@ typedef struct _es232_write_t {
     uint8_t rev1 : 2;             // NC
     uint8_t buzzer_freq_lsb : 3;  // 蜂鸣器频率选择
 
-    uint8_t rp : 1;       // 交流+直流模式的频率模式电阻控制位
-    uint8_t lpf_msb : 2;  // 低通滤波器选择的3dB BW：
-    uint8_t fd : 1;       // 30kHz范围内的F+工作模式辅助控制位：FD
-    uint8_t ext : 1;      // 二极管模式控制位的外部电源
+    uint8_t rp : 1;        // 交流+直流模式的频率模式电阻控制位
+    uint8_t lpf_msb : 2;   // 低通滤波器选择的3dB BW：
+    uint8_t fd : 1;        // 30kHz范围内的F+工作模式辅助控制位：FD
+    uint8_t ext : 1;       // 二极管模式控制位的外部电源
     uint8_t buf_acdc : 1;  // AC+DC模式的缓冲控制位
     uint8_t bufcal : 1;    // AC+DC模式的缓冲控制位
     uint8_t ac : 1;        // 交流测量模式使能

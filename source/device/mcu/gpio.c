@@ -131,9 +131,7 @@ void gpio_write_pin(gpio_port_t port, gpio_pin_t pin, bool flag) {
  * @param port
  * @param pin
  */
-void gpio_set_pin(gpio_port_t port, gpio_pin_t pin) {
-    REG_OFFSET(M0P_GPIO->PABSET, port) = pin;
-}
+void gpio_set_pin(gpio_port_t port, gpio_pin_t pin) { REG_OFFSET(M0P_GPIO->PABSET, port) = pin; }
 
 /**
  * @brief 输出复位
@@ -141,9 +139,7 @@ void gpio_set_pin(gpio_port_t port, gpio_pin_t pin) {
  * @param port
  * @param pin
  */
-void gpio_clear_pin(gpio_port_t port, gpio_pin_t pin) {
-    REG_OFFSET(M0P_GPIO->PABCLR, port) = pin;
-}
+void gpio_clear_pin(gpio_port_t port, gpio_pin_t pin) { REG_OFFSET(M0P_GPIO->PABCLR, port) = pin; }
 
 /**
  * @brief 输入

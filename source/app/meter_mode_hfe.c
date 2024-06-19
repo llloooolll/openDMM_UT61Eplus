@@ -76,12 +76,10 @@ QState meter_hfe_key(ao_meter_t *const me) {
  * @param range
  * @return int32_t
  */
-static int32_t meter_help_hfe_cal(ao_meter_t *const me, int32_t value) {
-    return value;
-}
+static int32_t meter_help_hfe_cal(ao_meter_t *const me, int32_t value) { return value; }
 
 /**
- * @brief 计算结果的幂
+ * @brief 根据档位计算ADC结果的幂
  *
  * @param me
  * @param range

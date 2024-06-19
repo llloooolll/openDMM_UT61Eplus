@@ -30,8 +30,7 @@ bool meter_range_sel(ao_meter_t *const me, int32_t value) {
     // }
 
 #if (CAP_RANGE_FAST)
-    if ((me->es232_read_buffer.ALARM == 1) &&
-        (me->mode == meter_mode_ohm_cap)) {
+    if ((me->es232_read_buffer.ALARM == 1) && (me->mode == meter_mode_ohm_cap)) {
         bool range_change = 0;
         switch (me->es232_write_buffer.range_msb) {
             case B000:
@@ -57,8 +56,7 @@ bool meter_range_sel(ao_meter_t *const me, int32_t value) {
 
         if (range_change == 1) {
             me->delay_cycle_count = 0;
-            QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG,
-                         &me->es232_write_buffer);
+            QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
             // ULOG_DEBUG("faster change range: %d\r\n",
             // me->es232_write_buffer.range_msb);
             return 0;
@@ -80,8 +78,7 @@ bool meter_range_sel(ao_meter_t *const me, int32_t value) {
             {
                 // value_meaningful = 0;
                 me->es232_write_buffer.range_msb++;
-                QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG,
-                             &me->es232_write_buffer);
+                QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
                 // ULOG_DEBUG("%d > %d\r\n", u32_value, me->es232_range_value_max);
                 // ULOG_DEBUG("value too large change range: %d\r\n",
                 //            me->es232_write_buffer.range_msb);
@@ -100,8 +97,7 @@ bool meter_range_sel(ao_meter_t *const me, int32_t value) {
             {
                 // value_meaningful = 0;
                 me->es232_write_buffer.range_msb--;
-                QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG,
-                             &me->es232_write_buffer);
+                QACTIVE_POST(&ao_es232, AO_ES232_WRITE_CONFIG_SIG, &me->es232_write_buffer);
                 // ULOG_DEBUG("%d < %d\r\n", u32_value, me->es232_range_value_min);
                 // ULOG_DEBUG("value too small change range: %d\r\n",
                 //            me->es232_write_buffer.range_msb);

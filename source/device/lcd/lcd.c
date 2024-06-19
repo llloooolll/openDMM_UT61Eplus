@@ -191,8 +191,7 @@ void lcd_show_point(lcd_pixel_t *lcd_pixel, uint8_t index, bool flag) {
  * @param i32_value 显示值
  * @param i8_power_relative 值的相对幂
  */
-void lcd_show_value(lcd_pixel_t *lcd_pixel, int32_t i32_value,
-                    int8_t i8_power_relative) {
+void lcd_show_value(lcd_pixel_t *lcd_pixel, int32_t i32_value, int8_t i8_power_relative) {
     int8_t i8_significant_number = 0;     // 有效的位数
     uint32_t u32_value = abs(i32_value);  // 数字绝对值
     uint8_t u8_point_position = 0;
@@ -213,7 +212,7 @@ void lcd_show_value(lcd_pixel_t *lcd_pixel, int32_t i32_value,
     /* 适配合适的千位分隔符 */
     int8_t i8_thousands_extern = i8_power_relative / 3;  // 额外的千分隔符
     if (i8_power_relative > 0) {
-        i8_thousands_extern++;  // 整数继续除千
+        i8_thousands_extern++;                               // 整数继续除千
         u8_point_position = abs(3 - i8_power_relative % 3);  // 小数点往前
     } else if (i8_power_relative < 0) {
         u8_point_position = abs(i8_power_relative % 3);  // 小数点往前
@@ -271,9 +270,7 @@ void lcd_show_ol(lcd_pixel_t *lcd_pixel) {
  *
  * @param flag
  */
-void lcd_enable_bl(bool flag) {
-    gpio_write_pin(LCD_BL_EN_PORT, LCD_BL_EN_PIN, flag);
-}
+void lcd_enable_bl(bool flag) { gpio_write_pin(LCD_BL_EN_PORT, LCD_BL_EN_PIN, flag); }
 
 /**
  * @brief 显示模拟条

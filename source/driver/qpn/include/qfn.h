@@ -154,20 +154,17 @@ typedef struct {
      * (task context).
      */
     /** @sa QACTIVE_POST() and QACTIVE_POST_X() */
-    bool (*post)(QActive *const me, uint_fast8_t const margin, enum_t const sig,
-                 QParam const par);
+    bool (*post)(QActive *const me, uint_fast8_t const margin, enum_t const sig, QParam const par);
 
     /*! virtual function to asynchronously post (FIFO) an event to an AO
      * (ISR context).
      */
     /** @sa QACTIVE_POST_ISR() and QACTIVE_POST_X_ISR() */
-    bool (*postISR)(QActive *const me, uint_fast8_t const margin,
-                    enum_t const sig, QParam const par);
+    bool (*postISR)(QActive *const me, uint_fast8_t const margin, enum_t const sig,
+                    QParam const par);
 #else
-    bool (*post)(QActive *const me, uint_fast8_t const margin,
-                 enum_t const sig);
-    bool (*postISR)(QActive *const me, uint_fast8_t const margin,
-                    enum_t const sig);
+    bool (*post)(QActive *const me, uint_fast8_t const margin, enum_t const sig);
+    bool (*postISR)(QActive *const me, uint_fast8_t const margin, enum_t const sig);
 #endif
 } QActiveVtable;
 
@@ -227,11 +224,11 @@ void QActive_ctor(QActive *const me, QStateHandler initial);
  * @usage
  * @include qfn_postx.c
  */
-#define QACTIVE_POST_X(me_, margin_, sig_, par_)                \
-    do {                                                        \
-        QActive *const ao_ = QF_ACTIVE_CAST((me_));             \
-        ((*((QActiveVtable const *)((ao_)->super.vptr))->post)( \
-            (ao_), (margin_), (enum_t)(sig_), (QParam)(par_))); \
+#define QACTIVE_POST_X(me_, margin_, sig_, par_)                                                 \
+    do {                                                                                         \
+        QActive *const ao_ = QF_ACTIVE_CAST((me_));                                              \
+        ((*((QActiveVtable const *)((ao_)->super.vptr))->post)((ao_), (margin_), (enum_t)(sig_), \
+                                                               (QParam)(par_)));                 \
     } while (false)
 
 /*! Polymorphically posts an event to an active object (FIFO)
@@ -287,43 +284,39 @@ void QActive_ctor(QActive *const me, QStateHandler initial);
 /*! Implementation of the task-level event posting
  * @private @memberof QActive
  */
-bool QActive_postX_(QActive *const me, uint_fast8_t margin, enum_t const sig,
-                    QParam const par);
+bool QActive_postX_(QActive *const me, uint_fast8_t margin, enum_t const sig, QParam const par);
 
 /*! Implementation of the ISR-level event posting
  * @private @memberof QActive
  */
-bool QActive_postXISR_(QActive *const me, uint_fast8_t margin, enum_t const sig,
-                       QParam const par);
+bool QActive_postXISR_(QActive *const me, uint_fast8_t margin, enum_t const sig, QParam const par);
 
 #else /* no event parameter */
 
-#define QACTIVE_POST(me_, sig_)                                     \
-    do {                                                            \
-        QActive *const ao_ = QF_ACTIVE_CAST((me_));                 \
-        ((void)(*((QActiveVtable const *)(ao_->super.vptr))->post)( \
-            ao_, QF_NO_MARGIN, (enum_t)(sig_)));                    \
+#define QACTIVE_POST(me_, sig_)                                                       \
+    do {                                                                              \
+        QActive *const ao_ = QF_ACTIVE_CAST((me_));                                   \
+        ((void)(*((QActiveVtable const *)(ao_->super.vptr))->post)(ao_, QF_NO_MARGIN, \
+                                                                   (enum_t)(sig_)));  \
     } while (false)
 
-#define QACTIVE_POST_X(me_, margin_, sig_)                                   \
-    ((*((QActiveVtable const *)((me_)->super.vptr))->post)((me_), (margin_), \
-                                                           (sig_)))
+#define QACTIVE_POST_X(me_, margin_, sig_) \
+    ((*((QActiveVtable const *)((me_)->super.vptr))->post)((me_), (margin_), (sig_)))
 
 bool QActive_postX_(QActive *const me, uint_fast8_t margin, enum_t const sig);
 
-#define QACTIVE_POST_ISR(me_, sig_)                                    \
-    do {                                                               \
-        QActive *const ao_ = QF_ACTIVE_CAST((me_));                    \
-        ((void)(*((QActiveVtable const *)(ao_->super.vptr))->postISR)( \
-            ao_, QF_NO_MARGIN, (enum_t)(sig_)));                       \
+#define QACTIVE_POST_ISR(me_, sig_)                                                      \
+    do {                                                                                 \
+        QActive *const ao_ = QF_ACTIVE_CAST((me_));                                      \
+        ((void)(*((QActiveVtable const *)(ao_->super.vptr))->postISR)(ao_, QF_NO_MARGIN, \
+                                                                      (enum_t)(sig_)));  \
     } while (false)
 
 #define QACTIVE_POST_X_ISR(me_, margin_, sig_)                                 \
     ((*((QActiveVtable const *)(QF_ACTIVE_CAST((me_))->super.vptr))->postISR)( \
         QF_ACTIVE_CAST((me_)), (margin_), (enum_t)(sig_)))
 
-bool QActive_postXISR_(QActive *const me, uint_fast8_t margin,
-                       enum_t const sig);
+bool QActive_postXISR_(QActive *const me, uint_fast8_t margin, enum_t const sig);
 #endif
 
 #if (QF_TIMEEVT_CTR_SIZE != 0U)
@@ -335,14 +328,13 @@ void QF_tickXISR(uint_fast8_t const tickRate);
 /*! Arm the QP-nano one-shot time event.
  * @public @memberof QActive
  */
-void QActive_armX(QActive *const me, uint_fast8_t const tickRate,
-                  QTimeEvtCtr const nTicks, QTimeEvtCtr const interval);
+void QActive_armX(QActive *const me, uint_fast8_t const tickRate, QTimeEvtCtr const nTicks,
+                  QTimeEvtCtr const interval);
 #else
 /*! Arm the QP-nano one-shot time event.
  * @public @memberof QActive
  */
-void QActive_armX(QActive *const me, uint_fast8_t const tickRate,
-                  QTimeEvtCtr const nTicks);
+void QActive_armX(QActive *const me, uint_fast8_t const tickRate, QTimeEvtCtr const nTicks);
 #endif
 
 /*! Disarm a time event. Since the tick counter

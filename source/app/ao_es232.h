@@ -15,8 +15,8 @@ typedef enum _ao_es232_signal_t {
 
 typedef struct _ao_es232_t {
     QActive super;
-    es232_write_t es232_write_buffer;   //
-    es232_read_t es232_read_buffer;     //
+    es232_write_t es232_write_buffer;  //
+    es232_read_t es232_read_buffer;    //
 } ao_es232_t;
 
 extern ao_es232_t ao_es232;

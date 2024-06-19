@@ -78,8 +78,7 @@ void QV_init(void) {
     n = 8U + ((*SCnSCB_ICTR & 0x7U) << 3); /* (# NVIC_PRIO registers)/4 */
     do {
         --n;
-        NVIC_IP[n] = (QF_BASEPRI << 24) | (QF_BASEPRI << 16) |
-                     (QF_BASEPRI << 8) | QF_BASEPRI;
+        NVIC_IP[n] = (QF_BASEPRI << 24) | (QF_BASEPRI << 16) | (QF_BASEPRI << 8) | QF_BASEPRI;
     } while (n != 0);
 }
 

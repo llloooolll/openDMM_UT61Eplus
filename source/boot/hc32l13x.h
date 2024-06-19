@@ -61,10 +61,9 @@ extern "C" {
 /******************************************************************************
  * Configuration of the Cortex-M0P Processor and Core Peripherals
  ******************************************************************************/
-#define __MPU_PRESENT 0    /* No MPU                                       */
-#define __NVIC_PRIO_BITS 2 /* M0P uses 2 Bits for the Priority Levels      */
-#define __Vendor_SysTickConfig \
-    0 /* Set to 1 if different SysTick Config is used */
+#define __MPU_PRESENT 0          /* No MPU                                       */
+#define __NVIC_PRIO_BITS 2       /* M0P uses 2 Bits for the Priority Levels      */
+#define __Vendor_SysTickConfig 0 /* Set to 1 if different SysTick Config is used */
 
 /******************************************************************************
  * Interrupt Number Definition

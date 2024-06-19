@@ -187,8 +187,7 @@ void rtc_alarm_time_add(rtc_alarm_t *addend1, rtc_alarm_t *addend2) {
     }
     minute %= 60;  // 取余
 
-    uint8_t hour =
-        BCD2DEC(addend1->hour) + BCD2DEC(addend2->hour) + minute_carry;
+    uint8_t hour = BCD2DEC(addend1->hour) + BCD2DEC(addend2->hour) + minute_carry;
     hour %= 24;  // 取余
 
     addend1->minute = DEC2BCD(minute);
@@ -200,9 +199,7 @@ void rtc_alarm_time_add(rtc_alarm_t *addend1, rtc_alarm_t *addend2) {
  *
  * @param mult_prd 周期
  */
-void rtc_set_prd_mult(rtc_mult_prd_t mult_prd) {
-    M0P_RTC->CR0_f.PRDS = mult_prd;
-}
+void rtc_set_prd_mult(rtc_mult_prd_t mult_prd) { M0P_RTC->CR0_f.PRDS = mult_prd; }
 
 /**
  * @brief 设置周期设置来源

@@ -111,7 +111,6 @@ void sysctrl_set_rch_trim(sysctrl_rch_freq_t freq);
 void sysctrl_set_rcl_trim(sysctrl_rcl_freq_t freq);
 void sysctrl_set_hclk_div(sysctrl_hclk_div_t div);
 void sysctrl_set_pclk_div(sysctrl_pclk_div_t div);
-void sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_t peripheral,
-                                   bool flag);
+void sysctrl_enable_peripheral_clk(sysctrl_peripheral_clk_t peripheral, bool flag);
 
 #endif

@@ -57,8 +57,7 @@ char_t const Q_ROM QP_versionStr[7] = QP_VERSION_STR;
 #define QHSM_MAX_NEST_DEPTH_ ((int_fast8_t)5)
 
 /*! helper function to execute a transition chain in HSM */
-static int_fast8_t QHsm_tran_(QHsm *const me,
-                              QStateHandler path[QHSM_MAX_NEST_DEPTH_]);
+static int_fast8_t QHsm_tran_(QHsm *const me, QStateHandler path[QHSM_MAX_NEST_DEPTH_]);
 
 /****************************************************************************/
 /**
@@ -108,8 +107,7 @@ void QHsm_init_(QHsm *const me) {
      * transition must be initialized, and the initial transition must not
      * be taken yet.
      */
-    Q_REQUIRE_ID(200, (me->vptr != (QHsmVtable const *)0) &&
-                          (me->temp != Q_STATE_CAST(0)) &&
+    Q_REQUIRE_ID(200, (me->vptr != (QHsmVtable const *)0) && (me->temp != Q_STATE_CAST(0)) &&
                           (t == Q_STATE_CAST(&QHsm_top)));
 
     r = (*me->temp)(me); /* execute the top-most initial transition */
@@ -212,7 +210,7 @@ void QHsm_dispatch_(QHsm *const me) {
     /* transition taken? */
     if (r >= Q_RET_TRAN) {
         QStateHandler path[QHSM_MAX_NEST_DEPTH_]; /* transition entry path */
-        int_fast8_t ip; /* transition entry path index */
+        int_fast8_t ip;                           /* transition entry path index */
 
         path[0] = me->temp; /* save the target of the transition */
         path[1] = t;
@@ -286,8 +284,7 @@ void QHsm_dispatch_(QHsm *const me) {
  * @returns
  * the depth of the entry path stored in the @p path parameter.
  */
-static int_fast8_t QHsm_tran_(QHsm *const me,
-                              QStateHandler path[QHSM_MAX_NEST_DEPTH_]) {
+static int_fast8_t QHsm_tran_(QHsm *const me, QStateHandler path[QHSM_MAX_NEST_DEPTH_]) {
     int_fast8_t ip = (int_fast8_t)(-1); /* transition entry path index */
     int_fast8_t iq;                     /* helper transition entry path index */
     QStateHandler t = path[0];
@@ -395,7 +392,7 @@ static int_fast8_t QHsm_tran_(QHsm *const me,
                                     if (t == path[iq]) {
                                         /* do not enter LCA */
                                         ip = (int_fast8_t)(iq - 1);
-                                        iq = -1; /* break out of inner loop */
+                                        iq = -1;           /* break out of inner loop */
                                         r = Q_RET_HANDLED; /* break */
                                     } else {
                                         --iq;
@@ -454,7 +451,7 @@ QStateHandler QHsm_childState_(QHsm *const me, QStateHandler const parent) {
             r = (*me->temp)(me); /* find the superstate */
         }
     } while (r != Q_RET_IGNORED); /* QHsm_top() state not reached */
-    me->temp = me->state;         /* establish stable state configuration */
+    me->temp = me->state; /* establish stable state configuration */
 
     /** @post the child must be found */
     Q_ENSURE_ID(810, isFound != false);
