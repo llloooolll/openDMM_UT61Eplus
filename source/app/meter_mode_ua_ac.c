@@ -102,7 +102,9 @@ QState meter_ua_ac_key(ao_meter_t *const me) {
  * @param range
  * @return int32_t
  */
-static int32_t meter_help_ua_ac_cal(ao_meter_t *const me, int32_t value) { return value; }
+static int32_t meter_help_ua_ac_cal(ao_meter_t *const me, int32_t value) {
+    return value;  //
+}
 
 /**
  * @brief 根据档位计算ADC结果的幂

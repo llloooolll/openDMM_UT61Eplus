@@ -49,9 +49,9 @@ int main(void) {
 
     // 读取全局配置
     app_config_read();
-    if (glob_config.glob_config_valid) {
-    } else {
-        app_config_reset();  // 配置无效，复位
+    if (!glob_config.glob_config_valid) {
+        app_config_reset();  // 配置无效，复位到默认配置
+        app_config_write();  // 写入
     }
 
     // 按住SELECT开机，关闭自动休眠
