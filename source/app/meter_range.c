@@ -15,7 +15,7 @@
  * @return true 数据有效
  * @return false
  */
-bool meter_range_sel(ao_meter_t *const me, int32_t value) {
+bool meter_help_select_range(ao_meter_t *const me, int32_t value) {
     bool value_meaningful = 1;
 
     if (!me->es232_range_auto) {
@@ -107,25 +107,28 @@ bool meter_range_sel(ao_meter_t *const me, int32_t value) {
     return value_meaningful;
 }
 
-void calculate_rel_result(ao_meter_t *const me) {
+void meter_help_calculate_relative_value(ao_meter_t *const me) {
     int8_t power_diff = me->es232_power_now - me->es232_power_rel;
     uint8_t power_diff_abs = abs(power_diff);
 
-    if (power_diff > 0) {  // 当前值幂高，以当前为准
+    if (power_diff > 0) {
+        /* 当前值幂高，以当前为准归算 */
         int32_t temp_value_div = me->es232_value_rel;
         for (uint8_t i = 0; i < power_diff_abs; i++) {
             temp_value_div /= 10;  // 除到同幂
         }
         me->es232_show_value = me->es232_value_now - temp_value_div;
         me->es232_show_power = me->es232_power_now;
-    } else if (power_diff < 0) {  // 相对值幂高，以相对为准
+    } else if (power_diff < 0) {
+        /* 相对值幂高，以相对为准归算 */
         int32_t temp_value_div = me->es232_value_now;
         for (uint8_t i = 0; i < power_diff_abs; i++) {
             temp_value_div /= 10;  // 除到同幂
         }
         me->es232_show_value = temp_value_div - me->es232_value_rel;
         me->es232_show_power = me->es232_power_rel;
-    } else {  // 一样
+    } else {
+        /* 一样就直接减 */
         me->es232_show_value = me->es232_value_now - me->es232_value_rel;
         me->es232_show_power = me->es232_power_now;
     }

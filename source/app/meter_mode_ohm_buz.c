@@ -14,13 +14,13 @@
  * 通断测量模式
  * F[3:0] = B0101
  * SHBP = 1, 打开内部比较器，自动鸣响
- * 
+ *
  * 电压测量结果
  * D0[18:0] 3cnvs/s
- * 
+ *
  * 电压快速测量结果
  * D1[9:0] 30cnvs/s
- * 
+ *
  */
 
 static int32_t meter_help_ohm_buz_cal(ao_meter_t *const me, int32_t value);
@@ -62,7 +62,7 @@ QState meter_ohm_buz_adc(ao_meter_t *const me) {
         me->es232_power_now = meter_help_ohm_buz_get_power(me, me->es232_write_buffer.range_msb);
     }
 
-    calculate_rel_result(me);  // 计算相对值
+    meter_help_calculate_relative_value(me);  // 计算相对值
     if (abs(me->es232_value_now > 3000)) {
         lcd_show_ol(&me->lcd_pixel_buffer);  // 显示OL
     } else {
@@ -115,7 +115,9 @@ QState meter_ohm_buz_key(ao_meter_t *const me) {
  * @param range
  * @return int32_t
  */
-static int32_t meter_help_ohm_buz_cal(ao_meter_t *const me, int32_t value) { return value; }
+static int32_t meter_help_ohm_buz_cal(ao_meter_t *const me, int32_t value) {
+    return value;  //
+}
 
 /**
  * @brief 根据档位计算ADC结果的幂

@@ -13,9 +13,9 @@
 /*
  * 电容测量模式
  * F[3:0] = B1000
- * 
+ *
  * 电容容量档位
- * Q[2:0] = 
+ * Q[2:0] =
  * B000: 30.000nF 0.3s
  * B001: 300.00nF 0.75s
  * B010: 3.0000uF 0.75s
@@ -24,13 +24,13 @@
  * B101: 3.0000mF 6.0s(max)
  * B110: 30.000mF 6.0s(max)
  * B111: 300.00mF 30s(max)
- * 
+ *
  * 电容测量结果
  * D0[18:0] 3cnvs/s
- * 
+ *
  * 档位快速跳跃标志
  * ALARM = 1
- * 
+ *
  */
 
 static int32_t meter_help_ohm_cap_cal(ao_meter_t *const me, int32_t value);
@@ -74,12 +74,12 @@ QState meter_ohm_cap_adc(ao_meter_t *const me) {
         me->es232_power_now = meter_help_ohm_cap_get_power(me, me->es232_write_buffer.range_msb);
     }
 
-    calculate_rel_result(me);  // 计算相对值
+    meter_help_calculate_relative_value(me);  // 计算相对值
     if (abs(me->es232_value_now > 30000) &&
         (me->es232_write_buffer.range_msb == me->es232_range_max)) {
         lcd_show_ol(&me->lcd_pixel_buffer);
     } else {
-        if (meter_range_sel(me, me->es232_value_now)) {
+        if (meter_help_select_range(me, me->es232_value_now)) {
             if (me->es232_read_buffer.STA0 == 0) {
                 lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value, me->es232_show_power);
             }
@@ -132,7 +132,9 @@ QState meter_ohm_cap_key(ao_meter_t *const me) {
  * @param range
  * @return int32_t
  */
-static int32_t meter_help_ohm_cap_cal(ao_meter_t *const me, int32_t value) { return value; }
+static int32_t meter_help_ohm_cap_cal(ao_meter_t *const me, int32_t value) {
+    return value;  //
+}
 
 /**
  * @brief 根据档位计算ADC结果的幂

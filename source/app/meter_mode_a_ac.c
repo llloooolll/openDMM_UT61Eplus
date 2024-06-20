@@ -49,7 +49,7 @@ QState meter_a_ac_adc(ao_meter_t *const me) {
         me->es232_power_now = meter_help_a_ac_get_power(me, me->es232_write_buffer.range_msb);
     }
 
-    calculate_rel_result(me);  // 计算相对值
+    meter_help_calculate_relative_value(me);  // 计算相对值
     if (abs(me->es232_value_now) > 30000) {
         lcd_show_ol(&me->lcd_pixel_buffer);
     } else {

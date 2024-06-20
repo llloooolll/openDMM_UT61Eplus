@@ -3,8 +3,8 @@
 
 #include "ao_meter.h"
 
-bool meter_range_sel(ao_meter_t *const me, int32_t value);
+bool meter_help_select_range(ao_meter_t *const me, int32_t value);
 
-void calculate_rel_result(ao_meter_t *const me);
+void meter_help_calculate_relative_value(ao_meter_t *const me);
 
 #endif

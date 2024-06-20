@@ -86,7 +86,7 @@ typedef struct _lcd_pixel_t {
     uint32_t ohm : 1;      // 欧姆
     uint32_t hz : 1;       // 赫兹
     uint32_t percent : 1;  // %百分号
-    uint32_t beta : 1;     // 相对符号
+    uint32_t beta : 1;     // 放大倍数
     // 0x50 - 0x5F
     uint32_t digitron_4_dp : 1;
     uint32_t digitron_3_e : 1;

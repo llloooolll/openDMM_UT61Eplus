@@ -10,6 +10,23 @@
 #include "meter_range.h"
 #include "ulog.h"
 
+/*
+ * HFE测量模式
+ * F[3:0] = B1001
+ * AC = 1
+ *
+ * 信号源
+ * Q[2:0] =
+ * B000: ADP
+ *
+ * 电压结果
+ * SADC D0[18:0] 3cnvs/s
+ *
+ * 电压快速结果
+ * FADC D1[9:0] 30cnvs/s
+ *
+ */
+
 static int32_t meter_help_hfe_cal(ao_meter_t *const me, int32_t value);
 static int8_t meter_help_hfe_get_power(ao_meter_t *const me, uint8_t range);
 
@@ -20,7 +37,7 @@ static int8_t meter_help_hfe_get_power(ao_meter_t *const me, uint8_t range);
  */
 void meter_hfe_init(ao_meter_t *const me) {
     // LCD显示
-    me->lcd_pixel_buffer.beta = 1;  // 单位伏特
+    me->lcd_pixel_buffer.beta = 1;  // 放大倍数
     me->lcd_pixel_buffer.hfe = 1;
 
     me->es232_range_max = B000;

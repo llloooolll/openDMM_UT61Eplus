@@ -10,6 +10,29 @@
 #include "meter_range.h"
 #include "ulog.h"
 
+/*
+ * 电阻测量模式
+ * F[3:0] = B0100
+ * AC = 0
+ *
+ * 电阻档位
+ * Q[2:0] =
+ * B000:  300.00Ω
+ * B001:  3.0000kΩ
+ * B010:  30.000kΩ
+ * B011:  300.00kΩ
+ * B100:  3.0000MΩ
+ * B101:  30.000MΩ
+ * B110:  300.00MΩ
+ *
+ * 电阻结果
+ * SADC D0[18:0] 3cnvs/s
+ *
+ * 电阻快速结果
+ * FADC D1[9:0] 30cnvs/s
+ *
+ */
+
 static int32_t meter_help_ohm_ohm_cal(ao_meter_t *const me, int32_t value);
 static int8_t meter_help_ohm_ohm_get_power(ao_meter_t *const me, uint8_t range);
 
@@ -52,12 +75,12 @@ QState meter_ohm_ohm_adc(ao_meter_t *const me) {
         me->es232_power_now = meter_help_ohm_ohm_get_power(me, me->es232_write_buffer.range_msb);
     }
 
-    calculate_rel_result(me);
+    meter_help_calculate_relative_value(me);
     if (abs(me->es232_value_now > 30000) &&
         (me->es232_write_buffer.range_msb == me->es232_range_max)) {
         lcd_show_ol(&me->lcd_pixel_buffer);  // 显示OL
     } else {
-        if (meter_range_sel(me, fadc_data * 100)) {
+        if (meter_help_select_range(me, fadc_data * 100)) {
             lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value, me->es232_show_power);
         }
     }

@@ -68,17 +68,21 @@ QState meter_dcv_adc(ao_meter_t *const me) {
     int32_t sadc_data = es232_get_D0(&me->es232_read_buffer);
     int32_t fadc_data = es232_get_D1(&me->es232_read_buffer);
 
+    /* hold 模式不更新显示值 */
     if (!me->es232_hold_flag) {
         me->es232_value_now = meter_help_dcv_cal(me, sadc_data);
         me->es232_power_now = meter_help_dcv_get_power(me, me->es232_write_buffer.range_msb);
     }
 
-    calculate_rel_result(me);  // 计算相对值
+    /* 计算相对值 */
+    meter_help_calculate_relative_value(me);
+
+    /* 更新显示值 */
     if (abs(me->es232_value_now > 10000) &&
         (me->es232_write_buffer.range_msb == me->es232_range_max)) {
         lcd_show_ol(&me->lcd_pixel_buffer);  // 1000.0V 显示OL
     } else {
-        if (meter_range_sel(me, fadc_data * 100)) {
+        if (meter_help_select_range(me, fadc_data * 100)) {
             lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value, me->es232_show_power);
         }
     }
@@ -98,6 +102,7 @@ QState meter_dcv_key(ao_meter_t *const me) {
     switch (Q_PAR(me)) {
         case button_rel_id << 4 | SINGLE_CLICK:
             me->es232_rel_flag = 1;
+            /* 保存当前测量结果作为相对值 */
             me->es232_value_rel = me->es232_value_now;
             me->es232_power_rel = me->es232_power_now;
             me->lcd_pixel_buffer.delta = 1;
@@ -125,9 +130,11 @@ QState meter_dcv_key(ao_meter_t *const me) {
  * @return int32_t
  */
 static int32_t meter_help_dcv_cal(ao_meter_t *const me, int32_t value) {
-    value *= 10000;
-    value += (glob_config.es232_calibration_value[0] / 2);  // 四舍五入
-    value /= glob_config.es232_calibration_value[0];
+    if (glob_config.es232_calibration_valid) {
+        value *= 10000;
+        value += (glob_config.es232_calibration_value[0] / 2);  // 四舍五入
+        value /= glob_config.es232_calibration_value[0];
+    }
     return value;
 }
 

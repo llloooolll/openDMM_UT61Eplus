@@ -49,7 +49,7 @@ QState meter_ohm_dio_adc(ao_meter_t *const me) {
         me->es232_power_now = meter_help_ohm_dio_get_power(me, me->es232_write_buffer.range_msb);
     }
 
-    calculate_rel_result(me);  // 计算相对值
+    meter_help_calculate_relative_value(me);  // 计算相对值
     if ((me->es232_value_now > 29000) &&
         (me->es232_write_buffer.range_msb == me->es232_range_max)) {
         lcd_show_ol(&me->lcd_pixel_buffer);  // 显示OL
@@ -104,9 +104,11 @@ QState meter_ohm_dio_key(ao_meter_t *const me) {
  * @return int32_t
  */
 static int32_t meter_help_ohm_dio_cal(ao_meter_t *const me, int32_t value) {
-    value *= 3000;
-    value += (glob_config.es232_calibration_value[1] / 2);  // 四舍五入
-    value /= glob_config.es232_calibration_value[1];
+    if (glob_config.es232_calibration_valid) {
+        value *= 3000;
+        value += (glob_config.es232_calibration_value[1] / 2);  // 四舍五入
+        value /= glob_config.es232_calibration_value[1];
+    }
     return value;
 }
 

@@ -87,12 +87,12 @@ QState meter_acv_adc(ao_meter_t *const me) {
         me->es232_power_now = meter_help_acv_get_power(me, me->es232_write_buffer.range_msb);
     }
 
-    calculate_rel_result(me);  // 计算相对值
+    meter_help_calculate_relative_value(me);  // 计算相对值
     if (abs(me->es232_value_now > 10000) &&
         (me->es232_write_buffer.range_msb == me->es232_range_max)) {
         lcd_show_ol(&me->lcd_pixel_buffer);  // 1000.0V 显示OL
     } else {
-        if (meter_range_sel(me, fadc_data * 100)) {
+        if (meter_help_select_range(me, fadc_data * 100)) {
             lcd_show_value(&me->lcd_pixel_buffer, me->es232_show_value, me->es232_show_power);
         }
     }

@@ -10,6 +10,23 @@
 #include "meter_range.h"
 #include "ulog.h"
 
+/*
+ * NCV电压测量模式
+ * F[3:0] = B1001
+ * AC = 1
+ *
+ * 信号源
+ * Q[2:0] =
+ * B111: ADP1
+ *
+ * 电压结果
+ * SADC D0[18:0] 3cnvs/s
+ *
+ * 电压快速结果
+ * FADC D1[9:0] 30cnvs/s
+ *
+ */
+
 static int32_t meter_help_ncv_cal(ao_meter_t *const me, int32_t value);
 static int8_t meter_help_ncv_get_power(ao_meter_t *const me, uint8_t range);
 
@@ -51,7 +68,7 @@ QState meter_ncv_adc(ao_meter_t *const me) {
         me->es232_power_now = meter_help_ncv_get_power(me, me->es232_write_buffer.range_msb);
     }
 
-    calculate_rel_result(me);  // 计算相对值
+    meter_help_calculate_relative_value(me);  // 计算相对值
     if (abs(me->es232_value_now) > 30000) {
         lcd_show_ol(&me->lcd_pixel_buffer);
     } else {
