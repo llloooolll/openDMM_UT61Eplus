@@ -68,7 +68,7 @@ static QState ao_knob_ready(ao_knob_t *const me) {
     switch (Q_SIG(me)) {
         case AO_KNOB_READY_SIG:
             QACTIVE_POST(&ao_meter, AO_METER_READY_SIG, 0U);
-            ULOG_INFO("KNOB done\r\n");
+            ULOG_DEBUG("KNOB init done\r\n");
             status = Q_TRAN(&ao_knob_active);
             break;
         default:
@@ -86,9 +86,8 @@ static QState ao_knob_active(ao_knob_t *const me) {
             uint8_t knob_status_now = app_knob_ticks();
             if (knob_status_now != me->knob_status) {
                 me->knob_status = knob_status_now;
-
-                ULOG_INFO("knob change: %s, id =%d\r\n", knob_mode_string[me->knob_status],
-                          me->knob_status);
+                ULOG_DEBUG("knob change to: %s, id =%d\r\n", knob_mode_string[me->knob_status],
+                           me->knob_status);
                 // 状态映射
                 QACTIVE_POST(&ao_meter, AO_METER_MODE_SIG, knob_mode_map[me->knob_status]);
                 QActive_disarmX((QActive *)me, 0U);
@@ -99,13 +98,13 @@ static QState ao_knob_active(ao_knob_t *const me) {
             break;
         case AO_KNOB_ACTIVE_SIG:
             if (Q_PAR(me) == 0U) {
-                ULOG_INFO("KNOB sleep\r\n");
+                ULOG_DEBUG("KNOB sleep\r\n");
                 QActive_disarmX((QActive *)me, 0U);
                 QActive_disarmX((QActive *)me, 1U);
                 app_knob_deinit();
                 QACTIVE_POST(&ao_meter, AO_METER_SLEEP_SIG, 0U);
             } else {
-                ULOG_INFO("KNOB running\r\n");
+                ULOG_DEBUG("KNOB running\r\n");
                 QActive_armX((QActive *)me, 0U, 100U, 0U);
             }
             status = Q_HANDLED();

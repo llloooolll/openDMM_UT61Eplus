@@ -106,18 +106,17 @@ static QState ao_meter_idle(ao_meter_t *const me) {
                         status = Q_HANDLED();
                         break;
                     case 3:
-                        ULOG_INFO("ALL hardware done\r\n");
+                        ULOG_DEBUG("ALL hardware init done\r\n");
 
                         /* 所有状态机启动 */
                         QACTIVE_POST(&ao_es232, AO_ES232_ACTIVE_SIG, 1U);
                         QACTIVE_POST(&ao_lcd, AO_LCD_ACTIVE_SIG, 1U);
                         QACTIVE_POST(&ao_knob, AO_KNOB_ACTIVE_SIG, 1U);
                         QACTIVE_POST(&ao_irda, AO_IRDA_ACTIVE_SIG, 1U);
-                        ULOG_INFO("build: %s %s\r\n", __DATE__, __TIME__);
+                        ULOG_DEBUG("build: %s %s\r\n", __DATE__, __TIME__);
 
                         meter_help_read_calibration_value(me);  // 读取校准值
-
-                        meter_help_sleep_init(me);  // 休眠计时器初始化
+                        meter_help_sleep_init(me);              // 休眠计时器初始化
 
                         status = Q_TRAN(&ao_meter_active);
                         break;
@@ -127,7 +126,7 @@ static QState ao_meter_idle(ao_meter_t *const me) {
                 }
                 init_status++;
             } else {
-                ULOG_ERROR("hardware error\r\n");
+                ULOG_ERROR("hardware init error!\r\n");
                 status = Q_HANDLED();
             }
             break;
@@ -160,7 +159,7 @@ static QState ao_meter_active(ao_meter_t *const me) {
             } else {
                 // 长鸣一次提醒
                 app_sleep_set_time(glob_config.glob_sleep_time_minute);
-                QACTIVE_POST(&ao_es232, AO_ES232_ENABLE_BUZ_SIG, glob_config.buzzer_long_ms * 2);
+                QACTIVE_POST(&ao_es232, AO_ES232_ENABLE_BUZ_SIG, glob_config.buzzer_long_ms * 4);
                 status = Q_HANDLED();
             }
             break;
@@ -173,7 +172,8 @@ static QState ao_meter_active(ao_meter_t *const me) {
                 me->es232_hold_flag = 0;
 
                 me->mode = Q_PAR(me);
-                ULOG_INFO("ES232 mode: %s, id =%d\r\n", meter_mode_string[me->mode], me->mode);
+                ULOG_DEBUG("ES232 measure mode: %s, id =%d\r\n",  //
+                           meter_mode_string[me->mode], me->mode);
                 /* 重置休眠倒计时 */
                 app_sleep_set_time(glob_config.glob_sleep_time_minute);
                 /* 清空缓存 */
@@ -185,8 +185,6 @@ static QState ao_meter_active(ao_meter_t *const me) {
                 me->es232_range_delay_cycle = 2;
                 /* 各档位初始化，例如点亮AC、DC单位等 */
                 meter_help_mode_init(me);
-                /* 短鸣提醒 */
-                QACTIVE_POST(&ao_es232, AO_ES232_ENABLE_BUZ_SIG, glob_config.buzzer_short_ms);
             }
             // 再探再报
             QACTIVE_POST(&ao_knob, AO_KNOB_ACTIVE_SIG, 1U);
@@ -281,10 +279,10 @@ static void meter_help_write_lcd_global(ao_meter_t *const me) {
 static void meter_help_read_calibration_value(ao_meter_t *const me) {
     glob_config.es232_calibration_valid = (eeprom_read_byte(0x00) == 0x00);
     if (glob_config.es232_calibration_valid) {
-        ULOG_WARN("eeprom value exit\r\n");
+        ULOG_DEBUG("eeprom value exist\r\n");
         eeprom_read_all(glob_config.es232_calibration_value);
     } else {
-        ULOG_ERROR("eeprom value non-exist\r\n");
+        ULOG_WARN("eeprom value does not exist\r\n");
     }
 }
 
@@ -297,10 +295,10 @@ static void meter_help_sleep_init(ao_meter_t *const me) {
     app_sleep_set_time(glob_config.glob_sleep_time_minute);
     if (glob_config.glob_auto_sleep_enable) {
         QACTIVE_POST(&ao_es232, AO_ES232_ENABLE_BUZ_SIG, glob_config.buzzer_short_ms);
-        ULOG_INFO("auto sleep after %d minutes\r\n", glob_config.glob_sleep_time_minute);
+        ULOG_DEBUG("auto sleep after %d minutes\r\n", glob_config.glob_sleep_time_minute);
     } else {
         QACTIVE_POST(&ao_es232, AO_ES232_ENABLE_BUZ_SIG, glob_config.buzzer_long_ms);
-        ULOG_INFO("auto sleep off\r\n");
+        ULOG_DEBUG("auto sleep disable\r\n");
     }
 }
 
@@ -371,23 +369,11 @@ static QState meter_help_key_handle(ao_meter_t *const me) {
     QState status = Q_HANDLED();
 
     switch (Q_PAR(me)) {
-        case button_range_id << 4 | SINGLE_CLICK:
-            QACTIVE_POST((QActive *)&ao_es232, AO_ES232_ENABLE_BUZ_SIG,
-                         glob_config.buzzer_short_ms);
-            status = Q_HANDLED();
-            break;
         case button_hold_id << 4 | LONG_PRESS_START:
+            /* HOLD长按，打开背光 */
             QACTIVE_POST((QActive *)&ao_es232, AO_ES232_ENABLE_BUZ_SIG,
                          glob_config.buzzer_short_ms);
             QACTIVE_POST(&ao_lcd, AO_LCD_BL_SIG, glob_config.lcd_backlight_once_time_sec * 1000);
-            status = Q_HANDLED();
-            break;
-        case button_hz_id << 4 | LONG_PRESS_START:
-            // QACTIVE_POST(me, AO_METER_ALARM_SIG, 0U);
-
-            // 休眠测试
-            // QACTIVE_POST_ISR(&ao_meter, AO_METER_ALARM_SIG, 0U);
-
             status = Q_HANDLED();
             break;
         default: {  // 各个档位自己处理

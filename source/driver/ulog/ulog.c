@@ -4,10 +4,14 @@
 #include "printf.h"
 
 #define SHELL_COLOR_ENABLE 1
+#define SHELL_IANDEX_ENABLE 0
 
 static bool _ulog_enable = 1;
 static ulog_level_t _log_level = ulog_level_error;
+
+#if SHELL_IANDEX_ENABLE
 static uint32_t _log_index = 0;
+#endif
 
 static char *log_level_type[] = {
     "[ERROR ] ",  // 错误
@@ -20,7 +24,7 @@ static uint8_t log_level_color[] = {
     shell_color_red,     // ERROR
     shell_color_yellow,  // WARN
     shell_color_white,   // INFO
-    shell_color_cyan,    // DEBUG
+    shell_color_green,   // DEBUG
 };
 
 /**
@@ -56,7 +60,12 @@ void ulog_printf(ulog_level_t level, char const *const format, ...) {
 #if SHELL_COLOR_ENABLE
         printf("\033[%dm", log_level_color[level]);
 #endif
+
+#if SHELL_IANDEX_ENABLE
         printf("%d %s", _log_index++, log_level_type[level]);
+#else
+        printf("%s", log_level_type[level]);
+#endif
 
         va_list args;
         va_start(args, format);

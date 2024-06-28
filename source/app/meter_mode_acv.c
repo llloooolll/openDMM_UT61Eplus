@@ -14,33 +14,33 @@
  * 交流电压+频率测量模式
  * F[3:0] = B0001
  * AC = 1
- * 
+ *
  * 电压档位
- * Q[2:0] = 
+ * Q[2:0] =
  * B000: 0.30000V
  * B001: 3.0000V
  * B010: 30.000V
  * B011: 300.00V
  * B100: 1000.0V (max)
- * 
+ *
  * 频率档位
- * FQ[2:0] = 
+ * FQ[2:0] =
  * B000: 30.00Hz
  * B001: 300.0Hz
  * B010: 3.000kHz
  * B011: 30.000kHz
- * 
+ *
  * 电压结果
  * D0[18:0] 3cnvs/s
- * 
+ *
  * 电压快速结果
  * D1[9:0] 30cnvs/s
- * 
+ *
  * 占空比结果
- * D2[18:0] 
- * 
+ * D2[18:0]
+ *
  * 频率结果
- * D3[18:0] 
+ * D3[18:0]
  */
 
 static int32_t meter_help_acv_cal(ao_meter_t *const me, int32_t value, uint32_t freq);
@@ -125,6 +125,7 @@ QState meter_acv_key(ao_meter_t *const me) {
                          glob_config.buzzer_short_ms);
             break;
         default:
+            ULOG_DEBUG("key don't care\r\n");
             break;
     }
     status = Q_HANDLED();

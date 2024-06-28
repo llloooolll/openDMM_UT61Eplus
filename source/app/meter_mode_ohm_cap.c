@@ -119,6 +119,7 @@ QState meter_ohm_cap_key(ao_meter_t *const me) {
                          glob_config.buzzer_short_ms);
             break;
         default:
+            ULOG_DEBUG("key don't care\r\n");
             break;
     }
     status = Q_HANDLED();

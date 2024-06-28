@@ -26,7 +26,7 @@ static QState ao_irda_ready(ao_irda_t *const me) {
     QState status;
     switch (Q_SIG(me)) {
         case AO_IRDA_READY_SIG:
-            ULOG_INFO("IRDA done\r\n");
+            ULOG_DEBUG("IRDA init done\r\n");
             QACTIVE_POST(&ao_meter, AO_METER_READY_SIG, 0U);
             status = Q_TRAN(&ao_irda_active);
             break;
@@ -47,11 +47,11 @@ static QState ao_irda_active(ao_irda_t *const me) {
             break;
         case AO_IRDA_ACTIVE_SIG:
             if (Q_PAR(me) == 0U) {
-                ULOG_INFO("IRDA sleep\r\n");
+                ULOG_DEBUG("IRDA sleep\r\n");
                 irda_deinit();
                 QACTIVE_POST(&ao_meter, AO_METER_SLEEP_SIG, 0U);
             } else {
-                ULOG_INFO("IRDA running\r\n");
+                ULOG_DEBUG("IRDA running\r\n");
             }
         default:
             status = Q_SUPER(&QHsm_top);

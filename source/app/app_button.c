@@ -61,8 +61,8 @@ static uint8_t button_read_gpio(uint8_t button_id) {
 }
 
 void app_button_call_back(void *btn) {
-    ULOG_INFO("button: %s, event: %s\r\n", button_list[(uint32_t)((Button *)btn)->button_id],
-              event_list[((Button *)btn)->event]);
+    ULOG_DEBUG("button: %s, event: %s\r\n", button_list[(uint32_t)((Button *)btn)->button_id],
+               event_list[((Button *)btn)->event]);
     QACTIVE_POST((QActive *)&ao_meter, AO_METER_KEY_SIG,
                  (((uint32_t)((Button *)btn)->button_id) << 4) | (((Button *)btn)->event));
 }
