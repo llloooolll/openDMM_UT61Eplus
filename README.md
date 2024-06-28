@@ -1,5 +1,17 @@
 # openDMM_UT61Eplus
 
+## 编译步骤
+- 下载arm-none-eabi-gcc，放入tool/gcc
+- 安装Cmake
+- 运行./scripts/shell/gen_mingw.bat
+- 运行./scripts/shell/build.bat all
+
+## 下载
+- 更换同型号MCU，以免无法恢复到原来的功能
+- 连接SWD线
+- 安装pyocd，安装HC32L13x的pack包
+- 运行./scripts/shell/load out/source/app/app.hex
+
 |芯片   |型号|
 |---    |--- |
 |MCU    |HC32L130J8TA|
